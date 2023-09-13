@@ -1,10 +1,14 @@
-# osintgram4java
+# OSINTgram (OSINT for Instagram)
 
 Remember on how old our old, beloved Osintgram project by Datalux barely even
-functions? Yeah, ever since the lack of updates and API changes, the
-[base repository](https://github.com/Datalux/Osintgram) of it barely works anymore.
-For that, I decided to write a completely new repository, converting most of the
-Python code into Java code.
+functions? Yeah, ever since the lack of updates and Instagram API changes, the
+[base repository](https://github.com/Datalux/Osintgram) barely works anymore. For that, I decided to rewrite the
+whole project in my favorite language of all time, Java.
+
+Note that this is still a work in the progress, as the original code is still
+being analyzed, so that I can convert them into the functional Java code. It is
+not expected to be fully functional as of now, as I recently started working on
+Osintgram for Java.
 
 ---
 
@@ -17,6 +21,10 @@ won't I go for Maven nor Gradle? Because in my own eyes, both of them suck,
 especially on projects with multiple modules that I mainly make. Since they give me
 headache, I do not work with those Build Systems, and will decide to make a better
 alternative to those Build Systems.
+
+Also, it might look like I bloated this project to the max, but I am still trying
+to keep it as lightweight as possible. Note that Java Development can receive more
+and more bloat from time to time, so this needs to be an expectation.
 
 ---
 
@@ -46,4 +54,4 @@ nor a macOS.
 ---
 
 ## Usage
-Usage coming soon
+Refer to [the Usage file](USAGE.md) for this project.
