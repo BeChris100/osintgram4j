@@ -1,6 +1,7 @@
 package net.bc100dev.osintgram4j;
 
 import net.bc100dev.commons.ResourceManager;
+import net.bc100dev.insta.api.privates.InstagramClient;
 import net.bc100dev.osintgram4j.files.FileWorkerOutputType;
 
 import java.io.File;

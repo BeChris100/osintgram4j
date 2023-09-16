@@ -55,6 +55,8 @@ echo '## Making "core.jar"'
 
 echo '## Obtaining the Application Java Modules'
 JAVA_MODS="$($JDEPS_CMD --print-module-deps -cp build/project/input/*.jar)"
+
+# This adds the Certificates for the HTTPS Requests
 JAVA_MODS="jdk.crypto.cryptoki,jdk.crypto.ec,$JAVA_MODS"
 echo "Modules: $JAVA_MODS"
 
