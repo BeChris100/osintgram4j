@@ -12,6 +12,28 @@ Osintgram for Java.
 
 ---
 
+## Disclaimer
+This software, OSINTgram (OSINT for Instagram), is indented for legitimate and
+ethical use only. Me, [the developer](https://github.com/Datalux) and other
+contributors of the Osintgram project do not condone or support any form of
+illegal, malicious, or unethical activities. It is essential to adhere to all
+relevant laws and Instagram's ToS (Terms of Service) when using this software.
+
+By using this project, you acknowledge and agree that:
+
+- You are solely responsible for your actions and usage of this software.
+- Any misuse, illegal activities, or violations of Instagram's policies are
+ strictly prohibited.
+- Me, the developer and other contributors of this project are not responsible for
+ any consequences or damages resulting from the use of this software.
+
+Please use OSINTgram responsibly, respect privacy, and maintain ethical standards
+in all your activities.
+
+<p style="font-size: 8px">Thanks, ChatGPT!</p>
+
+---
+
 ## Reasoning on Development
 
 The main reason on why the development started for this project is to have the
@@ -30,9 +52,10 @@ and more bloat from time to time, so this needs to be an expectation.
 
 ## Setup
 To set up with the new Osintgram project, you need to do a few steps. On Windows,
-use WSL, as it will make things easier. Also with Windows, I am no longer a fan of
-MS Windows due to it being privacy-concerned Operating System, and I am not willing
-to work with that Operating System ever again.
+use WSL, as the build process only supports Linux and macOS. However, you are able
+to download the stable release of Osintgram from the Releases Page, due to the
+complications within its Shell Script for the "Operating System Check" along with
+its WSL Check.
 
 First, run the Shell Script command to get an initialized state of this project on
 your local machine by running `setup.sh`. Afterward, run `build.sh` to compile the
