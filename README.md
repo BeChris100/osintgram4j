@@ -30,8 +30,6 @@ By using this project, you acknowledge and agree that:
 Please use OSINTgram responsibly, respect privacy, and maintain ethical standards
 in all your activities.
 
-<p style="font-size: 8px">Thanks, ChatGPT!</p>
-
 ---
 
 ## Reasoning on Development
