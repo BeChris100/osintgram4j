@@ -1,5 +1,4 @@
 # OSINTgram (OSINT for Instagram)
-
 Remember on how old our old, beloved Osintgram project by Datalux barely even
 functions? Yeah, ever since the lack of updates and Instagram API changes, the
 [base repository](https://github.com/Datalux/Osintgram) barely works anymore. For that, I decided to rewrite the
@@ -33,7 +32,6 @@ in all your activities.
 ---
 
 ## Reasoning on Development
-
 The main reason on why the development started for this project is to have the
 stability of the project Osintgram back, being kept up with the Instagram APIs and
 make the setup easy (even though Python is easy, but Java is my favorite). But why

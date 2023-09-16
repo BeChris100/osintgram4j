@@ -2,7 +2,7 @@
 
 VERIFIED_JDK="false"
 
-source app-ver
+source app_ver
 
 if [ -f ".java-tools" ]; then
     source .java-tools
