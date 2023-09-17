@@ -40,10 +40,10 @@ echo "## Compiling the Commons Library"
 find commons/src -name "*.java" -type f -print0 | xargs -0 "$JAVAC_CMD" -d build/project/commons
 
 echo "## Compiling the Instagram API"
-find instagram_api/src -name "*.java" -type f -print0 | xargs -0 "$JAVAC_CMD" -cp build/project/commons -d build/project/instagram-api
+find instagram_api/src -name "*.java" -type f -print0 | xargs -0 "$JAVAC_CMD" -cp build/project/commons:build/libs/json.jar -d build/project/instagram-api
 
 echo "## Compiling the Core Application"
-find src -name "*.java" -type f -print0 | xargs -0 "$JAVAC_CMD" -cp build/project/commons:build/project/instagram-api -d build/project/core
+find src -name "*.java" -type f -print0 | xargs -0 "$JAVAC_CMD" -cp build/project/commons:build/project/instagram-api:build/libs/json.jar -d build/project/core
 
 echo '## Making "commons.jar"'
 "$JAR_CMD" -cf build/project/input/commons.jar -C build/project/commons .
@@ -55,7 +55,7 @@ echo '## Making "core.jar"'
 "$JAR_CMD" -cfm build/project/input/core.jar META-INF/MANIFEST.MF -C build/project/core .
 
 echo '## Obtaining the Application Java Modules'
-JAVA_MODS="$($JDEPS_CMD --print-module-deps -cp build/project/input/*.jar)"
+JAVA_MODS="$($JDEPS_CMD --print-module-deps build/project/input/core.jar build/project/input/instagram-api.jar build/project/input/commons.jar build/libs/json.jar)"
 
 # This adds the Certificates for the HTTPS Requests
 JAVA_MODS="jdk.crypto.cryptoki,jdk.crypto.ec,$JAVA_MODS"
