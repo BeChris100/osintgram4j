@@ -1,7 +1,5 @@
 #!/bin/bash
 
-VERIFIED_JDK="false"
-
 source app_ver
 
 if [ -f ".java-tools" ]; then
@@ -20,10 +18,13 @@ if [ -f ".java-tools" ]; then
         JAVA_VERSION=$(java --version 2>&1 | grep -oP 'openjdk \K\d+' | cut -d. -f1)
 
         if [ "$JAVA_VERSION" -ge 20 ]; then
-            VERIFIED_JDK="true"
-        else
+            echo "Found JDK with version $JAVA_VERSION"
+        elif [ "$JAVA_VERSION" -le 19 ]; then
             echo "The major JDK Version needs to be at least on the JDK 20."
             echo "To obtain the newest JDK Version, run the setup.sh with the '--force-download' argument."
+            exit 1
+        else
+            echo "The JDK Version could not be identified, and has returned a value of $JAVA_VERSION."
             exit 1
         fi
     fi
