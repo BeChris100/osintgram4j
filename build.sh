@@ -20,13 +20,18 @@ if [ -f ".java-tools" ]; then
         if [ "$JAVA_VERSION" -ge 20 ]; then
             echo "Found JDK with version $JAVA_VERSION"
         elif [ "$JAVA_VERSION" -le 19 ]; then
-            echo "The major JDK Version needs to be at least on the JDK 20."
+            echo "You need at least the JDK version of 20. Reported Java Version is $JAVA_VERSION"
             echo "To obtain the newest JDK Version, run the setup.sh with the '--force-download' argument."
             exit 1
         else
             echo "The JDK Version could not be identified, and has returned a value of $JAVA_VERSION."
             exit 1
         fi
+    else
+        echo "Error: Some of more JDK Tools are missing from the JDK Installation."
+        echo "Please verify the JDK instance at \"$JAVA_DEFAULT_HOME\" and reinstall, if necessary."
+        echo "Alternatively, run the setup.sh with '--force-download' to obtain the latest JDK version compatible with the project."
+        exit 1
     fi
 else
     echo "No JDK has been initialized."

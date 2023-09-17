@@ -53,11 +53,17 @@ to download the stable release of Osintgram from the Releases Page, due to the
 complications within its Shell Script for the "Operating System Check" along with
 its WSL Check.
 
-First, run the Shell Script command to get an initialized state of this project on
-your local machine by running `setup.sh`. Afterward, run `build.sh` to compile the
-project, placing all JAR files into the "build" directory. With that, it will
-generate the prepared binaries for the execution, which should be located under 
-"build/pkg". To run the final build, do:
+(Note that the creation of an Application on the Instagram Developer Console
+isn't relevant as of by the time of this update, but as soon as this Project
+asks you to state your Application ID, then it will mean that it shifted towards
+the Instagram default APIs.)
+
+After creating the Application on the Instagram Developer Console, run the Shell
+Script command to get an initialized state of this project on your machine by
+running `setup.sh`. Afterward, run `build.sh` to compile the project, placing all
+JAR files into the "build" directory. With that, it will generate the prepared
+binaries for the execution, which should be located under "build/pkg". To run the
+final build, do:
 
 ```shell
 cd build/pkg
