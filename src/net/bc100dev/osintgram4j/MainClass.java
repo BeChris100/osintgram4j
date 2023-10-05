@@ -69,20 +69,13 @@ public class MainClass {
 
         if (args.length >= 1) {
             for (String arg : args) {
-                if (arg.equals("-h") || arg.equals("--help")) {
-                    usage();
-                    System.exit(0);
-                    return;
+                switch (arg) {
+                    case "-h", "--help", "-help" -> {
+                        usage();
+                        System.exit(0);
+                        return;
+                    }
                 }
-
-                if (target != null) {
-                    System.err.println("Only one target can be used. To use more than one targets,");
-                    System.err.println("use the Process CLI by typing \"&target = [new_target]\".");
-                    System.exit(1);
-                    return;
-                }
-
-                target = arg;
             }
         }
 
