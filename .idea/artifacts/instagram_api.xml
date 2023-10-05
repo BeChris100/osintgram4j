@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="instagram-api">
-    <output-path>$PROJECT_DIR$/out/artifacts/instagram_api</output-path>
-    <root id="archive" name="instagram-api.jar">
-      <element id="module-output" name="instagram_api" />
-    </root>
-  </artifact>
-</component>
