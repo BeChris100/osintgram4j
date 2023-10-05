@@ -3,7 +3,8 @@ out/
 !**/src/main/**/out/
 !**/src/test/**/out/
 .idea
-osintgram4java.iml
+*.iml
+**/*.iml
 
 ### Eclipse ###
 .apt_generated
@@ -31,6 +32,5 @@ bin/
 .DS_Store
 
 ### Project Code ###
-libs
 .java-tools
 build
