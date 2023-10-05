@@ -1,39 +1,21 @@
 package net.bc100dev.osintgram4j;
 
-import net.bc100dev.commons.ResourceManager;
-import net.bc100dev.insta.api.privates.InstagramClient;
+import net.bc100dev.commons.utils.io.FileUtil;
 import net.bc100dev.osintgram4j.files.FileWorkerOutputType;
+import net.bc100dev.osintgram4j.pcl.PCL;
+import net.bc100dev.osintgram4j.pcl.PCLException;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOError;
 import java.io.IOException;
-import java.io.InputStream;
+import java.nio.file.AccessDeniedException;
+import java.util.List;
 
 public class MainClass {
 
-    private static String titleBlock() {
-        try {
-            ResourceManager mgr = new ResourceManager(MainClass.class, true);
-            if (mgr.resourceExists("titleblock.txt")) {
-                InputStream is = mgr.getResourceInputStream("titleblock.txt");
-                StringBuilder str = new StringBuilder();
-                int d;
-                byte[] b = new byte[1024];
-
-                while ((d = is.read(b, 0, 1024)) != -1)
-                    str.append(new String(b, 0, d));
-
-                is.close();
-
-                return str.toString();
-            } else
-                return "OSINTgram v1.0";
-        } catch (IOException ignore) {
-            return "OSINTgram v1.0";
-        }
-    }
-
     private static void usage() {
-        System.out.println(titleBlock());
+        System.out.println(TitleBlock.TITLE_BLOCK());
         System.out.println();
         System.out.println("usage:");
         System.out.println("$ ./osintgram4j");
@@ -43,10 +25,47 @@ public class MainClass {
         System.out.println("(Process-Command Line).");
     }
 
+    private static File checkFile(File file) throws IOException {
+        if (file == null)
+            return null;
+
+        if (!file.exists())
+            throw new FileNotFoundException("File at \"" + file.getAbsolutePath() + "\" not found");
+
+        if (!file.canRead())
+            throw new AccessDeniedException("Cannot read file at at \"" + file.getAbsolutePath() + "\"");
+
+        return file;
+    }
+
+    private static File overrideUserCredentials() {
+        if (FileUtil.exists(".config")) {
+            try {
+                List<String> listStr = FileUtil.listDirectory(".config", false, true, false);
+
+                for (String itemStr : listStr) {
+                    if (itemStr.endsWith("credentials.json"))
+                        return checkFile(new File(".config/credentials.json"));
+
+                    if (itemStr.endsWith("credentials.cfg"))
+                        return checkFile(new File(".config/credentials.cfg"));
+
+                    if (itemStr.endsWith("credentials.ini"))
+                        return checkFile(new File(".config/credentials.ini"));
+                }
+            } catch (IOException ignore) {
+                return null;
+            }
+        }
+
+        return null;
+    }
+
     public static void main(String[] args) {
         String target = null;
         FileWorkerOutputType fileType = null;
         File output = new File("profiles/.default/worker");
+        boolean pclCredPrompt = true;
 
         if (args.length >= 1) {
             for (String arg : args) {
@@ -65,6 +84,21 @@ public class MainClass {
 
                 target = arg;
             }
+        }
+
+        File userCred = overrideUserCredentials();
+        if (userCred != null)
+            pclCredPrompt = false;
+
+        try {
+            PCL pcl = new PCL();
+            if (!pclCredPrompt)
+                // This is not my password, so do not try to log into my account.
+                pcl.connect("bechris100", "hfIUhG6rg8ih512vhiDsLJf1µ3");
+
+            pcl.launch();
+        } catch (IOException | PCLException ex) {
+            ex.printStackTrace();
         }
     }
 

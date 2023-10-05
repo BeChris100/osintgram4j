@@ -4,6 +4,8 @@ public enum FileWorkerOutputType {
 
     TEXT,
 
-    JSON
+    JSON,
+
+    CSV
 
 }
