@@ -1,13 +1,31 @@
 # OSINTgram (OSINT for Instagram)
 Remember on how old our old, beloved Osintgram project by Datalux barely even
 functions? Yeah, ever since the lack of updates and Instagram API changes, the
-[base repository](https://github.com/Datalux/Osintgram) barely works anymore. For that, I decided to rewrite the
-whole project in my favorite language of all time, Java.
+[base repository](https://github.com/Datalux/Osintgram) barely works anymore. For
+that, I decided to rewrite the whole project in my favorite language of all time,
+Java.
 
 Note that this is still a work in the progress, as the original code is still
 being analyzed, so that I can convert them into the functional Java code. It is
 not expected to be fully functional as of now, as I recently started working on
 Osintgram for Java.
+
+---
+
+## Notice of the Agreements
+If you have noticed the [Agreements file](AGREEMENTS.md) already sitting here, it
+means that Data Collection will be enforced. Keynote here, "will be". That means
+that it is not enforced yet. I can speculate that either later this year, or next
+year, this feature will be enforced.
+
+Why am I doing this? Because I strongly believe that as soon as this project is
+finished, people will use it for either malicious purposes, such as Information
+Gathering that might turn into spreading Malware or doing Phishing attacks, or
+for Spying purposes. Let me refrain, I am not responsible for what you do. If you
+are willing to risk yourself for any malicious purposes, and I get contacted
+about your wrongdoings, you have the high risk of your account being suspended
+and have the possibility of going to jail. Therefore, use this Software with legal
+mindset.
 
 ---
 
