@@ -106,7 +106,7 @@ public class Credential {
             }
 
             for (int i = 0; i < arr.length(); i++) {
-                if (!(arr.get(0) instanceof JSONObject))
+                if (!(arr.get(i) instanceof JSONObject))
                     throw new CredentialsException("The JSON object at JSON array index " + (i + 1) + " is not valid");
 
                 credentialList.add(fromJsonObject(arr.getJSONObject(i).toString()));
