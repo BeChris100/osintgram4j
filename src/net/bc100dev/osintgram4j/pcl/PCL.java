@@ -32,11 +32,8 @@ public class PCL {
         this.pclConfigList = new ArrayList<>();
 
         this.pclCallers = new ArrayList<>();
-        pclCallers.add(new PCLCaller("connect", "Connects the User to the Instagram APIs", new String[]{
-                "&username",
-                "&password",
-                "&mfa"
-        }, "net.bc100dev.osintgram4j.cmd.Connect"));
+        pclCallers.add(new PCLCaller("connect", "Connects the User to the Instagram APIs",
+                "net.bc100dev.osintgram4j.cmd.Connect"));
     }
 
     /**
@@ -71,7 +68,7 @@ public class PCL {
      * for a successful connection, use {@link PCL#isConnected()} to return
      * the connection status
      *
-     * @throws IOException Input/Output Error Streams
+     * @throws IOException  Input/Output Error Streams
      * @throws PCLException Process Command Line Errors, including API Connection errors etc.
      */
     public void connect(String username, String password) throws IOException, PCLException {
@@ -147,11 +144,49 @@ public class PCL {
         }
 
         if (ln.startsWith("help")) {
-            try {
-                System.out.println(pclCallers.get(0).retrieveLongHelp());
-            } catch (PCLException e) {
-                throw new RuntimeException(e);
+            StringTokenizer tok = new StringTokenizer(ln, " ");
+            Map<String, String> helps = new HashMap<>();
+
+            while (tok.hasMoreTokens()) {
+                String tokVal = tok.nextToken();
+
+                if (tokVal.equals("help"))
+                    // We do not need any help from the "help" command
+                    continue;
+
+                for (PCLCaller caller : pclCallers) {
+                    if (caller.getCommand().equals(tokVal)) {
+                        try {
+                            helps.put(tokVal, caller.retrieveLongHelp());
+                        } catch (PCLException ignore) {
+                            TerminalColors.println(TerminalColors.TerminalColor.RED,
+                                    String.format("Unknown command \"%s\"", tokVal), true);
+                        }
+                    }
+                }
             }
+
+            if (!helps.keySet().isEmpty()) {
+                List<String> cmd = new ArrayList<>(helps.keySet());
+
+                if (cmd.size() == 1)
+                    TerminalColors.println(TerminalColors.TerminalColor.BLUE, helps.get(cmd.get(0)), true);
+                else {
+                    for (int i = 0; i < cmd.size(); i++) {
+                        TerminalColors.println(TerminalColors.TerminalColor.CYAN, cmd.get(i), true);
+                        TerminalColors.println(TerminalColors.TerminalColor.BLUE, helps.get(cmd.get(i)), true);
+
+                        if (i != cmd.size() - 1)
+                            System.out.println();
+                    }
+                }
+            } else {
+                for (PCLCaller caller : pclCallers) {
+                    TerminalColors.print(TerminalColors.TerminalColor.CYAN, caller.getCommand() + "\t", true);
+                    TerminalColors.println(TerminalColors.TerminalColor.YELLOW, caller.retrieveShortHelp(), true);
+                }
+            }
+
             cmd();
             return;
         }
@@ -176,21 +211,24 @@ public class PCL {
         if (lnSplits.length > 1)
             System.arraycopy(lnSplits, 1, givenArgs, 0, lnSplits.length - 1);
 
-        System.out.println("Given Execution Parameter: " + exec);
-        System.out.println("Given Arguments: " + Arrays.toString(givenArgs));
+        boolean cmdFound = false;
+        for (PCLCaller caller : pclCallers) {
+            if (caller.getCommand().equals(exec)) {
+                cmdFound = true;
+
+                try {
+                    caller.execute(givenArgs, pclConfigList);
+                    break;
+                } catch (PCLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+
+        if (!cmdFound)
+            TerminalColors.println(TerminalColors.TerminalColor.RED, String.format("%s: Command not found", exec), true);
 
         cmd();
-    }
-
-    private String listToString(String[] list, String split) {
-        if (list == null || list.length == 0)
-            return "";
-
-        StringBuilder str = new StringBuilder();
-        for (String item : list)
-            str.append("\"").append(item).append("\"").append(str);
-
-        return str.substring(0, str.toString().length() - split.length());
     }
 
     public void launch() {

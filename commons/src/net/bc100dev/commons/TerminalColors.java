@@ -18,28 +18,30 @@ public class TerminalColors {
 
     private static String translateColor(TerminalColor color) {
         return switch (color) {
-            case RESET -> "\001B[0m";
-            case RED -> "\001B[31m";
-            case GREEN -> "\001B[32m";
-            case YELLOW -> "\001B[33m";
-            case BLUE -> "\001B[34m";
-            case PURPLE -> "\001B[35m";
-            case CYAN -> "\001B[36m";
-            case WHITE -> "\001B[37m";
+            case RESET -> "\033[0m";
+            case BLACK -> "\033[0;30m";
+            case RED -> "\033[0;31m";
+            case GREEN -> "\033[0;32m";
+            case YELLOW -> "\033[0;33m";
+            case BLUE -> "\033[0;34m";
+            case PURPLE -> "\033[0;35m";
+            case CYAN -> "\033[0;36m";
+            case WHITE -> "\033[0;37m";
             default -> translateColor(TerminalColor.RESET);
         };
     }
 
     public enum TerminalColor {
 
-        RESET, //  = "\001B[0m";
-        RED, // = "\001B[31m";
-        GREEN, // = "\u001B[32m";
-        YELLOW, // = "\u001B[33m";
-        BLUE, // = "\u001B[34m";
-        PURPLE, // = "\u001B[35m";
-        CYAN, // = "\u001B[36m";
-        WHITE // = "\u001B[37m";
+        RESET,
+        BLACK,
+        RED,
+        GREEN,
+        YELLOW,
+        BLUE,
+        PURPLE,
+        CYAN,
+        WHITE
 
     }
 

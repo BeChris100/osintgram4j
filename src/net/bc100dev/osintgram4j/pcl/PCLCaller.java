@@ -8,15 +8,13 @@ import java.util.List;
 public class PCLCaller {
 
     private final String command, helpDesc;
-    private final String[] args;
     private Class callableClass;
     private Method callableMethod, callableHelpMethod;
 
-    public PCLCaller(String command, String helpDesc, String[] args, String callableClassName)
+    public PCLCaller(String command, String helpDesc, String callableClassName)
             throws PCLException {
         this.command = command;
         this.helpDesc = helpDesc;
-        this.args = args;
 
         this.callableClass = null;
         this.callableMethod = null;
@@ -28,7 +26,7 @@ public class PCLCaller {
             if (callableMethodArr.length == 0)
                 throw new PCLException("No methods are given for the method");
 
-            Method execMethod = this.callableClass.getDeclaredMethod("launchCmd", String[].class, String[].class);
+            Method execMethod = this.callableClass.getDeclaredMethod("launchCmd", String[].class, List.class);
             Method helpMethod = this.callableClass.getDeclaredMethod("helpCmd");
 
             this.callableMethod = execMethod;
@@ -38,16 +36,20 @@ public class PCLCaller {
         }
     }
 
+    public String getCommand() {
+        return command;
+    }
+
     public String retrieveShortHelp() {
         return helpDesc;
     }
 
-    public void execute(String[] givenReqArgs, String[] givenOptArgs, List<PCLConfig> configList) throws PCLException {
+    public void execute(String[] args, List<PCLConfig> configList) throws PCLException {
         if (callableMethod == null || callableClass == null)
             throw new NullPointerException("Method and/or Class not initialized");
 
         try {
-            callableMethod.invoke(null, givenReqArgs, givenOptArgs);
+            callableMethod.invoke(null, args, configList);
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new PCLException(e);
         }

@@ -13,7 +13,7 @@ public class CLIParser {
      * An empty or null toProcess parameter results in a zero sized array.
      */
     public static String[] translateCmdLine(String toProcess) {
-        if (toProcess == null || toProcess.length() == 0) {
+        if (toProcess == null || toProcess.isEmpty()) {
             //no command? no string
             return new String[0];
         }
@@ -23,7 +23,7 @@ public class CLIParser {
         final int inQuote = 1;
         final int inDoubleQuote = 2;
         int state = normal;
-        final StringTokenizer tok = new StringTokenizer(toProcess, "\"\' ", true);
+        final StringTokenizer tok = new StringTokenizer(toProcess, "\"' ", true);
         final ArrayList<String> result = new ArrayList<String>();
         final StringBuilder current = new StringBuilder();
         boolean lastTokenHasBeenQuoted = false;
@@ -48,7 +48,7 @@ public class CLIParser {
                     }
                     break;
                 default:
-                    if ("\'".equals(nextTok)) {
+                    if ("'".equals(nextTok)) {
                         state = inQuote;
                     } else if ("\"".equals(nextTok)) {
                         state = inDoubleQuote;
