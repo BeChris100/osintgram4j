@@ -1,0 +1,14 @@
+[
+    {
+        "ConnectionStatus": {
+            "username": "",
+            "password": ""
+        },
+        "Targets": [
+            {
+                "Target": "",
+                "CacheDir": ""
+            }
+        ]
+    }
+]

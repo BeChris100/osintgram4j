@@ -2,7 +2,6 @@ package net.bc100dev.osintgram4j.pcl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.List;
 
 public class PCLCaller {
@@ -10,11 +9,13 @@ public class PCLCaller {
     private final String command, helpDesc;
     private Class callableClass;
     private Method callableMethod, callableHelpMethod;
+    private final String[] alternateCommands;
 
-    public PCLCaller(String command, String helpDesc, String callableClassName)
+    public PCLCaller(String command, String helpDesc, String callableClassName, String... alternateCommands)
             throws PCLException {
         this.command = command;
         this.helpDesc = helpDesc;
+        this.alternateCommands = alternateCommands;
 
         this.callableClass = null;
         this.callableMethod = null;
@@ -29,11 +30,18 @@ public class PCLCaller {
             Method execMethod = this.callableClass.getDeclaredMethod("launchCmd", String[].class, List.class);
             Method helpMethod = this.callableClass.getDeclaredMethod("helpCmd");
 
+            if (execMethod.getReturnType() != int.class)
+                throw new IllegalArgumentException("Execution Method does not return an Integer Value");
+
             this.callableMethod = execMethod;
             this.callableHelpMethod = helpMethod;
         } catch (ClassNotFoundException | NoSuchMethodException ignore) {
             throw new PCLException("No class or method found in class " + callableClassName);
         }
+    }
+
+    public String[] getAlternateCommands() {
+        return alternateCommands;
     }
 
     public String getCommand() {
@@ -44,12 +52,12 @@ public class PCLCaller {
         return helpDesc;
     }
 
-    public void execute(String[] args, List<PCLConfig> configList) throws PCLException {
+    public int execute(String[] args, List<PCLConfig> configList) throws PCLException {
         if (callableMethod == null || callableClass == null)
             throw new NullPointerException("Method and/or Class not initialized");
 
         try {
-            callableMethod.invoke(null, args, configList);
+            return (Integer) callableMethod.invoke(null, args, configList);
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new PCLException(e);
         }
@@ -57,7 +65,7 @@ public class PCLCaller {
 
     public String retrieveLongHelp() throws PCLException {
         if (callableHelpMethod == null || callableClass == null)
-            throw new NullPointerException("Help Method and/or Class not initialized");
+            throw new NullPointerException("Help Method and/or Class not initialized properly");
 
         try {
             return (String) callableHelpMethod.invoke(String.class);

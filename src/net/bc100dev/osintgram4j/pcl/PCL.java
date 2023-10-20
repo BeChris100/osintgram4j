@@ -1,12 +1,11 @@
 package net.bc100dev.osintgram4j.pcl;
 
 import net.bc100dev.commons.CLIParser;
-import net.bc100dev.commons.TerminalColors;
+import net.bc100dev.commons.Terminal;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.*;
 
 /**
@@ -18,15 +17,16 @@ public class PCL {
 
     private final Scanner scIn;
 
-    private boolean connected = false;
-
     private final List<PCLConfig> pclConfigList;
     private final List<PCLCaller> pclCallers;
 
-    // Instagram Connection Streams
-    private DataInputStream connectionInput, connectionError;
-    private DataOutputStream connectionOutput;
+    private String PS1 = "==> ";
 
+    /**
+     * Initializes the PCL with the necessary Input and the necessary commands.
+     *
+     * @throws PCLException May throw an exception during initializing the commands.
+     */
     public PCL() throws PCLException {
         this.scIn = new Scanner(System.in);
         this.pclConfigList = new ArrayList<>();
@@ -34,54 +34,34 @@ public class PCL {
         this.pclCallers = new ArrayList<>();
         pclCallers.add(new PCLCaller("connect", "Connects the User to the Instagram APIs",
                 "net.bc100dev.osintgram4j.cmd.Connect"));
+        pclCallers.add(new PCLCaller("sh", "Runs an interactive System shell and/or executes Shell commands",
+                "net.bc100dev.osintgram4j.cmd.ShellInstance", "shell"));
+        pclCallers.add(new PCLCaller("clear", "Clears the Terminal/Console Screen",
+                "net.bc100dev.osintgram4j.cmd.ClsScr", "cls", "clrscr"));
+        pclCallers.add(new PCLCaller("sessionctl", "Session Control and Manager",
+                "net.bc100dev.osintgram4j.cmd.SessionCmd", "sessions", "session"));
     }
 
     /**
-     * Checks, if we have made a connection to the Instagram API.
+     * Parses and assigns/reads a specific configuration. These configurations can be
+     * passed to their perspective methods to read, which can be used to remove most of
+     * the arguments for their specific commands, depending on their use case.
      *
-     * @return Returns true, if the connection is successful.
+     * @param line The line to get a configuration parsed
      */
-    public boolean isConnected() {
-        return connected;
-    }
-
-    /**
-     * Verifies, if the connection that we made to Instagram is still
-     * online, and verifies its current connection.
-     *
-     * @return Returns true, if the connection still can be established,
-     * otherwise returns false, if an Exception occurs
-     * @throws IOException  Throws an IO (Input/Output) Error (Exception),
-     *                      when an internal Connection fails.
-     * @throws PCLException Throws a PCL Exception, when an either known
-     *                      or unknown error from Instagram occurs.
-     */
-    public boolean verifyConnection() throws IOException, PCLException {
-        return false;
-    }
-
-    private void connect0(String username, String password, String mfaCode) throws IOException, PCLException {
-    }
-
-    /**
-     * Connects to the Instagram APIs, establishing a connection. To check
-     * for a successful connection, use {@link PCL#isConnected()} to return
-     * the connection status
-     *
-     * @throws IOException  Input/Output Error Streams
-     * @throws PCLException Process Command Line Errors, including API Connection errors etc.
-     */
-    public void connect(String username, String password) throws IOException, PCLException {
-    }
-
-    public void connect(String username, String password, String mfaCode) throws IOException, PCLException {
-    }
-
-    private void assignCfg(String ln) {
-        if (ln.contains("=")) {
-            String[] opt = ln.split("=", 2);
+    private void assignCfg(String line) {
+        if (line.contains("=")) {
+            String[] opt = line.split("=", 2);
             opt[0] = opt[0].trim().replaceFirst("&", "");
             opt[1] = opt[1].trim();
+
+            if (opt[1].contains("\""))
+                opt[1] = opt[1].replaceAll("\"", "");
+
+            if (opt[0].equals("PS1")) {
+                PS1 = opt[1];
+                return;
+            }
 
             if (pclConfigList.isEmpty()) {
                 pclConfigList.add(new PCLConfig(opt[0], opt[1]));
@@ -113,7 +93,7 @@ public class PCL {
                 return;
             }
 
-            String nm = ln.replaceFirst("&", "").trim();
+            String nm = line.replaceFirst("&", "").trim();
 
             boolean found = false;
             for (PCLConfig cfg : pclConfigList) {
@@ -128,8 +108,11 @@ public class PCL {
         }
     }
 
+    /**
+     * The beauty happens here: The interactive shell.
+     */
     private void cmd() {
-        System.out.print("==> ");
+        System.out.print(PS1);
         String ln = scIn.nextLine().trim();
 
         if (ln.isEmpty()) {
@@ -159,8 +142,19 @@ public class PCL {
                         try {
                             helps.put(tokVal, caller.retrieveLongHelp());
                         } catch (PCLException ignore) {
-                            TerminalColors.println(TerminalColors.TerminalColor.RED,
+                            Terminal.println(Terminal.Colors.RED,
                                     String.format("Unknown command \"%s\"", tokVal), true);
+                        }
+                    } else {
+                        for (String altCommand : caller.getAlternateCommands()) {
+                            if (altCommand.equals(tokVal)) {
+                                try {
+                                    helps.put(tokVal, caller.retrieveLongHelp());
+                                } catch (PCLException ignore) {
+                                    Terminal.println(Terminal.Colors.RED,
+                                            String.format("Unknown command \"%s\"", tokVal), true);
+                                }
+                            }
                         }
                     }
                 }
@@ -170,11 +164,11 @@ public class PCL {
                 List<String> cmd = new ArrayList<>(helps.keySet());
 
                 if (cmd.size() == 1)
-                    TerminalColors.println(TerminalColors.TerminalColor.BLUE, helps.get(cmd.get(0)), true);
+                    Terminal.println(Terminal.Colors.BLUE, helps.get(cmd.get(0)), true);
                 else {
                     for (int i = 0; i < cmd.size(); i++) {
-                        TerminalColors.println(TerminalColors.TerminalColor.CYAN, cmd.get(i), true);
-                        TerminalColors.println(TerminalColors.TerminalColor.BLUE, helps.get(cmd.get(i)), true);
+                        Terminal.println(Terminal.Colors.CYAN, cmd.get(i), true);
+                        Terminal.println(Terminal.Colors.BLUE, helps.get(cmd.get(i)), true);
 
                         if (i != cmd.size() - 1)
                             System.out.println();
@@ -182,8 +176,8 @@ public class PCL {
                 }
             } else {
                 for (PCLCaller caller : pclCallers) {
-                    TerminalColors.print(TerminalColors.TerminalColor.CYAN, caller.getCommand() + "\t", true);
-                    TerminalColors.println(TerminalColors.TerminalColor.YELLOW, caller.retrieveShortHelp(), true);
+                    Terminal.print(Terminal.Colors.CYAN, caller.getCommand() + "\t", true);
+                    Terminal.println(Terminal.Colors.YELLOW, caller.retrieveShortHelp(), true);
                 }
             }
 
@@ -200,7 +194,7 @@ public class PCL {
         String[] lnSplits = CLIParser.translateCmdLine(ln);
 
         if (lnSplits.length == 0) {
-            TerminalColors.println(TerminalColors.TerminalColor.RED, String.format("Syntax error with parsing line \"%s\"", ln), true);
+            Terminal.println(Terminal.Colors.RED, String.format("Syntax error with parsing line \"%s\"", ln), true);
             cmd();
             return;
         }
@@ -211,26 +205,60 @@ public class PCL {
         if (lnSplits.length > 1)
             System.arraycopy(lnSplits, 1, givenArgs, 0, lnSplits.length - 1);
 
+        execCommand(exec, givenArgs);
+
+        cmd();
+    }
+
+    /**
+     * Executes a command from the parsed line.
+     *
+     * @param exec The command parameter
+     * @param args Given PCL command parameters
+     */
+    private void execCommand(String exec, String[] args) {
         boolean cmdFound = false;
         for (PCLCaller caller : pclCallers) {
             if (caller.getCommand().equals(exec)) {
                 cmdFound = true;
 
                 try {
-                    caller.execute(givenArgs, pclConfigList);
+                    int code = caller.execute(args, pclConfigList);
+                    if (code != 0) {
+                        Terminal.println(Terminal.Colors.RED,
+                                caller.getCommand() + ": exit code " + code, true);
+                    }
+
                     break;
                 } catch (PCLException ex) {
                     ex.printStackTrace();
+                }
+            } else {
+                for (String alternate : caller.getAlternateCommands()) {
+                    if (alternate.equals(exec)) {
+                        cmdFound = true;
+
+                        try {
+                            int code = caller.execute(args, pclConfigList);
+                            if (code != 0) {
+                                Terminal.println(Terminal.Colors.RED,
+                                        alternate + ": exit code " + code, true);
+                            }
+                        } catch (PCLException ex) {
+                            ex.printStackTrace();
+                        }
+                    }
                 }
             }
         }
 
         if (!cmdFound)
-            TerminalColors.println(TerminalColors.TerminalColor.RED, String.format("%s: Command not found", exec), true);
-
-        cmd();
+            Terminal.println(Terminal.Colors.RED, String.format("%s: Command not found", exec), true);
     }
 
+    /**
+     * Launches the interactive Shell
+     */
     public void launch() {
         cmd();
     }

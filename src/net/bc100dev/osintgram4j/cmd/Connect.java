@@ -7,7 +7,8 @@ import java.util.List;
 public class Connect {
 
     // Invoked manually by `Method.invoke`
-    public static void launchCmd(String[] args, List<PCLConfig> pclConfigs) {
+    public static int launchCmd(String[] args, List<PCLConfig> pclConfigs) {
+        return 0;
     }
 
     // Invoked manually by `Method.invoke`

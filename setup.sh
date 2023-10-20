@@ -105,13 +105,14 @@ function get_libs() {
     if [ "$FORCE_DOWNLOAD" == "true" ]; then
         RUN_DOWNLOAD="true"
     else
-        if [ ! -f "build/libs/json.jar" ]; then
+        if [ ! -f "build/libs/json.jar" ] || [ ! -f "build/libs/commons-codec.jar" ]; then
             RUN_DOWNLOAD="true"
         fi
     fi
 
     if [ "$RUN_DOWNLOAD" == "true" ]; then
         wget "https://repo1.maven.org/maven2/org/json/json/20230618/json-20230618.jar" -O build/libs/json.jar
+        wget https://repo1.maven.org/maven2/commons-codec/commons-codec/1.16.0/commons-codec-1.16.0.jar -O build/libs/commons-codec.jar
     fi
 }
 

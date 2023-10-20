@@ -4,7 +4,6 @@ public enum OperatingSystem {
 
     LINUX,
     WINDOWS,
-    MAC_OS,
-    UNKNOWN
+    MAC_OS
 
 }
