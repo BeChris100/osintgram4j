@@ -12,23 +12,6 @@ Osintgram for Java.
 
 ---
 
-## Notice of the Agreements
-If you have noticed the [Agreements file](AGREEMENTS.md) already sitting here, it
-means that Data Collection will be enforced. Keynote here, "will be". That means
-that it is not enforced yet. I can speculate that either later this year, or next
-year, this feature will be enforced.
-
-Why am I doing this? Because I strongly believe that as soon as this project is
-finished, people will use it for either malicious purposes, such as Information
-Gathering that might turn into spreading Malware or doing Phishing attacks, or
-for Spying purposes. Let me refrain, I am not responsible for what you do. If you
-are willing to risk yourself for any malicious purposes, and I get contacted
-about your wrongdoings, you have the high risk of your account being suspended
-and have the possibility of going to jail. Therefore, use this Software with legal
-mindset.
-
----
-
 ## Disclaimer
 This software, OSINTgram (OSINT for Instagram), is indented for legitimate and
 ethical use only. Me, [the developer](https://github.com/Datalux) and other
@@ -93,6 +76,16 @@ What binaries were built there? The binaries that were built are produced by
 having to download the JRE/JDK. However, if you download the latest stable release
 for macOS, you will have to run `osintgram4j.sh` because I do not own a MacBook
 nor a macOS.
+
+---
+
+## Mods
+This is a planned feature for the future, but as of now, it currently does not
+support the use of Client Modifications. However, this also comes in Security Risks,
+which also involve Malware, Spyware and other malicious Software that may come into
+your hands. Always be on the lookout for any malicious Software.
+
+Section coming soon.
 
 ---
 

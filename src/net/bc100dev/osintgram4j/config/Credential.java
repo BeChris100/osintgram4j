@@ -42,13 +42,10 @@ public class Credential {
         if (!objRoot.has("password"))
             throw new CredentialsException("The password key in the JSON object has not been found");
 
-        if (!(objRoot.get("username") instanceof String))
-            throw new CredentialsException("The username key in the JSON object is not a string (text)");
+        if (objRoot.get("username") instanceof String un && objRoot.get("password") instanceof String pw)
+            return new Credential(un, pw);
 
-        if (!(objRoot.get("password") instanceof String))
-            throw new CredentialsException("The password key in the JSON object is not a string (text)");
-
-        return new Credential(objRoot.getString("username"), objRoot.getString("password"));
+        throw new CredentialsException("The username or the password value in the JSON object is not a string");
     }
 
     public static Credential getCredentialsFromConfig(File configFile) throws IOException, CredentialsException {
@@ -98,18 +95,19 @@ public class Credential {
                 throw new CredentialsException("No credentials given");
 
             if (arr.length() == 1) {
-                if (!(arr.get(0) instanceof JSONObject))
-                    throw new CredentialsException("The JSON object at JSON array index 1 is not valid");
+                if (arr.get(0) instanceof JSONObject j)
+                    credentialList.add(fromJsonObject(j.toString()));
+                else
+                    throw new CredentialsException("The JSON object at the first JSON array index is not valid");
 
-                credentialList.add(fromJsonObject(arr.getJSONObject(0).toString()));
                 return credentialList;
             }
 
             for (int i = 0; i < arr.length(); i++) {
-                if (!(arr.get(i) instanceof JSONObject))
-                    throw new CredentialsException("The JSON object at JSON array index " + (i + 1) + " is not valid");
-
-                credentialList.add(fromJsonObject(arr.getJSONObject(i).toString()));
+                if (arr.get(i) instanceof JSONObject j)
+                    credentialList.add(fromJsonObject(j.toString()));
+                else
+                    throw new CredentialsException("The JSON object at JSON array index " + i + " is not valid");
             }
         }
 

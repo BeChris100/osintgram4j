@@ -2,21 +2,39 @@ package net.bc100dev.commons;
 
 public class Terminal {
 
-    public static void print(Colors color, String msg, boolean reset) {
+    public static void print(Color color, String msg, boolean reset) {
         System.out.print(translateColor(color) + msg);
 
         if (reset)
-            System.out.print(translateColor(Colors.RESET));
+            System.out.print(translateColor(Color.RESET));
     }
 
-    public static void println(Colors color, String msg, boolean reset) {
+    public static void println(Color color, String msg, boolean reset) {
         System.out.print(translateColor(color) + msg);
 
         if (reset)
-            System.out.println(translateColor(Colors.RESET));
+            System.out.print(translateColor(Color.RESET));
+
+        System.out.println();
     }
 
-    private static String translateColor(Colors color) {
+    public static void errPrint(Color color, String msg, boolean reset) {
+        System.out.print(translateColor(color) + msg);
+
+        if (reset)
+            System.out.print(translateColor(Color.RESET));
+    }
+
+    public static void errPrintln(Color color, String msg, boolean reset) {
+        System.out.print(translateColor(color) + msg);
+
+        if (reset)
+            System.out.print(translateColor(Color.RESET));
+
+        System.out.println();
+    }
+
+    private static String translateColor(Color color) {
         return switch (color) {
             case RESET -> "\033[0m";
             case BLACK -> "\033[0;30m";
@@ -27,7 +45,7 @@ public class Terminal {
             case PURPLE -> "\033[0;35m";
             case CYAN -> "\033[0;36m";
             case WHITE -> "\033[0;37m";
-            default -> translateColor(Colors.RESET);
+            default -> translateColor(Color.RESET);
         };
     }
 
@@ -36,7 +54,7 @@ public class Terminal {
         System.out.flush();
     }
 
-    public enum Colors {
+    public enum Color {
 
         RESET,
         BLACK,

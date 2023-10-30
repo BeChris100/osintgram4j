@@ -28,7 +28,7 @@ public class PCLCaller {
                 throw new PCLException("No methods are given for the method");
 
             Method execMethod = this.callableClass.getDeclaredMethod("launchCmd", String[].class, List.class);
-            Method helpMethod = this.callableClass.getDeclaredMethod("helpCmd");
+            Method helpMethod = this.callableClass.getDeclaredMethod("helpCmd", String[].class);
 
             if (execMethod.getReturnType() != int.class)
                 throw new IllegalArgumentException("Execution Method does not return an Integer Value");
@@ -63,7 +63,7 @@ public class PCLCaller {
         }
     }
 
-    public String retrieveLongHelp() throws PCLException {
+    public String retrieveLongHelp(String[] args) throws PCLException {
         if (callableHelpMethod == null || callableClass == null)
             throw new NullPointerException("Help Method and/or Class not initialized properly");
 

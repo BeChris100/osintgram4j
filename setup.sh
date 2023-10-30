@@ -20,7 +20,7 @@ fi
 
 echo "## Operating System State"
 echo "Is Linux: $IS_LINUX"
-echo "Is OSX (macOS): $IS_OSX"
+echo "Is OS X (macOS): $IS_OSX"
 echo ""
 echo "Preparing files (JDK, Libraries)"
 echo ""
@@ -70,10 +70,10 @@ function get_jdk() {
 
     if [ "$RUN_DOWNLOAD" == "true" ]; then
         if [[ "$IS_LINUX" == "true" ]]; then
-            wget "https://download.java.net/java/GA/jdk21/fd2272bbf8e04c3dbaee13770090416c/35/GPL/openjdk-21_linux-x64_bin.tar.gz" \
+            wget "https://download.java.net/java/GA/jdk21.0.1/415e3f918a1f4062a0074a2794853d0d/12/GPL/openjdk-21.0.1_linux-x64_bin.tar.gz" \
                 -O build/jdk/tmp/jdk21.tar.gz
         elif [[ "$IS_OSX" == "true" ]]; then
-            wget "https://download.java.net/java/GA/jdk21/fd2272bbf8e04c3dbaee13770090416c/35/GPL/openjdk-21_macos-x64_bin.tar.gz" \
+            wget "https://download.java.net/java/GA/jdk21.0.1/415e3f918a1f4062a0074a2794853d0d/12/GPL/openjdk-21.0.1_macos-x64_bin.tar.gz" \
                 -O build/jdk/tmp/jdk21.tar.gz
         fi
 
@@ -111,7 +111,7 @@ function get_libs() {
     fi
 
     if [ "$RUN_DOWNLOAD" == "true" ]; then
-        wget "https://repo1.maven.org/maven2/org/json/json/20230618/json-20230618.jar" -O build/libs/json.jar
+        wget "https://repo1.maven.org/maven2/org/json/json/20230618/json-20231013.jar" -O build/libs/json.jar
         wget https://repo1.maven.org/maven2/commons-codec/commons-codec/1.16.0/commons-codec-1.16.0.jar -O build/libs/commons-codec.jar
     fi
 }

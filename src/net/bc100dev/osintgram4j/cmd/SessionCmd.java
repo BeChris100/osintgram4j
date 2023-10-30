@@ -1,7 +1,6 @@
 package net.bc100dev.osintgram4j.cmd;
 
 import net.bc100dev.commons.Terminal;
-import net.bc100dev.commons.utils.RuntimeEnvironment;
 import net.bc100dev.insta.api.ConnectionStateException;
 import net.bc100dev.osintgram4j.pcl.PCLConfig;
 import org.json.JSONArray;
@@ -57,7 +56,7 @@ public class SessionCmd {
 
     // Invoked manually by `Method.invoke`
     public static int launchCmd(String[] args, List<PCLConfig> pclConfigs) {
-        Terminal.println(Terminal.Colors.RED, "Session Manager is not implemented yet", true);
+        Terminal.println(Terminal.Color.RED, "Session Manager is not implemented yet", true);
         return 1;
     }
 

@@ -1,0 +1,205 @@
+{
+    "package": "net.bc100dev.osintgram4j",
+    "label": "Osintgram Core Commands",
+    "command_list": [
+        {
+            "command": "addresses",
+            "description": "Gets all registered addresses by target photos",
+            "class": ".cmd.conn.ReadAddresses",
+            "alternates": [
+                "addrs",
+                "Get-Addresses"
+            ]
+        },
+        {
+            "command": "captions",
+            "description": "Get user's photos captions",
+            "class": ".cmd.conn.ReadCaptions",
+            "alternates": [
+                "Get-Captions"
+            ]
+        },
+        {
+            "command": "comments",
+            "description": "Get total comments of target's photos",
+            "class": ".cmd.conn.ReadComments",
+            "alternates": [
+                "replies",
+                "Get-Comments"
+            ]
+        },
+        {
+            "command": "followers",
+            "description": "Get target followers",
+            "class": ".cmd.conn.ReadFollowers",
+            "alternates": [
+                "Get-Followers"
+            ]
+        },
+        {
+            "command": "followings",
+            "description": "Get users followed by target",
+            "class": ".cmd.conn.ReadFollowings",
+            "alternates": [
+                "Get-Followings"
+            ]
+        },
+        {
+            "command": "fwersemail",
+            "description": "Get email addresses of target followers",
+            "class": ".cmd.conn.ReadFollowers",
+            "alternates": [
+                "Get-Followers-Email",
+                "Get-Followers-EmailAddresses",
+                "followers-emails"
+            ],
+            "main-args": [
+                "--emails"
+            ]
+        },
+        {
+            "command": "fwingsemail",
+            "description": "Get email addresses of users followed by target",
+            "class": ".cmd.conn.ReadFollowings",
+            "alternates": [
+                "Get-Followings-Email",
+                "Get-Followings-EmailAddresses",
+                "followings-emails"
+            ],
+            "main-args": [
+                "--emails"
+            ]
+        },
+        {
+            "command": "fwersnumber",
+            "description": "Get phone numbers of target followers",
+            "class": ".cmd.conn.ReadFollowers",
+            "alternates": [
+                "Get-Followers-Phone",
+                "Get-Followers-PhoneNumbers",
+                "followers-phone",
+                "followers-phone-numbers"
+            ],
+            "main-args": [
+                "--ph-numbers"
+            ]
+        },
+        {
+            "command": "fwingsnumber",
+            "description": "Get phone numbers of users followed by target",
+            "class": ".cmd.conn.ReadFollowings",
+            "alternates": [
+                "Get-Followings-Email",
+                "Get-Followings-EmailAddresses",
+                "followers-phone",
+                "followers-phone-numbers"
+            ],
+            "main-args": [
+                "--ph-numbers"
+            ]
+        },
+        {
+            "command": "hashtags",
+            "description": "Get hashtags used by target",
+            "class": ".cmd.conn.ReadHashtags",
+            "alternates": [
+                "Get-Hashtags",
+                "htags"
+            ]
+        },
+        {
+            "command": "info",
+            "description": "Get target information",
+            "class": ".cmd.conn.ReadInfo",
+            "alternates": [
+                "information",
+                "Get-UserInfo",
+                "Get-User"
+            ]
+        },
+        {
+            "command": "likes",
+            "description": "Get total likes of target's photos",
+            "class": ".cmd.conn.ReadLikes",
+            "alternates": [
+                "Get-TotalLikes"
+            ]
+        },
+        {
+            "command": "mediatype",
+            "description": "Get user's posts type (photo or video)",
+            "class": ".cmd.conn.ReadMediaTypes",
+            "alternates": [
+                "Get-MediaTypes",
+                "media-types"
+            ]
+        },
+        {
+            "command": "photodes",
+            "description": "Get description of target's photos",
+            "class": ".cmd.conn.ReadPhotoDesc",
+            "alternates": [
+                "Get-PhotoDescriptions",
+                "Get-PhotoDesc",
+                "photo-desc"
+            ]
+        },
+        {
+            "command": "photos",
+            "description": "Download user's photos in the profile folder",
+            "class": ".cmd.conn.DownloaderPhotos",
+            "alternates": [
+                "Download-Photos",
+                "Get-Photos",
+                "images"
+            ]
+        },
+        {
+            "command": "propic",
+            "description": "Download user's profile picture",
+            "class": ".cmd.conn.DownloaderProfPic",
+            "alternates": [
+                "Download-ProfilePicture",
+                "Download-ProfilePic",
+                "Get-ProfilePicture",
+                "Get-ProfilePic",
+                "pfp"
+            ]
+        },
+        {
+            "command": "stories",
+            "description": "Download user's stories",
+            "class": ".cmd.conn.DownloaderStories",
+            "alternates": [
+                "Download-Stories",
+                "Get-Stories"
+            ]
+        },
+        {
+            "command": "tagged",
+            "description": "Get list of users tagged by target",
+            "class": ".cmd.conn.ReadTagged",
+            "alternates": [
+                "Get-Tags",
+                "Get-Tagged"
+            ]
+        },
+        {
+            "command": "wcommented",
+            "description": "Get a list of user who commented on targets photos",
+            "class": ".cmd.conn.ReadUserComments",
+            "alternates": [
+                "Get-PostComments"
+            ]
+        },
+        {
+            "command": "wtagged",
+            "description": "Get a list of user who tagged the target",
+            "class": ".cmd.conn.ReadUserTags",
+            "alternates": [
+                "Get-UserTags",
+                "Get-UserTagList"
+            ]
+        }
+    ]
+}

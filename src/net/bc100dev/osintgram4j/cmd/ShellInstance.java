@@ -13,17 +13,17 @@ public class ShellInstance {
 
     private static int startShell(File shellExec, String... args) throws IOException, InterruptedException {
         if (shellExec == null) {
-            Terminal.println(Terminal.Colors.RED, "Shell has not been defined by the program", true);
+            Terminal.println(Terminal.Color.RED, "Shell has not been defined by the program", true);
             return 1;
         }
 
         if (!shellExec.exists()) {
-            Terminal.println(Terminal.Colors.RED, shellExec.getAbsolutePath() + " does not exist", true);
+            Terminal.println(Terminal.Color.RED, shellExec.getAbsolutePath() + " does not exist", true);
             return 1;
         }
 
         if (!shellExec.canExecute()) {
-            Terminal.println(Terminal.Colors.RED, String.format("%s cannot be executed by %s",
+            Terminal.println(Terminal.Color.RED, String.format("%s cannot be executed by %s",
                     shellExec.getAbsolutePath(), RuntimeEnvironment.USER_NAME), true);
             return 1;
         }
@@ -39,7 +39,7 @@ public class ShellInstance {
         bdr.inheritIO();
 
         Process proc = bdr.start();
-        Terminal.println(Terminal.Colors.GREEN, "Process executed with PID " + proc.pid(), true);
+        Terminal.println(Terminal.Color.GREEN, "Process executed with PID " + proc.pid(), true);
 
         return proc.waitFor();
     }
@@ -62,7 +62,7 @@ public class ShellInstance {
                 case "--zsh" -> shellEnv = "/bin/zsh";
                 case "--fish" -> shellEnv = "/bin/fish";
                 case "--help", "-h", "?" -> {
-                    Terminal.println(Terminal.Colors.BLUE, helpCmd(), true);
+                    Terminal.println(Terminal.Color.BLUE, helpCmd(args), true);
                     return 0;
                 }
                 default -> {
@@ -101,7 +101,7 @@ public class ShellInstance {
     }
 
     // Invoked manually by `Method.invoke`
-    public static String helpCmd() {
+    public static String helpCmd(String[] args) {
         return """
                 The Shell (sh) command launches an instance of the Shell.
                 This initially launches the default Shell that is given by the "SHELL" environment.

@@ -3,9 +3,6 @@ package net.bc100dev.osintgram4j.pcl;
 import net.bc100dev.commons.CLIParser;
 import net.bc100dev.commons.Terminal;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.util.*;
 
 /**
@@ -32,8 +29,8 @@ public class PCL {
         this.pclConfigList = new ArrayList<>();
 
         this.pclCallers = new ArrayList<>();
-        pclCallers.add(new PCLCaller("connect", "Connects the User to the Instagram APIs",
-                "net.bc100dev.osintgram4j.cmd.Connect"));
+        pclCallers.add(new PCLCaller("connection", "Connects the User to the Instagram APIs",
+                "net.bc100dev.osintgram4j.cmd.Connection"));
         pclCallers.add(new PCLCaller("sh", "Runs an interactive System shell and/or executes Shell commands",
                 "net.bc100dev.osintgram4j.cmd.ShellInstance", "shell"));
         pclCallers.add(new PCLCaller("clear", "Clears the Terminal/Console Screen",
@@ -126,6 +123,20 @@ public class PCL {
             return;
         }
 
+        String[] lnSplits = CLIParser.translateCmdLine(ln);
+
+        if (lnSplits.length == 0) {
+            Terminal.println(Terminal.Color.RED, String.format("Syntax error with parsing line \"%s\"", ln), true);
+            cmd();
+            return;
+        }
+
+        String exec = lnSplits[0];
+        String[] givenArgs = new String[lnSplits.length - 1];
+
+        if (lnSplits.length > 1)
+            System.arraycopy(lnSplits, 1, givenArgs, 0, lnSplits.length - 1);
+
         if (ln.startsWith("help")) {
             StringTokenizer tok = new StringTokenizer(ln, " ");
             Map<String, String> helps = new HashMap<>();
@@ -140,18 +151,18 @@ public class PCL {
                 for (PCLCaller caller : pclCallers) {
                     if (caller.getCommand().equals(tokVal)) {
                         try {
-                            helps.put(tokVal, caller.retrieveLongHelp());
+                            helps.put(tokVal, caller.retrieveLongHelp(givenArgs));
                         } catch (PCLException ignore) {
-                            Terminal.println(Terminal.Colors.RED,
+                            Terminal.println(Terminal.Color.RED,
                                     String.format("Unknown command \"%s\"", tokVal), true);
                         }
                     } else {
                         for (String altCommand : caller.getAlternateCommands()) {
                             if (altCommand.equals(tokVal)) {
                                 try {
-                                    helps.put(tokVal, caller.retrieveLongHelp());
+                                    helps.put(tokVal, caller.retrieveLongHelp(givenArgs));
                                 } catch (PCLException ignore) {
-                                    Terminal.println(Terminal.Colors.RED,
+                                    Terminal.println(Terminal.Color.RED,
                                             String.format("Unknown command \"%s\"", tokVal), true);
                                 }
                             }
@@ -164,11 +175,11 @@ public class PCL {
                 List<String> cmd = new ArrayList<>(helps.keySet());
 
                 if (cmd.size() == 1)
-                    Terminal.println(Terminal.Colors.BLUE, helps.get(cmd.get(0)), true);
+                    Terminal.println(Terminal.Color.BLUE, helps.get(cmd.get(0)), true);
                 else {
                     for (int i = 0; i < cmd.size(); i++) {
-                        Terminal.println(Terminal.Colors.CYAN, cmd.get(i), true);
-                        Terminal.println(Terminal.Colors.BLUE, helps.get(cmd.get(i)), true);
+                        Terminal.println(Terminal.Color.CYAN, cmd.get(i), true);
+                        Terminal.println(Terminal.Color.BLUE, helps.get(cmd.get(i)), true);
 
                         if (i != cmd.size() - 1)
                             System.out.println();
@@ -176,8 +187,8 @@ public class PCL {
                 }
             } else {
                 for (PCLCaller caller : pclCallers) {
-                    Terminal.print(Terminal.Colors.CYAN, caller.getCommand() + "\t", true);
-                    Terminal.println(Terminal.Colors.YELLOW, caller.retrieveShortHelp(), true);
+                    Terminal.print(Terminal.Color.CYAN, caller.getCommand() + "\t", true);
+                    Terminal.println(Terminal.Color.YELLOW, caller.retrieveShortHelp(), true);
                 }
             }
 
@@ -190,20 +201,6 @@ public class PCL {
             System.exit(0);
             return;
         }
-
-        String[] lnSplits = CLIParser.translateCmdLine(ln);
-
-        if (lnSplits.length == 0) {
-            Terminal.println(Terminal.Colors.RED, String.format("Syntax error with parsing line \"%s\"", ln), true);
-            cmd();
-            return;
-        }
-
-        String exec = lnSplits[0];
-        String[] givenArgs = new String[lnSplits.length - 1];
-
-        if (lnSplits.length > 1)
-            System.arraycopy(lnSplits, 1, givenArgs, 0, lnSplits.length - 1);
 
         execCommand(exec, givenArgs);
 
@@ -225,7 +222,7 @@ public class PCL {
                 try {
                     int code = caller.execute(args, pclConfigList);
                     if (code != 0) {
-                        Terminal.println(Terminal.Colors.RED,
+                        Terminal.println(Terminal.Color.RED,
                                 caller.getCommand() + ": exit code " + code, true);
                     }
 
@@ -241,7 +238,7 @@ public class PCL {
                         try {
                             int code = caller.execute(args, pclConfigList);
                             if (code != 0) {
-                                Terminal.println(Terminal.Colors.RED,
+                                Terminal.println(Terminal.Color.RED,
                                         alternate + ": exit code " + code, true);
                             }
                         } catch (PCLException ex) {
@@ -253,7 +250,7 @@ public class PCL {
         }
 
         if (!cmdFound)
-            Terminal.println(Terminal.Colors.RED, String.format("%s: Command not found", exec), true);
+            Terminal.println(Terminal.Color.RED, String.format("%s: Command not found", exec), true);
     }
 
     /**
