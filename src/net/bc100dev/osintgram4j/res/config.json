@@ -1,8 +1,4 @@
 {
-    "user": {
-        "username": "",
-        "password": ""
-    },
     "env": {
         "MFA_REQUEST": "prompt",
         "AUTO_CONNECT": "no"

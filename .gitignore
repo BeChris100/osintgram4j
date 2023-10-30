@@ -34,4 +34,3 @@ bin/
 ### Project Code ###
 .java-tools
 build
-secrets.cfg
