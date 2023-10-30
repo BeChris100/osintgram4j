@@ -39,7 +39,8 @@ make the setup easy (even though Python is easy, but Java is my favorite). But w
 won't I go for Maven nor Gradle? Because in my own eyes, both of them suck,
 especially on projects with multiple modules that I mainly make. Since they give me
 headache, I do not work with those Build Systems, and will decide to make a better
-alternative to those Build Systems.
+alternative to those Build Systems. It will still use the Maven Repository, so no
+worries.
 
 Also, it might look like I bloated this project to the max, but I am still trying
 to keep it as lightweight as possible. Note that Java Development can receive more
