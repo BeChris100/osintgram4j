@@ -77,13 +77,13 @@ the Instagram default APIs.)
 
 After creating the Application on the Instagram Developer Console, run the Shell
 Script command to get an initialized state of this project on your machine by
-running `setup.sh`. Afterward, run `build.sh` to compile the project, placing all
-JAR files into the "build" directory. With that, it will generate the prepared
-binaries for the execution, which should be located under "build/pkg". To run the
-final build, do:
+running `setup.sh` (assuming that you have `wget` installed). Afterward, run
+`build.sh` to compile the project, placing all JAR files into the "build" directory.
+With that, it will generate the prepared binaries for the execution, which should
+be located under "build/pkg". To run the final build, do:
 
 ```shell
-cd build/pkg
+cd "build/pkg/osintgram4j"
 ./bin/osintgram4j
 ```
 
