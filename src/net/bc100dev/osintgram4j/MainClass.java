@@ -21,8 +21,6 @@ public class MainClass {
     }
 
     public static void main(String[] args) {
-        System.out.println("Classpath: " + System.getProperty("java.class.path"));
-
         if (args.length >= 1) {
             switch (args[0]) {
                 case "-h", "--help", "-help", "?" -> {
