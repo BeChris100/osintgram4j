@@ -13,6 +13,9 @@ Osintgram for Java.
 ---
 
 ## Disclaimer
+Yes, I know that I used ChatGPT, but just bare with the disclaimer. It is necessary
+to follow all laws, Terms of Service and to follow ethical guidelines.
+
 This software, OSINTgram (OSINT for Instagram), is indented for legitimate and
 ethical use only. Me, [the developer](https://github.com/Datalux) and other
 contributors of the Osintgram project do not condone or support any form of
