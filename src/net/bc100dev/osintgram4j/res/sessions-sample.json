@@ -1,9 +1,6 @@
 [
     {
-        "ConnectionStatus": {
-            "username": "",
-            "password": ""
-        },
+        "ConnectedUser": "[username]",
         "Targets": [
             {
                 "Target": "",

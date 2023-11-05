@@ -55,6 +55,17 @@
                 "SettingsControl",
                 "Control-Settings"
             ]
+        },
+        {
+            "command": "cachectl",
+            "description": "Cache Control",
+            "class": ".cmd.CacheCmd",
+            "alternates": [
+                "CacheControl",
+                "CacheManager",
+                "Cache-Control",
+                "Cache-Manager"
+            ]
         }
     ]
 }

@@ -4,6 +4,7 @@ import net.bc100dev.commons.CLIParser;
 import net.bc100dev.commons.ResourceManager;
 import net.bc100dev.commons.Terminal;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
@@ -25,14 +26,38 @@ public class Shell {
      * Initializes the PCL with the necessary Input and the necessary commands.
      *
      * @throws ShellException May throw an exception during initializing the commands.
-     * @throws IOException Throws an exception, when cannot read any command entries
+     * @throws IOException    Throws an exception, when cannot read any command entries
      */
     public Shell() throws IOException, ShellException {
         this.scIn = new Scanner(System.in);
 
-        ResourceManager resMgr = new ResourceManager(Shell.class, false);
-        ShellCommandEntry coreEntries = ShellCommandEntry.initialize(resMgr, "/net/bc100dev/osintgram4j/res/cmd_list_d/app-core.json");
-        shellCallers.addAll(coreEntries.getCommands());
+        appendCallers(Shell.class, "/net/bc100dev/osintgram4j/res/cmd_list_d/app-core.json");
+    }
+
+    /**
+     * Reads a JSON File and parses into the necessary commands and other relevant information for the Shell
+     *
+     * @param jsonFile The JSON file to parse
+     * @throws IOException    Will throw on Input Readers
+     * @throws ShellException Will throw on classes/methods that are not found
+     */
+    public void appendCallers(File jsonFile) throws IOException, ShellException {
+        ShellCommandEntry entry = ShellCommandEntry.initialize(jsonFile);
+        shellCallers.addAll(entry.getCommands());
+    }
+
+    /**
+     * Reads a JSON File and parses into the necessary commands and other relevant information for the Shell
+     *
+     * @param correspondingClass A corresponding class to its Class Path
+     * @param resourceFile       The resource file within its Class Path
+     * @throws IOException    Will throw on Input Readers
+     * @throws ShellException Will throw on classes/methods that are not found
+     */
+    public void appendCallers(Class<?> correspondingClass, String resourceFile) throws IOException, ShellException {
+        ResourceManager resMgr = new ResourceManager(correspondingClass, false);
+        ShellCommandEntry entry = ShellCommandEntry.initialize(resMgr, resourceFile);
+        shellCallers.addAll(entry.getCommands());
     }
 
     /**
@@ -101,6 +126,10 @@ public class Shell {
         }
     }
 
+    private void helpCmd() {
+
+    }
+
     /**
      * The beauty happens here: The interactive shell.
      */
@@ -147,6 +176,9 @@ public class Shell {
                 for (ShellCaller caller : shellCallers) {
                     if (caller.getCommand().equals(tokVal)) {
                         try {
+                            if (helps.containsKey(caller.getCommand()))
+                                continue;
+
                             helps.put(tokVal, caller.retrieveLongHelp());
                         } catch (ShellException ignore) {
                             Terminal.println(Terminal.Color.RED,
@@ -156,7 +188,10 @@ public class Shell {
                         for (String altCommand : caller.getAlternateCommands()) {
                             if (altCommand.equals(tokVal)) {
                                 try {
-                                    helps.put(tokVal, caller.retrieveLongHelp());
+                                    if (helps.containsKey(caller.getCommand()))
+                                        continue;
+
+                                    helps.put(caller.getCommand(), caller.retrieveLongHelp());
                                 } catch (ShellException ignore) {
                                     Terminal.println(Terminal.Color.RED,
                                             String.format("Unknown command \"%s\"", tokVal), true);
@@ -182,8 +217,21 @@ public class Shell {
                     }
                 }
             } else {
+                int maxCmdLength = 0;
+
                 for (ShellCaller caller : shellCallers) {
-                    Terminal.print(Terminal.Color.CYAN, caller.getCommand() + "\t", true);
+                    String cmd = caller.getCommand();
+                    if (cmd.length() > maxCmdLength)
+                        maxCmdLength = cmd.length();
+                }
+
+                maxCmdLength += 5;
+
+                for (ShellCaller caller : shellCallers) {
+                    String cmd = caller.getCommand();
+                    int spaces = maxCmdLength - cmd.length();
+
+                    Terminal.print(Terminal.Color.CYAN, cmd + " ".repeat(spaces), true);
                     Terminal.println(Terminal.Color.YELLOW, caller.retrieveShortHelp(), true);
                 }
             }
