@@ -111,7 +111,7 @@ function get_libs() {
     fi
 
     if [ "$RUN_DOWNLOAD" == "true" ]; then
-        wget "https://repo1.maven.org/maven2/org/json/json/20230618/json-20231013.jar" -O build/libs/json.jar
+        wget "https://repo1.maven.org/maven2/org/json/json/20231013/json-20231013.jar" -O build/libs/json.jar
     fi
 }
 

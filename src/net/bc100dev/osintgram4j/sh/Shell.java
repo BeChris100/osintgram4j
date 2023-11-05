@@ -30,8 +30,8 @@ public class Shell {
     public Shell() throws IOException, ShellException {
         this.scIn = new Scanner(System.in);
 
-        ShellCommandEntry coreEntries = ShellCommandEntry.initialize(new ResourceManager(Shell.class, false),
-                "/net/bc100dev/osintgram4j/res/cmd_list_d/app-core.json");
+        ResourceManager resMgr = new ResourceManager(Shell.class, false);
+        ShellCommandEntry coreEntries = ShellCommandEntry.initialize(resMgr, "/net/bc100dev/osintgram4j/res/cmd_list_d/app-core.json");
         shellCallers.addAll(coreEntries.getCommands());
     }
 

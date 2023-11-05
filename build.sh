@@ -54,6 +54,9 @@ find instagram_api/src -name "*.java" -type f -print0 | xargs -0 "$JAVAC_CMD" -c
 echo "## Compiling the Core Application"
 find src -name "*.java" -type f -print0 | xargs -0 "$JAVAC_CMD" -cp build/project/commons:build/project/instagram-api:build/libs/json.jar -d build/project/core
 
+echo "## Adding resources to the Core Application"
+cp -r src/net/bc100dev/osintgram4j/res build/project/core/net/bc100dev/osintgram4j/
+
 echo '## Making "commons.jar"'
 "$JAR_CMD" -cf build/project/input/commons.jar -C build/project/commons .
 
@@ -80,7 +83,7 @@ fi
 
 echo '## Building the Application Package'
 cp build/libs/json.jar build/project/input/json.jar
-"$JPACKAGE_CMD" -t app-image -n "$BUILD_NAME" --app-version "$BUILD_VERSION-$BUILD_VERSION_CODE" --runtime-image build/runtime -i build/project/input -d build/pkg --main-jar core.jar
+"$JPACKAGE_CMD" -t app-image -n "$BUILD_NAME" --app-version "$BUILD_VERSION-$BUILD_VERSION_CODE" --runtime-image build/runtime -i build/project/input --main-jar core.jar --main-class net.bc100dev.osintgram4j.MainClass -d build/pkg
 
 read -p "Do you want to install Osintgram (requires sudo privileges)? (Y/N): " INSTALL_CHOICE
 if [[ "$INSTALL_CHOICE" =~ ^[Yy]$ ]]; then
