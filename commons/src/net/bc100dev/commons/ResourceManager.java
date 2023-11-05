@@ -23,7 +23,7 @@ public class ResourceManager {
         if (inPkg)
             lookup = "/" + packageName.replaceAll("\\.", "/") + "/";
 
-        return lookup += resName;
+        return lookup + resName;
     }
 
     public boolean resourceExists(String resName) {

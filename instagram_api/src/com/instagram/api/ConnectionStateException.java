@@ -1,4 +1,4 @@
-package net.bc100dev.insta.api;
+package com.instagram.api;
 
 public class ConnectionStateException extends Exception {
 

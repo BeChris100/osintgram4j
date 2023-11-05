@@ -2,7 +2,7 @@ package net.bc100dev.osintgram4j.cmd;
 
 import net.bc100dev.commons.Terminal;
 import net.bc100dev.commons.utils.RuntimeEnvironment;
-import net.bc100dev.osintgram4j.pcl.PCLConfig;
+import net.bc100dev.osintgram4j.sh.ShellConfig;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,7 +46,7 @@ public class ShellInstance {
 
     // Invoked manually by `Method.invoke`
     // Currently only works under Linux (Ubuntu 22.04.3 LTS)
-    public static int launchCmd(String[] args, List<PCLConfig> ignore) {
+    public static int launchCmd(String[] args, List<ShellConfig> ignore) {
         String shellEnv = System.getenv("SHELL");
         if (shellEnv == null)
             // set to linux default
@@ -62,7 +62,7 @@ public class ShellInstance {
                 case "--zsh" -> shellEnv = "/bin/zsh";
                 case "--fish" -> shellEnv = "/bin/fish";
                 case "--help", "-h", "?" -> {
-                    Terminal.println(Terminal.Color.BLUE, helpCmd(args), true);
+                    Terminal.println(Terminal.Color.BLUE, helpCmd(), true);
                     return 0;
                 }
                 default -> {
@@ -94,14 +94,14 @@ public class ShellInstance {
         try {
             return startShell(new File(shellEnv), _args);
         } catch (IOException | InterruptedException ex) {
-            ex.printStackTrace();
+            ex.printStackTrace(System.err);
         }
 
         return 0;
     }
 
     // Invoked manually by `Method.invoke`
-    public static String helpCmd(String[] args) {
+    public static String helpCmd() {
         return """
                 The Shell (sh) command launches an instance of the Shell.
                 This initially launches the default Shell that is given by the "SHELL" environment.

@@ -1,6 +1,7 @@
 {
+    "cmd_version": 1,
     "package": "net.bc100dev.osintgram4j",
-    "label": "Osintgram Core Commands",
+    "label": "Osintgram Default Commands",
     "command_list": [
         {
             "command": "addresses",
@@ -41,61 +42,58 @@
             "description": "Get users followed by target",
             "class": ".cmd.conn.ReadFollowings",
             "alternates": [
-                "Get-Followings"
+                "Get-Followings",
+                "Read-Followings"
             ]
         },
         {
             "command": "fwersemail",
             "description": "Get email addresses of target followers",
-            "class": ".cmd.conn.ReadFollowers",
+            "class": ".cmd.conn.ReadFollowersE",
             "alternates": [
                 "Get-Followers-Email",
                 "Get-Followers-EmailAddresses",
+                "Read-Followers-Email",
+                "Read-Followers-EmailAddresses",
                 "followers-emails"
-            ],
-            "main-args": [
-                "--emails"
             ]
         },
         {
             "command": "fwingsemail",
             "description": "Get email addresses of users followed by target",
-            "class": ".cmd.conn.ReadFollowings",
+            "class": ".cmd.conn.ReadFollowingsE",
             "alternates": [
                 "Get-Followings-Email",
                 "Get-Followings-EmailAddresses",
+                "Read-Followings-Email",
+                "Read-Followings-EmailAddresses",
                 "followings-emails"
-            ],
-            "main-args": [
-                "--emails"
             ]
         },
         {
             "command": "fwersnumber",
             "description": "Get phone numbers of target followers",
-            "class": ".cmd.conn.ReadFollowers",
+            "class": ".cmd.conn.ReadFollowersP",
             "alternates": [
                 "Get-Followers-Phone",
                 "Get-Followers-PhoneNumbers",
+                "Read-Followers-Phone",
+                "Read-Followers-PhoneNumbers",
                 "followers-phone",
                 "followers-phone-numbers"
-            ],
-            "main-args": [
-                "--ph-numbers"
             ]
         },
         {
             "command": "fwingsnumber",
             "description": "Get phone numbers of users followed by target",
-            "class": ".cmd.conn.ReadFollowings",
+            "class": ".cmd.conn.ReadFollowingsP",
             "alternates": [
-                "Get-Followings-Email",
-                "Get-Followings-EmailAddresses",
+                "Get-Followings-Phone",
+                "Get-Followings-PhoneNumbers",
+                "Read-Followings-Phone",
+                "Read-Followings-PhoneNumbers",
                 "followers-phone",
                 "followers-phone-numbers"
-            ],
-            "main-args": [
-                "--ph-numbers"
             ]
         },
         {
@@ -104,6 +102,7 @@
             "class": ".cmd.conn.ReadHashtags",
             "alternates": [
                 "Get-Hashtags",
+                "Read-Hashtags",
                 "htags"
             ]
         },
@@ -114,7 +113,9 @@
             "alternates": [
                 "information",
                 "Get-UserInfo",
-                "Get-User"
+                "Get-User",
+                "Read-UserInfo",
+                "Read-User"
             ]
         },
         {
@@ -141,6 +142,8 @@
             "alternates": [
                 "Get-PhotoDescriptions",
                 "Get-PhotoDesc",
+                "Read-PhotoDescriptions",
+                "Read-PhotoDesc",
                 "photo-desc"
             ]
         },
@@ -181,7 +184,9 @@
             "class": ".cmd.conn.ReadTagged",
             "alternates": [
                 "Get-Tags",
-                "Get-Tagged"
+                "Get-Tagged",
+                "Read-Tags",
+                "Read-Tagged"
             ]
         },
         {
@@ -189,7 +194,8 @@
             "description": "Get a list of user who commented on targets photos",
             "class": ".cmd.conn.ReadUserComments",
             "alternates": [
-                "Get-PostComments"
+                "Get-PostComments",
+                "Read-PostComments"
             ]
         },
         {
@@ -198,7 +204,9 @@
             "class": ".cmd.conn.ReadUserTags",
             "alternates": [
                 "Get-UserTags",
-                "Get-UserTagList"
+                "Get-UserTagList",
+                "Read-UserTags",
+                "Read-UserTagList"
             ]
         }
     ]

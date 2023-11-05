@@ -1,8 +1,9 @@
-package net.bc100dev.osintgram4j.pcl;
+package net.bc100dev.osintgram4j.sh;
 
 import net.bc100dev.commons.CLIParser;
 import net.bc100dev.commons.Terminal;
 
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -10,33 +11,26 @@ import java.util.*;
  * interacting with the Instagram Private APIs, along with the interaction
  * of the official and publicly available Instagram Graph API.
  */
-public class PCL {
+public class Shell {
 
     private final Scanner scIn;
 
-    private final List<PCLConfig> pclConfigList;
-    private final List<PCLCaller> pclCallers;
+    private final List<ShellConfig> shellConfigList = new ArrayList<>();
+    private final List<ShellCaller> shellCallers = new ArrayList<>();
 
     private String PS1 = "==> ";
 
     /**
      * Initializes the PCL with the necessary Input and the necessary commands.
      *
-     * @throws PCLException May throw an exception during initializing the commands.
+     * @throws ShellException May throw an exception during initializing the commands.
+     * @throws IOException Throws an exception, when cannot read any command entries
      */
-    public PCL() throws PCLException {
+    public Shell() throws IOException, ShellException {
         this.scIn = new Scanner(System.in);
-        this.pclConfigList = new ArrayList<>();
 
-        this.pclCallers = new ArrayList<>();
-        pclCallers.add(new PCLCaller("connection", "Connects the User to the Instagram APIs",
-                "net.bc100dev.osintgram4j.cmd.Connection"));
-        pclCallers.add(new PCLCaller("sh", "Runs an interactive System shell and/or executes Shell commands",
-                "net.bc100dev.osintgram4j.cmd.ShellInstance", "shell"));
-        pclCallers.add(new PCLCaller("clear", "Clears the Terminal/Console Screen",
-                "net.bc100dev.osintgram4j.cmd.ClsScr", "cls", "clrscr"));
-        pclCallers.add(new PCLCaller("sessionctl", "Session Control and Manager",
-                "net.bc100dev.osintgram4j.cmd.SessionCmd", "sessions", "session"));
+        ShellCommandEntry entry = ShellCommandEntry.initialize("/net/bc100dev/osintgram4j/res/cmd_list_d/app-core.json");
+        shellCallers.addAll(entry.getCommands());
     }
 
     /**
@@ -60,20 +54,20 @@ public class PCL {
                 return;
             }
 
-            if (pclConfigList.isEmpty()) {
-                pclConfigList.add(new PCLConfig(opt[0], opt[1]));
+            if (shellConfigList.isEmpty()) {
+                shellConfigList.add(new ShellConfig(opt[0], opt[1]));
                 System.out.printf("Created %s with value \"%s\"\n", opt[0], opt[1]);
                 return;
             }
 
             boolean found = false;
-            for (int i = 0; i < pclConfigList.size(); i++) {
-                PCLConfig cfg = pclConfigList.get(i);
+            for (int i = 0; i < shellConfigList.size(); i++) {
+                ShellConfig cfg = shellConfigList.get(i);
 
                 if (opt[0].equals(cfg.name)) {
                     cfg.value = opt[1];
 
-                    pclConfigList.set(i, cfg);
+                    shellConfigList.set(i, cfg);
 
                     System.out.printf("Assigned new value as \"%s\" to %s\n", cfg.value, cfg.name);
                     found = true;
@@ -81,19 +75,19 @@ public class PCL {
             }
 
             if (!found) {
-                pclConfigList.add(new PCLConfig(opt[0], opt[1]));
+                shellConfigList.add(new ShellConfig(opt[0], opt[1]));
                 System.out.printf("Created %s with value \"%s\"\n", opt[0], opt[1]);
             }
         } else {
-            if (pclConfigList.isEmpty()) {
-                System.out.println("No items assigned yet");
+            if (shellConfigList.isEmpty()) {
+                System.out.println("No items assigned");
                 return;
             }
 
             String nm = line.replaceFirst("&", "").trim();
 
             boolean found = false;
-            for (PCLConfig cfg : pclConfigList) {
+            for (ShellConfig cfg : shellConfigList) {
                 if (nm.equals(cfg.name)) {
                     System.out.printf("%s ==> %s\n", cfg.name, cfg.value);
                     found = true;
@@ -148,11 +142,11 @@ public class PCL {
                     // We do not need any help from the "help" command
                     continue;
 
-                for (PCLCaller caller : pclCallers) {
+                for (ShellCaller caller : shellCallers) {
                     if (caller.getCommand().equals(tokVal)) {
                         try {
-                            helps.put(tokVal, caller.retrieveLongHelp(givenArgs));
-                        } catch (PCLException ignore) {
+                            helps.put(tokVal, caller.retrieveLongHelp());
+                        } catch (ShellException ignore) {
                             Terminal.println(Terminal.Color.RED,
                                     String.format("Unknown command \"%s\"", tokVal), true);
                         }
@@ -160,8 +154,8 @@ public class PCL {
                         for (String altCommand : caller.getAlternateCommands()) {
                             if (altCommand.equals(tokVal)) {
                                 try {
-                                    helps.put(tokVal, caller.retrieveLongHelp(givenArgs));
-                                } catch (PCLException ignore) {
+                                    helps.put(tokVal, caller.retrieveLongHelp());
+                                } catch (ShellException ignore) {
                                     Terminal.println(Terminal.Color.RED,
                                             String.format("Unknown command \"%s\"", tokVal), true);
                                 }
@@ -186,7 +180,7 @@ public class PCL {
                     }
                 }
             } else {
-                for (PCLCaller caller : pclCallers) {
+                for (ShellCaller caller : shellCallers) {
                     Terminal.print(Terminal.Color.CYAN, caller.getCommand() + "\t", true);
                     Terminal.println(Terminal.Color.YELLOW, caller.retrieveShortHelp(), true);
                 }
@@ -215,19 +209,19 @@ public class PCL {
      */
     private void execCommand(String exec, String[] args) {
         boolean cmdFound = false;
-        for (PCLCaller caller : pclCallers) {
+        for (ShellCaller caller : shellCallers) {
             if (caller.getCommand().equals(exec)) {
                 cmdFound = true;
 
                 try {
-                    int code = caller.execute(args, pclConfigList);
+                    int code = caller.execute(args, shellConfigList);
                     if (code != 0) {
                         Terminal.println(Terminal.Color.RED,
                                 caller.getCommand() + ": exit code " + code, true);
                     }
 
                     break;
-                } catch (PCLException ex) {
+                } catch (ShellException ex) {
                     ex.printStackTrace();
                 }
             } else {
@@ -236,12 +230,12 @@ public class PCL {
                         cmdFound = true;
 
                         try {
-                            int code = caller.execute(args, pclConfigList);
+                            int code = caller.execute(args, shellConfigList);
                             if (code != 0) {
                                 Terminal.println(Terminal.Color.RED,
                                         alternate + ": exit code " + code, true);
                             }
-                        } catch (PCLException ex) {
+                        } catch (ShellException ex) {
                             ex.printStackTrace();
                         }
                     }

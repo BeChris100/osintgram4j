@@ -2,6 +2,7 @@
 
 # shellcheck disable=SC2074
 # shellcheck disable=SC2162
+# shellcheck disable=SC2016
 
 source app_ver
 
@@ -18,12 +19,12 @@ if [ -f ".java-tools" ]; then
         [ -f "$JLINK_CMD" ] && [ -x "$JLINK_CMD" ] &&
         [ -f "$JDEPS_CMD" ] && [ -x "$JDEPS_CMD" ] &&
         [ -f "$JPACKAGE_CMD" ] && [ -x "$JPACKAGE_CMD" ]; then
-        JAVA_VERSION=$(java --version 2>&1 | grep -oP 'openjdk \K\d+' | cut -d. -f1)
+        JAVA_VERSION=$($JAVA_CMD --version 2>&1 | grep -oP 'openjdk \K\d+' | cut -d. -f1)
 
-        if [ "$JAVA_VERSION" -ge 20 ]; then
+        if [ "$JAVA_VERSION" -ge 21 ]; then
             echo "Found JDK with version $JAVA_VERSION"
-        elif [ "$JAVA_VERSION" -le 19 ]; then
-            echo "You need at least the JDK version of 20. Reported Java Version is $JAVA_VERSION"
+        elif [ "$JAVA_VERSION" -le 20 ]; then
+            echo "You need at least the JDK version of 21. Reported Java Version is $JAVA_VERSION"
             echo "To obtain the newest JDK Version, run the setup.sh with the '--force-download' argument."
             exit 1
         else
@@ -95,6 +96,9 @@ if [[ "$INSTALL_CHOICE" =~ ^[Yy]$ ]]; then
 
     echo "## Installation complete"
     echo "To run Osintgram, with a Terminal open, run the 'osintgram4j' command."
+    echo
+    echo "In order to remove Osintgram4j from your system, delete the /usr/share/osintgram4j directory,"
+    echo 'and run "rm -rf $(which osintgram4j)" with root privileges.'
 else
     echo "You can run Osintgram from this directory and forwards by going to $PWD and run './build/pkg/osintgram4j/bin/osintgram4j'"
 fi

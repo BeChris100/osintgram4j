@@ -1,9 +1,9 @@
 package net.bc100dev.osintgram4j.cmd;
 
 import net.bc100dev.commons.Terminal;
-import net.bc100dev.insta.api.ConnectionStateException;
+import com.instagram.api.ConnectionStateException;
 import net.bc100dev.osintgram4j.api_conn.AppConnectionStatus;
-import net.bc100dev.osintgram4j.pcl.PCLConfig;
+import net.bc100dev.osintgram4j.sh.ShellConfig;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -14,13 +14,13 @@ public class Connection {
 
     private static AppConnectionStatus connectionStatus = null;
 
-    private static String[] usernameAndPassword(List<PCLConfig> pclConfigs) {
+    private static String[] usernameAndPassword(List<ShellConfig> pclConfigs) {
         String[] values = new String[2];
 
         values[0] = null;
         values[1] = null;
 
-        for (PCLConfig config : pclConfigs) {
+        for (ShellConfig config : pclConfigs) {
             switch (config.name) {
                 case "username" -> values[0] = config.value;
                 case "password" -> values[1] = config.value;
@@ -47,14 +47,14 @@ public class Connection {
     }
 
     // Invoked manually by `Method.invoke`
-    public static int launchCmd(String[] args, List<PCLConfig> pclConfigs) {
+    public static int launchCmd(String[] args, List<ShellConfig> pclConfigs) {
         if (args == null) {
-            Terminal.println(Terminal.Color.BLUE, helpCmd(null), true);
+            Terminal.println(Terminal.Color.BLUE, helpCmd(), true);
             return 1;
         }
 
         if (args.length == 0) {
-            Terminal.println(Terminal.Color.BLUE, helpCmd(args), true);
+            Terminal.println(Terminal.Color.BLUE, helpCmd(), true);
             return 1;
         }
 
@@ -96,7 +96,7 @@ public class Connection {
     }
 
     // Invoked manually by `Method.invoke`
-    public static String helpCmd(String[] ignore) {
+    public static String helpCmd() {
         return """
                 Manages the Connection State with the Client (Osintgram) and the Backend (Instagram).
                 

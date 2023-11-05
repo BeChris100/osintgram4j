@@ -1,8 +1,8 @@
 package net.bc100dev.osintgram4j.cmd;
 
 import net.bc100dev.commons.Terminal;
-import net.bc100dev.insta.api.ConnectionStateException;
-import net.bc100dev.osintgram4j.pcl.PCLConfig;
+import com.instagram.api.ConnectionStateException;
+import net.bc100dev.osintgram4j.sh.ShellConfig;
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -55,13 +55,13 @@ public class SessionCmd {
     }
 
     // Invoked manually by `Method.invoke`
-    public static int launchCmd(String[] args, List<PCLConfig> pclConfigs) {
+    public static int launchCmd(String[] args, List<ShellConfig> pclConfigs) {
         Terminal.println(Terminal.Color.RED, "Session Manager is not implemented yet", true);
         return 1;
     }
 
     // Invoked manually by `Method.invoke`
-    public static String helpCmd(String[] args) {
+    public static String helpCmd() {
         return """
                 Session Manager for the Instagram Connection Status""";
     }

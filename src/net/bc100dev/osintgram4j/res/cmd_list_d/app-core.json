@@ -1,0 +1,60 @@
+{
+    "version": 1,
+    "package": "net.bc100dev.osintgram4j",
+    "label": "Osintgram4j Commands",
+    "command_list": [
+        {
+            "command": "connection",
+            "description": "Connection Management via Client and Instagram APIs",
+            "class": ".cmd.Connection",
+            "alternates": [
+                "Manage-Connection",
+                "ConnectionManager"
+            ]
+        },
+        {
+            "command": "sh",
+            "description": "Runs a system interactive shell",
+            "class": ".cmd.ShellInstance",
+            "alternates": [
+                "Run-Shell",
+                "Shell",
+                "ShellExec",
+                "shell"
+            ]
+        },
+        {
+            "command": "clear",
+            "description": "Clears the Terminal Screen",
+            "class": ".cmd.ClsScr",
+            "alternates": [
+                "ClsScr",
+                "Cls",
+                "ClearTerminal",
+                "ClearScreen",
+                "Clear",
+                "cls"
+            ]
+        },
+        {
+            "command": "sessionctl",
+            "description": "Session Control and Manager",
+            "class": ".cmd.SessionCmd",
+            "alternates": [
+                "Manage-Sessions",
+                "SessionManager",
+                "SessionMgr",
+                "SessionControl"
+            ]
+        },
+        {
+            "command": "setctl",
+            "description": "Settings Control",
+            "class": ".cmd.SettingsControl",
+            "alternates": [
+                "SettingsControl",
+                "Control-Settings"
+            ]
+        }
+    ]
+}

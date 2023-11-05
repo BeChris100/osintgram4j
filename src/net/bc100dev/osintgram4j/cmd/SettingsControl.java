@@ -1,18 +1,18 @@
 package net.bc100dev.osintgram4j.cmd;
 
-import net.bc100dev.osintgram4j.pcl.PCLConfig;
+import net.bc100dev.osintgram4j.sh.ShellConfig;
 
 import java.util.List;
 
-public class SettingsReload {
+public class SettingsControl {
 
     // Invoked manually by `Method.invoke`
-    public static int launchCmd(String[] args, List<PCLConfig> pclConfigs) {
+    public static int launchCmd(String[] args, List<ShellConfig> pclConfigs) {
         return 0;
     }
 
     // Invoked manually by `Method.invoke`
-    public static String helpCmd(String[] args) {
+    public static String helpCmd() {
         return """
                 Reloads the Settings file by reading the "AppSettings.cfg" file and
                 reading them into the Application Memory Heap.""";

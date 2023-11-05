@@ -1,7 +1,9 @@
 package net.bc100dev.osintgram4j;
 
-import net.bc100dev.osintgram4j.pcl.PCL;
-import net.bc100dev.osintgram4j.pcl.PCLException;
+import net.bc100dev.osintgram4j.sh.Shell;
+import net.bc100dev.osintgram4j.sh.ShellException;
+
+import java.io.IOException;
 
 public class MainClass {
 
@@ -12,8 +14,7 @@ public class MainClass {
         System.out.println("$ ./osintgram4j");
         System.out.println();
         System.out.println("Refer to the README.md and USAGE.md files on GitHub at");
-        System.out.println("https://github.com/BeChris100/Osintgram to have a better overview on using the PCL");
-        System.out.println("(Process-Command Line).");
+        System.out.println("https://github.com/BeChris100/osintgram4j to have a better overview on using the Application Shell.");
     }
 
     public static void main(String[] args) {
@@ -30,9 +31,9 @@ public class MainClass {
         }
 
         try {
-            PCL pcl = new PCL();
+            Shell pcl = new Shell();
             pcl.launch();
-        } catch (PCLException ex) {
+        } catch (IOException | ShellException ex) {
             ex.printStackTrace(System.err);
         }
     }
