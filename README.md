@@ -35,6 +35,18 @@ in all your activities.
 
 ---
 
+## Potential Takedown
+
+Another point to mention is that the original developer has all the right to tell
+me, if I am required to archive, delete or completely dump the project. While I am
+still happy on the development in this project, I am still trying to get in touch
+with [the original developer](https://github.com/Datalux) himself, and hope to get
+a positive response. The reason is that I do not want to dive myself into a lawsuit
+due to copyrights. Even though that the Software Licensing exists, I am willing to
+contact to ensure the legitimacy between me and the developer.
+
+---
+
 ## Reasoning on Development
 The main reason on why the development started for this project is to have the
 stability of the project Osintgram back, being kept up with the Instagram APIs and
