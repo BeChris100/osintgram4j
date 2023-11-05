@@ -114,7 +114,7 @@ public class ShellCommandEntry {
         if (!resourceManager.resourceExists(resourceFile))
             throw new NullPointerException("Could not find resource file at \"" + resourceFile + "\"");
 
-        InputStream is = res.getResourceInputStream(resourceFile);
+        InputStream is = resourceManager.getResourceInputStream(resourceFile);
         byte[] buff = is.readAllBytes();
         is.close();
 
