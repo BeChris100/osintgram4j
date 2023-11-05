@@ -1,6 +1,7 @@
 package net.bc100dev.osintgram4j.sh;
 
 import net.bc100dev.commons.CLIParser;
+import net.bc100dev.commons.ResourceManager;
 import net.bc100dev.commons.Terminal;
 
 import java.io.IOException;
@@ -29,8 +30,9 @@ public class Shell {
     public Shell() throws IOException, ShellException {
         this.scIn = new Scanner(System.in);
 
-        ShellCommandEntry entry = ShellCommandEntry.initialize("/net/bc100dev/osintgram4j/res/cmd_list_d/app-core.json");
-        shellCallers.addAll(entry.getCommands());
+        ShellCommandEntry coreEntries = ShellCommandEntry.initialize(new ResourceManager(Shell.class, false),
+                "/net/bc100dev/osintgram4j/res/cmd_list_d/app-core.json");
+        shellCallers.addAll(coreEntries.getCommands());
     }
 
     /**

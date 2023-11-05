@@ -107,9 +107,11 @@ public class ShellCommandEntry {
         return new ShellCommandEntry(version, label, pkgName, callerList);
     }
 
-    public static ShellCommandEntry initialize(String resourceFile) throws IOException, ShellException {
-        ResourceManager res = new ResourceManager(ShellCommandEntry.class, false);
-        if (!res.resourceExists(resourceFile))
+    public static ShellCommandEntry initialize(ResourceManager resourceManager, String resourceFile) throws IOException, ShellException {
+        if (resourceManager == null)
+            throw new NullPointerException("Resource Manager is passed as null");
+
+        if (!resourceManager.resourceExists(resourceFile))
             throw new NullPointerException("Could not find resource file at \"" + resourceFile + "\"");
 
         InputStream is = res.getResourceInputStream(resourceFile);
