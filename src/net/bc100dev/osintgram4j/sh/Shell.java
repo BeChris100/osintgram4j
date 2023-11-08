@@ -34,6 +34,10 @@ public class Shell {
         appendCallers(Shell.class, "/net/bc100dev/osintgram4j/res/cmd_list_d/app-core.json");
     }
 
+    public void appendConfig(List<ShellConfig> configList) {
+        shellConfigList.addAll(configList);
+    }
+
     /**
      * Reads a JSON File and parses into the necessary commands and other relevant information for the Shell
      *
@@ -83,7 +87,6 @@ public class Shell {
 
             if (shellConfigList.isEmpty()) {
                 shellConfigList.add(new ShellConfig(opt[0], opt[1]));
-                System.out.printf("Created %s with value \"%s\"\n", opt[0], opt[1]);
                 return;
             }
 
@@ -96,18 +99,15 @@ public class Shell {
 
                     shellConfigList.set(i, cfg);
 
-                    System.out.printf("Assigned new value as \"%s\" to %s\n", cfg.value, cfg.name);
                     found = true;
                 }
             }
 
-            if (!found) {
+            if (!found)
                 shellConfigList.add(new ShellConfig(opt[0], opt[1]));
-                System.out.printf("Created %s with value \"%s\"\n", opt[0], opt[1]);
-            }
         } else {
             if (shellConfigList.isEmpty()) {
-                System.out.println("No items assigned");
+                System.out.println("NoItemsAssigned");
                 return;
             }
 
@@ -122,12 +122,8 @@ public class Shell {
             }
 
             if (!found)
-                System.out.printf("No keyword labeled %s is assigned\n", nm);
+                System.out.printf("%s is not defined\n", nm);
         }
-    }
-
-    private void helpCmd() {
-
     }
 
     /**
@@ -176,7 +172,7 @@ public class Shell {
                 for (ShellCaller caller : shellCallers) {
                     if (caller.getCommand().equals(tokVal)) {
                         try {
-                            if (helps.containsKey(caller.getCommand()))
+                            if (helps.containsKey(tokVal))
                                 continue;
 
                             helps.put(tokVal, caller.retrieveLongHelp());
@@ -303,5 +299,4 @@ public class Shell {
     public void launch() {
         cmd();
     }
-
 }

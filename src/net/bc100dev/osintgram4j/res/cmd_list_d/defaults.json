@@ -1,5 +1,5 @@
 {
-    "cmd_version": 1,
+    "version": 1,
     "package": "net.bc100dev.osintgram4j",
     "label": "Osintgram Default Commands",
     "command_list": [

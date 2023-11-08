@@ -39,12 +39,12 @@ public class CacheCmd {
     // Invoked manually by `Method.invoke`
     public static int launchCmd(String[] args, List<ShellConfig> ignore) {
         if (args == null) {
-            Terminal.println(Terminal.Color.YELLOW, helpCmd(), true);
+            Terminal.println(Terminal.Color.BLUE, helpCmd(), true);
             return 0;
         }
 
         if (args.length == 0) {
-            Terminal.println(Terminal.Color.YELLOW, helpCmd(), true);
+            Terminal.println(Terminal.Color.BLUE, helpCmd(), true);
             return 0;
         }
 
@@ -52,7 +52,7 @@ public class CacheCmd {
             case "-w", "--wipe", "--clear" -> {
                 try {
                     clearCache();
-                    Terminal.println(Terminal.Color.GREEN, "Cache wiped", true);
+                    System.out.println("Cache cleared!");
                 } catch (IOException ex) {
                     Terminal.errPrintln(Terminal.Color.RED, "Something went wrong with wiping cache:", false);
                     Terminal.errPrintln(Terminal.Color.RED, ex.getMessage(), false);
@@ -67,6 +67,10 @@ public class CacheCmd {
                     return 1;
                 }
             }
+            case "-h", "--help" -> {
+                Terminal.println(Terminal.Color.BLUE, helpCmd(), true);
+                return 0;
+            }
         }
 
         return 0;
@@ -78,7 +82,16 @@ public class CacheCmd {
                 Manages the use of Cache, and if necessary, wipes them.
                 
                 Parameters:
-                -w / --wipe / --clear       Wipes Cache""";
+                -i / --invalidate           Invalidates all Cache 
+                -w / --wipe / --clear       Wipes Cache
+                
+                Also used with these following alternate commands:
+                > CacheControl
+                > CacheManager
+                > Cache-Control
+                > Cache-Manager
+                > Cache
+                > cache""";
     }
 
 }

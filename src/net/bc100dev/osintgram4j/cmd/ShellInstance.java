@@ -57,10 +57,10 @@ public class ShellInstance {
 
         for (String arg : args) {
             switch (arg) {
-                case "--integrated" -> shellEnv = "/bin/sh";
-                case "--bash" -> shellEnv = "/bin/bash";
-                case "--zsh" -> shellEnv = "/bin/zsh";
-                case "--fish" -> shellEnv = "/bin/fish";
+                case "--integrated", "-i" -> shellEnv = "/bin/sh";
+                case "--bash", "-b" -> shellEnv = "/bin/bash";
+                case "--zsh", "-z" -> shellEnv = "/bin/zsh";
+                case "--fish", "-f" -> shellEnv = "/bin/fish";
                 case "--help", "-h", "?" -> {
                     Terminal.println(Terminal.Color.BLUE, helpCmd(), true);
                     return 0;

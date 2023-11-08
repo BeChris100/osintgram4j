@@ -104,6 +104,10 @@ public class Connection {
                 connection -e [&username] [&password]  -> Establishes an Instagram Account
                 connection -c (mfa)                    -> Connects to the Instagram Backend Server
                 connection -i                          -> Gets the current information state
-                connection -d                          -> Disconnects from the Instagram Server""";
+                connection -d                          -> Disconnects from the Instagram Server
+                
+                Also used with these following alternate commands:
+                > Manage-Connection
+                > ConnectionManager""";
     }
 }

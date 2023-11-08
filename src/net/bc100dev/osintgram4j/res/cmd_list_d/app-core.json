@@ -64,7 +64,20 @@
                 "CacheControl",
                 "CacheManager",
                 "Cache-Control",
-                "Cache-Manager"
+                "Cache-Manager",
+                "Cache",
+                "cache"
+            ]
+        },
+        {
+            "command": "env",
+            "description": "Environment Command",
+            "class": ".cmd.EnvCmd",
+            "alternates": [
+                "Environ",
+                "Env",
+                "environ",
+                "Get-Env"
             ]
         }
     ]
