@@ -158,91 +158,91 @@ public class Shell {
         if (lnSplits.length > 1)
             System.arraycopy(lnSplits, 1, givenArgs, 0, lnSplits.length - 1);
 
-        if (ln.startsWith("help")) {
-            StringTokenizer tok = new StringTokenizer(ln, " ");
-            Map<String, String> helps = new HashMap<>();
+        switch (exec) {
+            case "help", "app-help", "?" -> {
+                StringTokenizer tok = new StringTokenizer(ln, " ");
+                Map<String, String> helps = new HashMap<>();
 
-            while (tok.hasMoreTokens()) {
-                String tokVal = tok.nextToken();
+                while (tok.hasMoreTokens()) {
+                    String tokVal = tok.nextToken();
 
-                if (tokVal.equals("help"))
-                    // We do not need any help from the "help" command
-                    continue;
+                    if (tokVal.equals("help"))
+                        // We do not need any help from the "help" command
+                        continue;
 
-                for (ShellCaller caller : shellCallers) {
-                    if (caller.getCommand().equals(tokVal)) {
-                        try {
-                            if (helps.containsKey(tokVal))
-                                continue;
+                    for (ShellCaller caller : shellCallers) {
+                        if (caller.getCommand().equals(tokVal)) {
+                            try {
+                                if (helps.containsKey(tokVal))
+                                    continue;
 
-                            helps.put(tokVal, caller.retrieveLongHelp());
-                        } catch (ShellException ignore) {
-                            Terminal.println(Terminal.Color.RED,
-                                    String.format("Unknown command \"%s\"", tokVal), true);
-                        }
-                    } else {
-                        for (String altCommand : caller.getAlternateCommands()) {
-                            if (altCommand.equals(tokVal)) {
-                                try {
-                                    if (helps.containsKey(caller.getCommand()))
-                                        continue;
+                                helps.put(tokVal, caller.retrieveLongHelp());
+                            } catch (ShellException ignore) {
+                                Terminal.println(Terminal.Color.RED,
+                                        String.format("Unknown command \"%s\"", tokVal), true);
+                            }
+                        } else {
+                            for (String altCommand : caller.getAlternateCommands()) {
+                                if (altCommand.equals(tokVal)) {
+                                    try {
+                                        if (helps.containsKey(caller.getCommand()))
+                                            continue;
 
-                                    helps.put(caller.getCommand(), caller.retrieveLongHelp());
-                                } catch (ShellException ignore) {
-                                    Terminal.println(Terminal.Color.RED,
-                                            String.format("Unknown command \"%s\"", tokVal), true);
+                                        helps.put(caller.getCommand(), caller.retrieveLongHelp());
+                                    } catch (ShellException ignore) {
+                                        Terminal.println(Terminal.Color.RED,
+                                                String.format("Unknown command \"%s\"", tokVal), true);
+                                    }
                                 }
                             }
                         }
                     }
                 }
-            }
 
-            if (!helps.keySet().isEmpty()) {
-                List<String> cmd = new ArrayList<>(helps.keySet());
+                if (!helps.keySet().isEmpty()) {
+                    List<String> cmd = new ArrayList<>(helps.keySet());
 
-                if (cmd.size() == 1)
-                    Terminal.println(Terminal.Color.BLUE, helps.get(cmd.get(0)), true);
-                else {
-                    for (int i = 0; i < cmd.size(); i++) {
-                        Terminal.println(Terminal.Color.CYAN, cmd.get(i), true);
-                        Terminal.println(Terminal.Color.BLUE, helps.get(cmd.get(i)), true);
+                    if (cmd.size() == 1)
+                        Terminal.println(Terminal.Color.BLUE, helps.get(cmd.get(0)), true);
+                    else {
+                        for (int i = 0; i < cmd.size(); i++) {
+                            Terminal.println(Terminal.Color.CYAN, cmd.get(i), true);
+                            Terminal.println(Terminal.Color.BLUE, helps.get(cmd.get(i)), true);
 
-                        if (i != cmd.size() - 1)
-                            System.out.println();
+                            if (i != cmd.size() - 1)
+                                System.out.println();
+                        }
+                    }
+                } else {
+                    int maxCmdLength = 0;
+
+                    for (ShellCaller caller : shellCallers) {
+                        String cmd = caller.getCommand();
+                        if (cmd.length() > maxCmdLength)
+                            maxCmdLength = cmd.length();
+                    }
+
+                    maxCmdLength += 5;
+
+                    for (ShellCaller caller : shellCallers) {
+                        String cmd = caller.getCommand();
+                        int spaces = maxCmdLength - cmd.length();
+
+                        Terminal.print(Terminal.Color.CYAN, cmd + " ".repeat(spaces), true);
+                        Terminal.println(Terminal.Color.YELLOW, caller.retrieveShortHelp(), true);
                     }
                 }
-            } else {
-                int maxCmdLength = 0;
 
-                for (ShellCaller caller : shellCallers) {
-                    String cmd = caller.getCommand();
-                    if (cmd.length() > maxCmdLength)
-                        maxCmdLength = cmd.length();
-                }
-
-                maxCmdLength += 5;
-
-                for (ShellCaller caller : shellCallers) {
-                    String cmd = caller.getCommand();
-                    int spaces = maxCmdLength - cmd.length();
-
-                    Terminal.print(Terminal.Color.CYAN, cmd + " ".repeat(spaces), true);
-                    Terminal.println(Terminal.Color.YELLOW, caller.retrieveShortHelp(), true);
-                }
+                cmd();
+                return;
             }
-
-            cmd();
-            return;
+            case "exit", "quit", "close" -> {
+                scIn.close();
+                System.exit(0);
+                return;
+            }
+            default -> execCommand(exec, givenArgs);
         }
-
-        if (ln.equals("exit") || ln.equals("quit")) {
-            scIn.close();
-            System.exit(0);
-            return;
-        }
-
-        execCommand(exec, givenArgs);
 
         cmd();
     }
