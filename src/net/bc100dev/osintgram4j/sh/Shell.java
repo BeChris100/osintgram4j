@@ -94,8 +94,8 @@ public class Shell {
             for (int i = 0; i < shellConfigList.size(); i++) {
                 ShellConfig cfg = shellConfigList.get(i);
 
-                if (opt[0].equals(cfg.name)) {
-                    cfg.value = opt[1];
+                if (opt[0].equals(cfg.getName())) {
+                    cfg.setValue(opt[1]);
 
                     shellConfigList.set(i, cfg);
 
@@ -107,7 +107,7 @@ public class Shell {
                 shellConfigList.add(new ShellConfig(opt[0], opt[1]));
         } else {
             if (shellConfigList.isEmpty()) {
-                System.out.println("NoItemsAssigned");
+                System.out.println("No Items assigned");
                 return;
             }
 
@@ -115,8 +115,8 @@ public class Shell {
 
             boolean found = false;
             for (ShellConfig cfg : shellConfigList) {
-                if (nm.equals(cfg.name)) {
-                    System.out.printf("%s ==> %s\n", cfg.name, cfg.value);
+                if (nm.equals(cfg.getName())) {
+                    System.out.printf("%s ==> %s\n", cfg.getName(), cfg.getValue());
                     found = true;
                 }
             }
@@ -127,7 +127,7 @@ public class Shell {
     }
 
     /**
-     * The beauty happens here: The interactive shell.
+     * The beauty happens here: The interactive application shell.
      */
     private void cmd() {
         System.out.print(PS1);

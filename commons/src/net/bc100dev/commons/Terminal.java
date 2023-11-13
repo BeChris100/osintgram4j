@@ -35,6 +35,9 @@ public class Terminal {
     }
 
     private static String translateColor(Color color) {
+        if (color == null)
+            return "";
+
         return switch (color) {
             case RESET -> "\033[0m";
             case BLACK -> "\033[0;30m";
