@@ -21,9 +21,9 @@ public class Connection {
         values[1] = null;
 
         for (ShellConfig config : pclConfigs) {
-            switch (config.name) {
-                case "username" -> values[0] = config.value;
-                case "password" -> values[1] = config.value;
+            switch (config.getName()) {
+                case "username" -> values[0] = config.getValue();
+                case "password" -> values[1] = config.getValue();
             }
         }
 

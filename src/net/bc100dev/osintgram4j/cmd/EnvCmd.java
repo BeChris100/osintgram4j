@@ -12,7 +12,7 @@ public class EnvCmd {
             return 0;
 
         for (ShellConfig config : configs)
-            System.out.println(config.name + " = " + config.value);
+            System.out.println(config.getName() + " = " + config.getValue());
 
         return 0;
     }

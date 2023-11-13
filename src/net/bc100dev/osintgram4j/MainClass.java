@@ -73,7 +73,7 @@ public class MainClass {
                             env[0] = env[0].trim();
                             env[1] = env[1].trim();
 
-                            configList.add(new ShellConfig(env[0], env[1]));
+                            configList.add(ShellConfig.create(env[0], env[1]));
                         } else {
                             File envFile = new File(opts[1]);
                             if (!envFile.exists())
@@ -91,7 +91,7 @@ public class MainClass {
 
                                 if (!envProps.isEmpty()) {
                                     for (Object key : envProps.keySet())
-                                        configList.add(new ShellConfig((String) key, envProps.getProperty((String) key)));
+                                        configList.add(ShellConfig.create((String) key, envProps.getProperty((String) key)));
                                 }
                             } catch (IOException ex) {
                                 ex.printStackTrace();
