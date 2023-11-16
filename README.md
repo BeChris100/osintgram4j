@@ -75,6 +75,14 @@ isn't relevant as of by the time of this update, but as soon as this Project
 asks you to state your Application ID, then it will mean that it shifted towards
 the Instagram default APIs.)
 
+By default, the application checks for updates via the Releases Tab, using non
+Pre-Release versions. If you'd like to modify the behavior, go to
+`src/net/bc100dev/osintgram4j/res/AppSettings.cfg` and change the line, where it
+says `SoftUpd.UpdateCheck = true`, replacing the `true` value with `false`. If
+you want to disable the behavior of always asking you for updating the Application,
+modify `SoftUpd.AskForUpdate = true`. Same tactic, replacing the true value with
+false.
+
 After creating the Application on the Instagram Developer Console, run the Shell
 Script command to get an initialized state of this project on your machine by
 running `setup.sh` (assuming that you have `wget` installed). Afterward, run

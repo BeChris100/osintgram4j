@@ -1,6 +1,7 @@
 {
     "version": 1,
     "package": "net.bc100dev.osintgram4j",
+    "uuid": "ok5prmfdir1x5yw1lmkneeg0djdloj2ekya",
     "label": "Osintgram Default Commands",
     "command_list": [
         {

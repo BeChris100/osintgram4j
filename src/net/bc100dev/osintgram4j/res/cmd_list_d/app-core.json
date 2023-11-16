@@ -1,6 +1,7 @@
 {
     "version": 1,
     "package": "net.bc100dev.osintgram4j",
+    "identifier": "av454m3mglr62mznf7od1um70z96euvigz9",
     "label": "Osintgram4j Commands",
     "command_list": [
         {
@@ -67,6 +68,23 @@
                 "Cache-Manager",
                 "Cache",
                 "cache"
+            ]
+        },
+        {
+            "command": "appver",
+            "description": "Application Version and Information",
+            "class": ".cmd.VerCmd",
+            "alternates": [
+                "Get-ApplicationVersion",
+                "Read-ApplicationVersion",
+                "ApplicationVersion",
+                "AppVersion",
+                "App-Version",
+                "Version",
+                "Get-ApplicationInfo",
+                "Get-AppInfo",
+                "AppInfo",
+                "ApplicationInfo"
             ]
         },
         {

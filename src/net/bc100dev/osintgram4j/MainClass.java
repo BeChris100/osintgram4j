@@ -1,5 +1,6 @@
 package net.bc100dev.osintgram4j;
 
+import net.bc100dev.commons.utils.Utility;
 import net.bc100dev.osintgram4j.sh.Shell;
 import net.bc100dev.osintgram4j.sh.ShellConfig;
 import net.bc100dev.osintgram4j.sh.ShellException;
@@ -11,45 +12,71 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import static net.bc100dev.commons.utils.RuntimeEnvironment.isWindows;
+import static net.bc100dev.osintgram4j.TitleBlock.DISPLAY;
+import static net.bc100dev.osintgram4j.TitleBlock.TITLE_BLOCK;
+
 public class MainClass {
 
-    private static final String PROGRESS_LABEL = "Launching Shell";
-    private static final String PROGRESS1 = PROGRESS_LABEL + " (-)";
-    private static final String PROGRESS2 = PROGRESS_LABEL + " (\\)";
-    private static final String PROGRESS3 = PROGRESS_LABEL + " (|)";
-    private static final String PROGRESS4 = PROGRESS_LABEL + " (/)";
-
-    private static boolean shellLaunched = false, initProgress = false;
-    private static int progressIndex = 0;
-
-    private static String getProgressLine() {
-        if (progressIndex < 1)
-            progressIndex = 1;
-
-        if (progressIndex > 4)
-            progressIndex = 1;
-
-        return switch (progressIndex) {
-            case 1 -> PROGRESS1;
-            case 2 -> PROGRESS2;
-            case 3 -> PROGRESS3;
-            case 4 -> PROGRESS4;
-            default -> throw new IllegalStateException("Unexpected value: " + progressIndex);
-        };
-    }
-
     private static void usage(ProcessHandle ph) {
-        System.out.println(TitleBlock.TITLE_BLOCK());
+        System.out.println(TITLE_BLOCK());
+        System.out.println();
+        System.out.println(DISPLAY());
         System.out.println();
         System.out.println("usage:");
-        System.out.println("$ " + ph.info().command().orElse("./osintgram4j") + " [options]");
+
+        String cmd;
+        if (ph.info().command().isPresent()) {
+            File f = new File(ph.info().command().get());
+            cmd = f.getName().equals("java") ? "osintgram4j.jar" : f.getName();
+        } else
+            cmd = "./osintgram4j" + (isWindows() ? ".exe" : "");
+
+        System.out.println("$ " + cmd + " [options]");
         System.out.println();
         System.out.println("options:");
-        System.out.println("-h, --help          Display this message and exit");
-        System.out.println("--append-env=[env]  Appends environment to the Application Shell from either CLI or File");
+
+        HelpPage helpPage = new HelpPage();
+        helpPage.setSpaceWidth(3);
+        helpPage.addArg("-h, --help", null, "Display this message and exit");
+        helpPage.addArg("--append-env", "[env]", "Appends environment to the Application Shell from either CLI or File");
+        helpPage.addArg("-gI [count]", null, "Generates new Identifiers for a development package");
+        helpPage.display(System.out);
+
         System.out.println();
-        System.out.println("Refer to the README.md and USAGE.md files on GitHub at");
+        System.out.println("Refer to the README.md and USAGE.md files on GitHub, along with the Wikis at");
         System.out.println("https://github.com/BeChris100/osintgram4j to have a better overview on using the Application Shell.");
+    }
+
+    private static List<String> generateIdentifiers(int count) {
+        if (count <= 0) {
+            System.out.println("## using count of 1");
+            count = 1;
+        }
+
+        List<String> list = new ArrayList<>();
+
+        String map = "0123456789abcdefghijklmnopqrstuvwxyz";
+
+        for (int l = 0; l < count; l++) {
+            StringBuilder str = new StringBuilder();
+
+            for (int i = 0; i < 35; i++) {
+                str.append(map.charAt(Utility.getRandomInteger(0, map.length() - 1)));
+            }
+
+            if (list.contains(str.toString()))
+                continue;
+
+            list.add(str.toString());
+
+            if (l + 1 != Integer.MAX_VALUE)
+                System.out.print("## Generated " + (l + 1) + " identifiers\r");
+        }
+
+        System.out.println("## Generated " + count + " identifiers\r");
+
+        return list;
     }
 
     public static void main(String[] args) {
@@ -61,6 +88,26 @@ public class MainClass {
                     usage(ProcessHandle.current());
                     System.exit(0);
                     return;
+                }
+                case "--generate-identifiers", "-gI", "--identifiers" -> {
+                    if (args.length == 1) {
+                        System.err.println("## Required [count] parameter.");
+                        System.exit(1);
+                        return;
+                    }
+
+                    int count = 1;
+                    try {
+                        count = Integer.parseInt(args[1]);
+                    } catch (NumberFormatException ignore) {
+                        System.err.println("## Invalid argument \"" + args[1] + "\": using count of 1");
+                    }
+
+                    List<String> identifierList = generateIdentifiers(count);
+                    for (String identifier : identifierList)
+                        System.out.println(identifier);
+
+                    System.exit(0);
                 }
             }
 
@@ -102,46 +149,15 @@ public class MainClass {
             }
         }
 
-        // Launch a progress bar, in case of I/O Streams
-        new Thread(() -> {
-            try {
-                Thread.sleep(6000);
-            } catch (InterruptedException ignore) {
-            }
-
-            if (!shellLaunched) {
-                while (true) {
-                    progressIndex++;
-
-                    if (progressIndex > 4)
-                        progressIndex = 1;
-
-                    System.out.print(getProgressLine() + "\r");
-
-                    try {
-                        Thread.sleep(370);
-                    } catch (InterruptedException ignore) {
-                    }
-
-                    if (shellLaunched) {
-                        System.out.println();
-                        break;
-                    }
-                }
-            }
-        }).start();
-
         try {
             Shell appShell = new Shell();
 
             if (!configList.isEmpty())
                 appShell.appendConfig(configList);
 
-            shellLaunched = true;
             appShell.launch();
         } catch (IOException | ShellException ex) {
             ex.printStackTrace(System.err);
-            shellLaunched = true;
         }
     }
 

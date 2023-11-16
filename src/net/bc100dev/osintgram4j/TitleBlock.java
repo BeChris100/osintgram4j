@@ -4,6 +4,7 @@ import net.bc100dev.commons.ResourceManager;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Properties;
 
 public class TitleBlock {
 
@@ -22,10 +23,30 @@ public class TitleBlock {
                 is.close();
 
                 return str.toString();
-            } else
-                return "OSINTgram v1.0";
+            }
+
+            return "OSINTgram v0.1";
         } catch (IOException ignore) {
-            return "OSINTgram v1.0";
+            return "OSINTgram v0.1";
+        }
+    }
+
+    public static String DISPLAY() {
+        try {
+            ResourceManager mgr = new ResourceManager(TitleBlock.class, true);
+            if (mgr.resourceExists("app_ver.cfg")) {
+                Properties props = new Properties();
+                InputStream is = mgr.getResourceInputStream("app_ver.cfg");
+
+                props.load(is);
+                is.close();
+
+                return props.getProperty("BUILD_DISPLAY") + " v" + props.getProperty("BUILD_VERSION") + "-" + props.getProperty("BUILD_VERSION_CODE");
+            }
+
+            return "OSINTgram v0.1";
+        } catch (IOException ignore) {
+            return "OSINTgram v0.1";
         }
     }
 
