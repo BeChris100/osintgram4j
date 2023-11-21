@@ -14,7 +14,7 @@ import java.util.Properties;
 public class VerCmd {
 
     private static String version(Properties props) {
-        return props.getProperty("BUILD_VERSION");
+        return "v" + props.getProperty("BUILD_VERSION");
     }
 
     private static int versionCode(Properties props) {
@@ -51,7 +51,7 @@ public class VerCmd {
     }
 
     private static String defaultLine(Properties props) {
-        return displayName(props) + " (" + name(props) + ") v" + version(props) + "-" +
+        return displayName(props) + " (" + name(props) + ") " + version(props) + "-" +
                 versionCode(props) + " " + flavor(props) + " (" + rFlavor(props) + ")";
     }
 
@@ -66,12 +66,12 @@ public class VerCmd {
             is.close();
 
             if (args == null) {
-                Terminal.println(Terminal.Color.BLUE, defaultLine(props), true);
+                Terminal.println(Terminal.TermColor.BLUE, defaultLine(props), true);
                 return 0;
             }
 
             if (args.length == 0) {
-                Terminal.println(Terminal.Color.BLUE, defaultLine(props), true);
+                Terminal.println(Terminal.TermColor.BLUE, defaultLine(props), true);
                 return 0;
             }
 
@@ -85,7 +85,7 @@ public class VerCmd {
             for (String arg : args) {
                 switch (arg) {
                     case "-v" -> bVersion = true;
-                    case "-V " -> bVersionCode = true;
+                    case "-V" -> bVersionCode = true;
                     case "-n" -> bName = true;
                     case "-N" -> bDisplayName = true;
                     case "-f" -> bFlavor = true;
@@ -115,7 +115,7 @@ public class VerCmd {
             System.out.println(str);
             return 0;
         } catch (IOException ex) {
-            Terminal.errPrintln(Terminal.Color.RED, "An error occurred while trying to read the App Information file", true);
+            Terminal.errPrintln(Terminal.TermColor.RED, "An error occurred while trying to read the App Information file", true);
             return 1;
         }
     }

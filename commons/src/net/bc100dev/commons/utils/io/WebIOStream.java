@@ -1,6 +1,5 @@
 package net.bc100dev.commons.utils.io;
 
-import net.bc100dev.commons.ApplicationException;
 import net.bc100dev.commons.ApplicationIOException;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -14,7 +13,7 @@ import java.util.Set;
 public class WebIOStream {
 
     private final HttpsURLConnection conn;
-    private final DataInputStream disIn, disErr;
+    private final DataInputStream dis;
     private final Response response;
 
     public static WebIOStream openStream(String urlParam, String method, Map<String, String> headers) throws IOException {
@@ -36,16 +35,16 @@ public class WebIOStream {
             conn.connect();
 
             Response _response = new Response(conn.getResponseCode(), conn.getResponseMessage());
-            DataInputStream disIn = null, disErr = null;
+            InputStream is;
 
-            InputStream isIn = conn.getInputStream(), isErr = conn.getErrorStream();
-            if (isIn != null)
-                disIn = new DataInputStream(isIn);
+            if (String.valueOf(conn.getResponseCode()).startsWith("2"))
+                is = conn.getInputStream();
+            else if (String.valueOf(conn.getResponseCode()).startsWith("4") || String.valueOf(conn.getResponseCode()).startsWith("5"))
+                is = conn.getErrorStream();
+            else
+                throw new IOException("Unknown code " + conn.getResponseCode() + " received");
 
-            if (isErr != null)
-                disErr = new DataInputStream(isErr);
-
-            return new WebIOStream(_response, conn, disIn, disErr);
+            return new WebIOStream(_response, conn, new DataInputStream(is));
         } catch (URISyntaxException e) {
             throw new ApplicationIOException("Error in creating a URI", e);
         }
@@ -76,25 +75,24 @@ public class WebIOStream {
             conn.connect();
 
             Response _response = new Response(conn.getResponseCode(), conn.getResponseMessage());
-            DataInputStream disIn = null, disErr = null;
+            InputStream is;
 
-            InputStream isIn = conn.getInputStream(), isErr = conn.getErrorStream();
-            if (isIn != null)
-                disIn = new DataInputStream(isIn);
+            if (String.valueOf(conn.getResponseCode()).startsWith("2"))
+                is = conn.getInputStream();
+            else if (String.valueOf(conn.getResponseCode()).startsWith("4") || String.valueOf(conn.getResponseCode()).startsWith("5"))
+                is = conn.getErrorStream();
+            else
+                throw new IOException("Unknown code " + conn.getResponseCode() + " received");
 
-            if (isErr != null)
-                disErr = new DataInputStream(isErr);
-
-            return new WebIOStream(_response, conn, disIn, disErr);
+            return new WebIOStream(_response, conn, new DataInputStream(is));
         } catch (URISyntaxException e) {
             throw new ApplicationIOException("Error in creating a URI", e);
         }
     }
 
-    protected WebIOStream(Response response, HttpsURLConnection conn, DataInputStream disIn, DataInputStream disErr) {
+    protected WebIOStream(Response response, HttpsURLConnection conn, DataInputStream dis) {
         this.conn = conn;
-        this.disIn = disIn;
-        this.disErr = disErr;
+        this.dis = dis;
         this.response = response;
     }
 
@@ -102,26 +100,16 @@ public class WebIOStream {
         return response;
     }
 
-    public byte[] readOutputContents() throws IOException {
-        if (disIn == null)
+    public byte[] readContents() throws IOException {
+        if (dis == null)
             return new byte[0];
 
-        return disIn.readAllBytes();
-    }
-
-    public byte[] readErrorContents() throws IOException {
-        if (disErr == null)
-            return new byte[0];
-
-        return disErr.readAllBytes();
+        return dis.readAllBytes();
     }
 
     public void close() throws IOException {
-        if (disIn != null)
-            disIn.close();
-
-        if (disErr != null)
-            disErr.close();
+        if (dis != null)
+            dis.close();
 
         conn.disconnect();
     }

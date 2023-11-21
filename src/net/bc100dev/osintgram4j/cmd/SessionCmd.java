@@ -3,15 +3,12 @@ package net.bc100dev.osintgram4j.cmd;
 import net.bc100dev.commons.ApplicationException;
 import net.bc100dev.commons.Terminal;
 import com.instagram.api.ConnectionStateException;
-import net.bc100dev.commons.utils.io.FileEncryption;
 import net.bc100dev.commons.utils.io.FileUtil;
 import net.bc100dev.osintgram4j.sh.ShellConfig;
 import org.json.JSONArray;
-import org.json.JSONException;
 
 import java.io.*;
 import java.nio.file.AccessDeniedException;
-import java.util.ArrayList;
 import java.util.List;
 
 import static net.bc100dev.commons.utils.RuntimeEnvironment.*;
@@ -69,23 +66,43 @@ public class SessionCmd {
     private static int testImpl(String[] args, List<ShellConfig> shellConfigs) {
         if (args.length != 0) {
             switch (args[0]) {
-                case "--encrypt-session", "-eS" -> {
+                case "--encrypt", "-e" -> {
                     if (args.length == 1) {
-                        Terminal.errPrintln(Terminal.Color.YELLOW, "To encrypt a session, run", false);
-                        Terminal.errPrintln(Terminal.Color.YELLOW, args[0] + " session_id_1 session_id_2 ...", false);
-                        Terminal.errPrintln(Terminal.Color.YELLOW, "where \"session_id_1\" and other labels are the corresponding Session identifiers", true);
+                        Terminal.errPrintln(Terminal.TermColor.YELLOW, "To encrypt a session, run", false);
+                        Terminal.errPrintln(Terminal.TermColor.YELLOW, args[0] + " session_id_1 session_id_2 ...", false);
+                        Terminal.errPrintln(Terminal.TermColor.YELLOW, "where \"session_id_1\" and other labels are the corresponding Session identifiers", true);
                         return 1;
                     }
                 }
+                case "--use", "-u" -> {
+                    // Use: username|identifier|label
+                }
+                case "--create", "-c" -> {
+                    // Create:
+                    /*
+                    -u username -> Creates a new Session with the corresponding Instagram Username
+                    -l label    -> Creates a new Session with a specific Label
+                     */
+                    // This will automatically create an identifier.
+                }
+                case "--list", "-l" -> {
+                    // List: [null]
+                }
+                case "--set", "-s" -> {
+                    // Set: key value
+                }
             }
+
+            return 0;
         }
 
-        return 0;
+        Terminal.errPrintln(Terminal.TermColor.RED,"Requires at least one argument", true);
+        return 1;
     }
 
     // Invoked manually by `Method.invoke`
     public static int launchCmd(String[] args, List<ShellConfig> shellConfigs) {
-        Terminal.println(Terminal.Color.RED, "Session Manager is not implemented yet", true);
+        Terminal.println(Terminal.TermColor.RED, "Session Manager is not implemented yet", true);
         return testImpl(args, shellConfigs);
     }
 

@@ -13,7 +13,7 @@ public class Release {
 
     public static List<ReleaseData> getReleases(String user, String repo) throws IOException, ApplicationException {
         WebIOStream stream = WebIOStream.openStream("https://api.github.com/repos/" + user + "/" + repo + "/releases", "GET", null);
-        byte[] buff = stream.readOutputContents();
+        byte[] buff = stream.readContents();
         stream.close();
 
         String jsonArrData = new String(buff).trim();

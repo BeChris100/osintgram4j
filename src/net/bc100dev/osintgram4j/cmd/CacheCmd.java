@@ -29,7 +29,7 @@ public class CacheCmd {
             throw new IOException("\"" + relDir.getAbsolutePath() + "\" is not a directory");
 
         // For your understanding: dir, nameSort, removePaths, ignoreErrors
-        List<String> contents = FileUtil.listDirectory(relDir.getAbsolutePath(), false, false, false);
+        List<String> contents = FileUtil.listDirectory(relDir.getAbsolutePath(), false, false);
         if (!contents.isEmpty()) {
             for (String content : contents)
                 FileUtil.delete(content);
@@ -39,12 +39,12 @@ public class CacheCmd {
     // Invoked manually by `Method.invoke`
     public static int launchCmd(String[] args, List<ShellConfig> ignore) {
         if (args == null) {
-            Terminal.println(Terminal.Color.BLUE, helpCmd(), true);
+            Terminal.println(Terminal.TermColor.BLUE, helpCmd(), true);
             return 0;
         }
 
         if (args.length == 0) {
-            Terminal.println(Terminal.Color.BLUE, helpCmd(), true);
+            Terminal.println(Terminal.TermColor.BLUE, helpCmd(), true);
             return 0;
         }
 
@@ -54,21 +54,21 @@ public class CacheCmd {
                     clearCache();
                     System.out.println("Cache cleared!");
                 } catch (IOException ex) {
-                    Terminal.errPrintln(Terminal.Color.RED, "Something went wrong with wiping cache:", false);
-                    Terminal.errPrintln(Terminal.Color.RED, ex.getMessage(), false);
+                    Terminal.errPrintln(Terminal.TermColor.RED, "Something went wrong with wiping cache:", false);
+                    Terminal.errPrintln(Terminal.TermColor.RED, ex.getMessage(), false);
                     System.err.println();
-                    Terminal.errPrintln(Terminal.Color.RED, "Stacktrace:", false);
+                    Terminal.errPrintln(Terminal.TermColor.RED, "Stacktrace:", false);
 
                     StringWriter sw = new StringWriter();
                     PrintWriter pw = new PrintWriter(sw);
                     ex.printStackTrace(pw);
 
-                    Terminal.errPrintln(Terminal.Color.RED, sw.toString(), true);
+                    Terminal.errPrintln(Terminal.TermColor.RED, sw.toString(), true);
                     return 1;
                 }
             }
             case "-h", "--help" -> {
-                Terminal.println(Terminal.Color.BLUE, helpCmd(), true);
+                Terminal.println(Terminal.TermColor.BLUE, helpCmd(), true);
                 return 0;
             }
         }

@@ -1,40 +1,42 @@
 package net.bc100dev.commons;
 
+import java.awt.*;
+
 public class Terminal {
 
-    public static void print(Color color, String msg, boolean reset) {
+    public static void print(TermColor color, String msg, boolean reset) {
         System.out.print(translateColor(color) + msg);
 
         if (reset)
-            System.out.print(translateColor(Color.RESET));
+            System.out.print(translateColor(TermColor.RESET));
     }
 
-    public static void println(Color color, String msg, boolean reset) {
+    public static void println(TermColor color, String msg, boolean reset) {
         System.out.print(translateColor(color) + msg);
 
         if (reset)
-            System.out.print(translateColor(Color.RESET));
+            System.out.print(translateColor(TermColor.RESET));
 
         System.out.println();
     }
 
-    public static void errPrint(Color color, String msg, boolean reset) {
+    public static void errPrint(TermColor color, String msg, boolean reset) {
         System.out.print(translateColor(color) + msg);
 
         if (reset)
-            System.out.print(translateColor(Color.RESET));
+            System.out.print(translateColor(TermColor.RESET));
     }
 
-    public static void errPrintln(Color color, String msg, boolean reset) {
+    public static void errPrintln(TermColor color, String msg, boolean reset) {
         System.out.print(translateColor(color) + msg);
 
         if (reset)
-            System.out.print(translateColor(Color.RESET));
+            System.out.print(translateColor(TermColor.RESET));
 
         System.out.println();
     }
 
-    private static String translateColor(Color color) {
+    private static String translateColor(TermColor color) {
         if (color == null)
             return "";
 
@@ -48,7 +50,7 @@ public class Terminal {
             case PURPLE -> "\033[0;35m";
             case CYAN -> "\033[0;36m";
             case WHITE -> "\033[0;37m";
-            default -> translateColor(Color.RESET);
+            default -> translateColor(TermColor.RESET);
         };
     }
 
@@ -57,7 +59,7 @@ public class Terminal {
         System.out.flush();
     }
 
-    public enum Color {
+    public enum TermColor {
 
         RESET,
         BLACK,

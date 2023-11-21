@@ -8,6 +8,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+import static net.bc100dev.osintgram4j.TitleBlock.TITLE_BLOCK;
+
 /**
  * The PCL (Process Command Line) is an interactive shell, used for
  * interacting with the Instagram Private APIs, along with the interaction
@@ -147,7 +149,7 @@ public class Shell {
         String[] lnSplits = CLIParser.translateCmdLine(ln);
 
         if (lnSplits.length == 0) {
-            Terminal.println(Terminal.Color.RED, String.format("Syntax error with parsing line \"%s\"", ln), true);
+            Terminal.println(Terminal.TermColor.RED, String.format("Syntax error with parsing line \"%s\"", ln), true);
             cmd();
             return;
         }
@@ -178,7 +180,7 @@ public class Shell {
 
                                 helps.put(tokVal, caller.retrieveLongHelp());
                             } catch (ShellException ignore) {
-                                Terminal.println(Terminal.Color.RED,
+                                Terminal.println(Terminal.TermColor.RED,
                                         String.format("Unknown command \"%s\"", tokVal), true);
                             }
                         } else {
@@ -190,7 +192,7 @@ public class Shell {
 
                                         helps.put(caller.getCommand(), caller.retrieveLongHelp());
                                     } catch (ShellException ignore) {
-                                        Terminal.println(Terminal.Color.RED,
+                                        Terminal.println(Terminal.TermColor.RED,
                                                 String.format("Unknown command \"%s\"", tokVal), true);
                                     }
                                 }
@@ -203,17 +205,20 @@ public class Shell {
                     List<String> cmd = new ArrayList<>(helps.keySet());
 
                     if (cmd.size() == 1)
-                        Terminal.println(Terminal.Color.BLUE, helps.get(cmd.get(0)), true);
+                        Terminal.println(Terminal.TermColor.BLUE, helps.get(cmd.get(0)), true);
                     else {
                         for (int i = 0; i < cmd.size(); i++) {
-                            Terminal.println(Terminal.Color.CYAN, cmd.get(i), true);
-                            Terminal.println(Terminal.Color.BLUE, helps.get(cmd.get(i)), true);
+                            Terminal.println(Terminal.TermColor.CYAN, cmd.get(i), true);
+                            Terminal.println(Terminal.TermColor.BLUE, helps.get(cmd.get(i)), true);
 
                             if (i != cmd.size() - 1)
                                 System.out.println();
                         }
                     }
                 } else {
+                    Terminal.println(Terminal.TermColor.GREEN, TITLE_BLOCK(), true);
+                    System.out.println();
+
                     int maxCmdLength = 0;
 
                     for (ShellCaller caller : shellCallers) {
@@ -228,8 +233,8 @@ public class Shell {
                         String cmd = caller.getCommand();
                         int spaces = maxCmdLength - cmd.length();
 
-                        Terminal.print(Terminal.Color.CYAN, cmd + " ".repeat(spaces), true);
-                        Terminal.println(Terminal.Color.YELLOW, caller.retrieveShortHelp(), true);
+                        Terminal.print(Terminal.TermColor.CYAN, cmd + " ".repeat(spaces), true);
+                        Terminal.println(Terminal.TermColor.YELLOW, caller.retrieveShortHelp(), true);
                     }
                 }
 
@@ -262,7 +267,7 @@ public class Shell {
                 try {
                     int code = caller.execute(args, shellConfigList);
                     if (code != 0) {
-                        Terminal.println(Terminal.Color.RED,
+                        Terminal.println(Terminal.TermColor.RED,
                                 caller.getCommand() + ": exit code " + code, true);
                     }
 
@@ -278,7 +283,7 @@ public class Shell {
                         try {
                             int code = caller.execute(args, shellConfigList);
                             if (code != 0) {
-                                Terminal.println(Terminal.Color.RED,
+                                Terminal.println(Terminal.TermColor.RED,
                                         alternate + ": exit code " + code, true);
                             }
                         } catch (ShellException ex) {
@@ -290,7 +295,7 @@ public class Shell {
         }
 
         if (!cmdFound)
-            Terminal.println(Terminal.Color.RED, String.format("%s: Command not found", exec), true);
+            Terminal.println(Terminal.TermColor.RED, String.format("%s: Command not found", exec), true);
     }
 
     /**

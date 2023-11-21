@@ -11,6 +11,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * This class is mainly associated with a specific Application, "Sketchware".
+ * Since I like this class, I decided that I will keep it.
+ */
 public class FileUtil {
 
     public static boolean exists(String path) {
@@ -199,17 +203,15 @@ public class FileUtil {
         }
     }
 
-    public static List<String> listDirectory(String dirPath, boolean nameSort, boolean removePaths, boolean ignoreErrors) throws IOException {
+    public static List<String> listDirectory(String dirPath, boolean nameSort, boolean removePaths) throws IOException {
         List<String> data = new ArrayList<>();
         File dir = new File(dirPath);
 
         if (!dir.exists())
             throw new FileNotFoundException(String.format("\"%s\" does not exist", dirPath));
 
-        if (!dir.canRead()) {
-            if (!ignoreErrors)
-                throw new AccessDeniedException(String.format("Cannot access \"%s\"", dirPath));
-        }
+        if (!dir.canRead())
+            throw new AccessDeniedException(String.format("Cannot access \"%s\"", dirPath));
 
         if (dir.isFile()) {
             data.add(dirPath);
@@ -240,7 +242,7 @@ public class FileUtil {
         return data;
     }
 
-    public static List<String> specificNameScan(String path, String name, boolean excludeAddingFolders, boolean ignoreErrors) throws IOException {
+    public static List<String> specificNameScan(String path, String name, boolean excludeAddingFolders) throws IOException {
         List<String> results = new ArrayList<>();
         File root = new File(path);
 
@@ -251,12 +253,13 @@ public class FileUtil {
             return results;
         }
 
-        List<String> data = listDirectory(path, true, false, ignoreErrors);
+        List<String> data = listDirectory(path, true, false);
 
         for (String item : data) {
             File file = new File(item);
 
             if (!RuntimeEnvironment.isWindows()) {
+                // TODO: Rework this part (read the symlink, check for access)
                 if ((file.getAbsolutePath().toLowerCase().contains("proton") && file.getAbsolutePath().toLowerCase().contains(":")) ||
                         (file.getAbsolutePath().toLowerCase().contains("dosdevices") && file.getAbsolutePath().toLowerCase().contains(":")))
                     continue;
@@ -274,13 +277,13 @@ public class FileUtil {
             }
 
             if (file.isDirectory())
-                results.addAll(specificNameScan(item, name, excludeAddingFolders, ignoreErrors));
+                results.addAll(specificNameScan(item, name, excludeAddingFolders));
         }
 
         return results;
     }
 
-    public static List<String> scanWithSpecificEnding(String path, String ending, boolean ignoreErrors) throws IOException {
+    public static List<String> scanWithSpecificEnding(String path, String ending) throws IOException {
         List<String> results = new ArrayList<>();
         File root = new File(path);
 
@@ -291,7 +294,7 @@ public class FileUtil {
             return results;
         }
 
-        List<String> data = listDirectory(path, true, false, ignoreErrors);
+        List<String> data = listDirectory(path, true, false);
 
         for (String item : data) {
             File file = new File(item);
@@ -302,20 +305,20 @@ public class FileUtil {
             }
 
             if (file.isDirectory())
-                results.addAll(scanWithSpecificEnding(item, ending, ignoreErrors));
+                results.addAll(scanWithSpecificEnding(item, ending));
         }
 
         return results;
     }
 
-    public static List<String> scanFiles(String path, boolean ignoreErrors) throws IOException {
+    public static List<String> scanFiles(String path) throws IOException {
         List<String> results = new ArrayList<>();
         File root = new File(path);
 
         if (root.isFile())
             return results;
 
-        List<String> data = listDirectory(path, true, false, ignoreErrors);
+        List<String> data = listDirectory(path, true, false);
 
         for (String itemPath : data) {
             File file = new File(itemPath);
@@ -324,20 +327,20 @@ public class FileUtil {
                 results.add(itemPath);
 
             if (file.isDirectory())
-                results.addAll(scanFiles(itemPath, ignoreErrors));
+                results.addAll(scanFiles(itemPath));
         }
 
         return results;
     }
 
-    public static List<String> scanFolders(String path, boolean ignoreErrors) throws IOException {
+    public static List<String> scanFolders(String path) throws IOException {
         List<String> results = new ArrayList<>();
         File root = new File(path);
 
         if (root.isFile())
             return results;
 
-        List<String> data = listDirectory(path, true, false, ignoreErrors);
+        List<String> data = listDirectory(path, true, false);
 
         for (String itemPath : data) {
             File file = new File(itemPath);
@@ -347,7 +350,7 @@ public class FileUtil {
 
             if (file.isDirectory()) {
                 results.add(itemPath);
-                results.addAll(scanFolders(itemPath, ignoreErrors));
+                results.addAll(scanFolders(itemPath));
             }
         }
 
@@ -367,7 +370,7 @@ public class FileUtil {
             return;
         }
 
-        if (listDirectory(path, false, false, false).isEmpty()) {
+        if (listDirectory(path, false, false).isEmpty()) {
             if (!inner.delete())
                 throw new IOException(String.format("Could not delete \"%s\"", path));
 
@@ -459,7 +462,7 @@ public class FileUtil {
         if (!destDir.canWrite())
             throw new AccessDeniedException(String.format("Cannot make copy operations from \"%s\" to \"%s\" (Permission denied)", sourceDirPath, destDirPath));
 
-        List<String> srcList = listDirectory(srcDir.getAbsolutePath(), true, false, false);
+        List<String> srcList = listDirectory(srcDir.getAbsolutePath(), true, false);
         for (String srcItem : srcList) {
             File srcData = new File(srcItem);
 

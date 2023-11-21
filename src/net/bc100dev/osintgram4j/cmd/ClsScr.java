@@ -7,7 +7,7 @@ import java.util.List;
 public class ClsScr {
 
     // Invoked manually by `Method.invoke`
-    public static int launchCmd(String[] args, List<ShellConfig> pclConfigs) {
+    public static int launchCmd(String[] args, List<ShellConfig> shellConfigs) {
         System.out.print("\033\143");
         System.out.flush();
         return 0;

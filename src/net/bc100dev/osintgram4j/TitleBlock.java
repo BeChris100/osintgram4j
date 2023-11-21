@@ -11,21 +11,20 @@ public class TitleBlock {
     public static String TITLE_BLOCK() {
         try {
             ResourceManager mgr = new ResourceManager(TitleBlock.class, true);
-            if (mgr.resourceExists("titleblock.txt")) {
-                InputStream is = mgr.getResourceInputStream("titleblock.txt");
-                StringBuilder str = new StringBuilder();
-                int d;
-                byte[] b = new byte[1024];
+            if (!mgr.resourceExists("titleblock.txt"))
+                return "OSINTgram v0.1";
 
-                while ((d = is.read(b, 0, 1024)) != -1)
-                    str.append(new String(b, 0, d));
+            InputStream is = mgr.getResourceInputStream("titleblock.txt");
+            StringBuilder str = new StringBuilder();
+            int d;
+            byte[] b = new byte[1024];
 
-                is.close();
+            while ((d = is.read(b, 0, 1024)) != -1)
+                str.append(new String(b, 0, d));
 
-                return str.toString();
-            }
+            is.close();
 
-            return "OSINTgram v0.1";
+            return str.toString();
         } catch (IOException ignore) {
             return "OSINTgram v0.1";
         }
@@ -34,17 +33,16 @@ public class TitleBlock {
     public static String DISPLAY() {
         try {
             ResourceManager mgr = new ResourceManager(TitleBlock.class, true);
-            if (mgr.resourceExists("app_ver.cfg")) {
-                Properties props = new Properties();
-                InputStream is = mgr.getResourceInputStream("app_ver.cfg");
+            if (!mgr.resourceExists("app_ver.cfg"))
+                return "OSINTgram v0.1";
 
-                props.load(is);
-                is.close();
+            Properties props = new Properties();
+            InputStream is = mgr.getResourceInputStream("app_ver.cfg");
 
-                return props.getProperty("BUILD_DISPLAY") + " v" + props.getProperty("BUILD_VERSION") + "-" + props.getProperty("BUILD_VERSION_CODE");
-            }
+            props.load(is);
+            is.close();
 
-            return "OSINTgram v0.1";
+            return props.getProperty("BUILD_DISPLAY") + " v" + props.getProperty("BUILD_VERSION") + "-" + props.getProperty("BUILD_VERSION_CODE");
         } catch (IOException ignore) {
             return "OSINTgram v0.1";
         }

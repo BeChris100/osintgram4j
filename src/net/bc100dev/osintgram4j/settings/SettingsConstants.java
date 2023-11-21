@@ -19,12 +19,12 @@ public class SettingsConstants {
 
     public static class ColorTheme {
 
-        public static Terminal.Color HELP_BLOCK = Terminal.Color.BLUE;
-        public static Terminal.Color COMMAND_INPUT = Terminal.Color.RESET;
-        public static Terminal.Color ERROR = Terminal.Color.RED;
-        public static Terminal.Color WARNING = Terminal.Color.YELLOW;
-        public static Terminal.Color VERBOSE = Terminal.Color.BLACK;
-        public static Terminal.Color INFO = Terminal.Color.PURPLE;
+        public static Terminal.TermColor HELP_BLOCK = Terminal.TermColor.BLUE;
+        public static Terminal.TermColor COMMAND_INPUT = Terminal.TermColor.RESET;
+        public static Terminal.TermColor ERROR = Terminal.TermColor.RED;
+        public static Terminal.TermColor WARNING = Terminal.TermColor.YELLOW;
+        public static Terminal.TermColor VERBOSE = Terminal.TermColor.BLACK;
+        public static Terminal.TermColor INFO = Terminal.TermColor.PURPLE;
 
     }
 

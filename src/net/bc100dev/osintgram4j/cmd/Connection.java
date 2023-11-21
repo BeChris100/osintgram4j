@@ -14,13 +14,13 @@ public class Connection {
 
     private static AppConnectionStatus connectionStatus = null;
 
-    private static String[] usernameAndPassword(List<ShellConfig> pclConfigs) {
+    private static String[] usernameAndPassword(List<ShellConfig> shellConfigs) {
         String[] values = new String[2];
 
         values[0] = null;
         values[1] = null;
 
-        for (ShellConfig config : pclConfigs) {
+        for (ShellConfig config : shellConfigs) {
             switch (config.getName()) {
                 case "username" -> values[0] = config.getValue();
                 case "password" -> values[1] = config.getValue();
@@ -46,27 +46,30 @@ public class Connection {
     private static void connect(String username, String password) throws IOException, ConnectionStateException {
     }
 
+    private static void testCmd(String[] args, List<ShellConfig> shellConfigs) {
+    }
+
     // Invoked manually by `Method.invoke`
-    public static int launchCmd(String[] args, List<ShellConfig> pclConfigs) {
+    public static int launchCmd(String[] args, List<ShellConfig> shellConfigs) {
         if (args == null) {
-            Terminal.println(Terminal.Color.BLUE, helpCmd(), true);
+            Terminal.println(Terminal.TermColor.BLUE, helpCmd(), true);
             return 1;
         }
 
         if (args.length == 0) {
-            Terminal.println(Terminal.Color.BLUE, helpCmd(), true);
+            Terminal.println(Terminal.TermColor.BLUE, helpCmd(), true);
             return 1;
         }
 
         switch (args[0]) {
             case "-e", "--establish" -> {
-                String[] upValues = usernameAndPassword(pclConfigs);
+                String[] upValues = usernameAndPassword(shellConfigs);
                 if (upValues[0] == null || upValues[1] == null) {
-                    Terminal.println(Terminal.Color.YELLOW, "Failed to read username and/or password out of the variables; trying arguments", true);
+                    Terminal.println(Terminal.TermColor.YELLOW, "Failed to read username and/or password out of the variables; trying arguments", true);
 
                     upValues = usernameAndPassword(args);
                     if (upValues[0] == null || upValues[1] == null) {
-                        Terminal.errPrintln(Terminal.Color.RED, "Failed to connect: username and/or password not given", true);
+                        Terminal.errPrintln(Terminal.TermColor.RED, "Failed to connect: username and/or password not given", true);
                         return 1;
                     }
                 }
@@ -78,7 +81,7 @@ public class Connection {
                     PrintWriter pw = new PrintWriter(sw);
                     th.printStackTrace(pw);
 
-                    Terminal.errPrintln(Terminal.Color.RED, sw.toString(), true);
+                    Terminal.errPrintln(Terminal.TermColor.RED, sw.toString(), true);
                 }
             }
             case "-c", "--connect" -> {
@@ -89,6 +92,9 @@ public class Connection {
             }
             case "-d", "--disconnect" -> {
                 // Disconnects from the server
+            }
+            case "-aS", "--assign-session" -> {
+                // Assigns the current connection to a session
             }
         }
 

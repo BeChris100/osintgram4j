@@ -3,9 +3,13 @@ package net.bc100dev.commons.utils;
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 
+/**
+ * I wrote this class, with a few methods that I found online. Since I cannot remember,
+ * where exactly I found this class, I thought that at least this would be good enough.
+ */
 public class SizeConvert {
 
-    public static String humanReadableByteCountSI(long bytes) {
+    public static String byteCountSI(long bytes) {
         if (-1000 < bytes && bytes < 1000)
             return bytes + " B";
 
@@ -19,7 +23,7 @@ public class SizeConvert {
         return String.format("%.1f %cB", bytes / 1000.0, ci.current());
     }
 
-    public static String humanReadableByteCountBin(long bytes) {
+    public static String byteCountBin(long bytes) {
         long absB = bytes == Long.MIN_VALUE ? Long.MAX_VALUE : Math.abs(bytes);
 
         if (absB < 1024)
@@ -32,6 +36,7 @@ public class SizeConvert {
             value >>= 10;
             ci.next();
         }
+
         value *= Long.signum(bytes);
         return String.format("%.1f %cB", value / 1024.0, ci.current());
     }

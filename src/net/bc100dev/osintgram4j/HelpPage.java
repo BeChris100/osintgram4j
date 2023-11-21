@@ -22,8 +22,8 @@ public class HelpPage {
         return spaceWidth;
     }
 
-    public void addArg(String arg, String equalValue, String description) {
-        argItemList.add(new Item(arg, equalValue, description));
+    public void addArg(String arg, String assignableDesc, String description) {
+        argItemList.add(new Item(arg, assignableDesc, description));
     }
 
     public String display() {

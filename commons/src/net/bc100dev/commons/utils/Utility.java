@@ -1,6 +1,8 @@
 package net.bc100dev.commons.utils;
 
 import java.io.File;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URISyntaxException;
 import java.util.Random;
 
@@ -80,6 +82,15 @@ public class Utility {
         }
 
         return lastSep;
+    }
+
+    public static String exceptionToString(Exception ex) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+
+        ex.printStackTrace(pw);
+
+        return sw.toString();
     }
 
     public static long getRandomLong() {

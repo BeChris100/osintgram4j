@@ -71,6 +71,20 @@
             ]
         },
         {
+            "command": "runtime",
+            "description": "Application Runtime",
+            "class": ".cmd.AppRuntime",
+            "alternates": [
+                "Runtime",
+                "ApplicationRuntime",
+                "AppRuntime",
+                "Application-Runtime",
+                "App-Runtime",
+                "Get-ApplicationRuntime",
+                "Get-AppRuntime"
+            ]
+        },
+        {
             "command": "appver",
             "description": "Application Version and Information",
             "class": ".cmd.VerCmd",
