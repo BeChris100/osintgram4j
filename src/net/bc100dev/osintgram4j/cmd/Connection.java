@@ -1,52 +1,29 @@
 package net.bc100dev.osintgram4j.cmd;
 
+import com.instagram.api.auth.AuthenticationCallback;
+import com.instagram.api.auth.UserAuthentication;
 import net.bc100dev.commons.Terminal;
-import com.instagram.api.ConnectionStateException;
+import net.bc100dev.commons.utils.Utility;
 import net.bc100dev.osintgram4j.api_conn.AppConnectionStatus;
+import net.bc100dev.osintgram4j.sh.Shell;
 import net.bc100dev.osintgram4j.sh.ShellConfig;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.List;
+import java.util.Scanner;
 
 public class Connection {
 
     private static AppConnectionStatus connectionStatus = null;
 
-    private static String[] usernameAndPassword(List<ShellConfig> shellConfigs) {
-        String[] values = new String[2];
+    private static AuthenticationCallback authCallback;
 
-        values[0] = null;
-        values[1] = null;
-
-        for (ShellConfig config : shellConfigs) {
-            switch (config.getName()) {
-                case "username" -> values[0] = config.getValue();
-                case "password" -> values[1] = config.getValue();
-            }
-        }
-
-        return values;
+    private static void connect(String username, String password, String mfa) throws IOException {
     }
 
-    private static String[] usernameAndPassword(String[] args) {
-        String[] values = new String[2];
-        values[0] = null;
-        values[1] = null;
-
-        if (args.length == 3) {
-            values[0] = args[1];
-            values[1] = args[2];
-        }
-
-        return values;
-    }
-
-    private static void connect(String username, String password) throws IOException, ConnectionStateException {
-    }
-
-    private static void testCmd(String[] args, List<ShellConfig> shellConfigs) {
+    private static int testCmd(String[] args, List<ShellConfig> shellConfigs) {
+        Terminal.println(Terminal.TermColor.RED, "not implemented", true);
+        return 1;
     }
 
     // Invoked manually by `Method.invoke`
@@ -62,30 +39,26 @@ public class Connection {
         }
 
         switch (args[0]) {
-            case "-e", "--establish" -> {
-                String[] upValues = usernameAndPassword(shellConfigs);
-                if (upValues[0] == null || upValues[1] == null) {
-                    Terminal.println(Terminal.TermColor.YELLOW, "Failed to read username and/or password out of the variables; trying arguments", true);
-
-                    upValues = usernameAndPassword(args);
-                    if (upValues[0] == null || upValues[1] == null) {
-                        Terminal.errPrintln(Terminal.TermColor.RED, "Failed to connect: username and/or password not given", true);
-                        return 1;
+            case "-c", "--connect" -> {
+                // Connect to the server
+                String[] val = new String[3];
+                for (ShellConfig config : shellConfigs) {
+                    switch (config.getName().toLowerCase()) {
+                        case "username", "name", "uname" -> val[0] = config.getValue();
+                        case "password", "pass", "passwd" -> val[1] = config.getValue();
+                        case "mfa", "auth_code", "multi",
+                                "factor_auth", "factor", "code" -> val[2] = config.getValue();
                     }
                 }
 
-                try {
-                    connect(upValues[0], upValues[1]);
-                } catch (Throwable th) {
-                    StringWriter sw = new StringWriter();
-                    PrintWriter pw = new PrintWriter(sw);
-                    th.printStackTrace(pw);
-
-                    Terminal.errPrintln(Terminal.TermColor.RED, sw.toString(), true);
+                if (val[0] != null && val[1] != null) {
+                    try {
+                        connect(val[0], val[1], val[2] != null ? val[2] : null);
+                    } catch (IOException e) {
+                        Terminal.errPrintln(Terminal.TermColor.RED, Utility.throwableToString(e), true);
+                        return 1;
+                    }
                 }
-            }
-            case "-c", "--connect" -> {
-                // Connect to the server
             }
             case "-i", "--state", "--info" -> {
                 // Get the information about the current connection
@@ -98,20 +71,46 @@ public class Connection {
             }
         }
 
-        return 0;
+        authCallback = new AuthenticationCallback() {
+            @Override
+            public void onLogin(String username) {
+            }
+
+            @Override
+            public void onError(int responseCode, String responseMessage, String body) {
+            }
+
+            @Override
+            public void onMfaRequire(String mfaCode) {
+                Scanner in = Shell.scIn;
+                Terminal.print(Terminal.TermColor.YELLOW, "enter your 2FA (Two-Factor Authentication) to continue: ", false);
+            }
+        };
+
+        return testCmd(args, shellConfigs);
+    }
+
+    private enum CmdAction {
+        ActionConnect,
+
+        ActionGetState,
+
+        ActionDisconnect,
+
+        ActionSessionAssign
     }
 
     // Invoked manually by `Method.invoke`
     public static String helpCmd() {
         return """
                 Manages the Connection State with the Client (Osintgram) and the Backend (Instagram).
-                
+                                
                 Parameters:
                 connection -e [&username] [&password]  -> Establishes an Instagram Account
                 connection -c (mfa)                    -> Connects to the Instagram Backend Server
                 connection -i                          -> Gets the current information state
                 connection -d                          -> Disconnects from the Instagram Server
-                
+                                
                 Also used with these following alternate commands:
                 > Manage-Connection
                 > ConnectionManager""";

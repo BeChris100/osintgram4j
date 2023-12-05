@@ -2,13 +2,9 @@ package com.instagram.api.dev;
 
 import com.instagram.api.Constants;
 
-import java.io.Serial;
-import java.io.Serializable;
+@Deprecated
+public class IGAndroidDevice {
 
-public class IGAndroidDevice extends IGDevice implements Serializable {
-
-    @Serial
-    private static final long serialVersionUID = -885748975689L;
     private final String androidVersion;
     private final String androidRelease;
     private final String dpi;
@@ -20,7 +16,6 @@ public class IGAndroidDevice extends IGDevice implements Serializable {
     public static final String CAPABILITIES = "3brTvw==";
 
     public IGAndroidDevice(String formatted) {
-        //super(toUserAgent(formatted), CAPABILITIES, null);
         String[] format = formatted.split("; ");
         this.androidVersion = format[0].split("/")[0];
         this.androidRelease = format[0].split("/")[1];

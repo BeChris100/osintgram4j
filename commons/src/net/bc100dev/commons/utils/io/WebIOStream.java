@@ -1,5 +1,6 @@
 package net.bc100dev.commons.utils.io;
 
+import net.bc100dev.commons.ApplicationException;
 import net.bc100dev.commons.ApplicationIOException;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -16,41 +17,21 @@ public class WebIOStream {
     private final DataInputStream dis;
     private final Response response;
 
-    public static WebIOStream openStream(String urlParam, String method, Map<String, String> headers) throws IOException {
-        try {
-            URI _u = new URI(urlParam);
-            URL url = _u.toURL();
+    private static final String[] PAYLOAD_METHODS = {
+            // Submits data
+            "POST",
 
-            HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
-            conn.setRequestMethod(method);
+            // Update or create a new item
+            "PUT",
 
-            if (headers != null) {
-                Set<String> set = headers.keySet();
-                if (!set.isEmpty()) {
-                    for (String key : set)
-                        conn.setRequestProperty(key, headers.get(key));
-                }
-            }
+            // Partial Updates
+            "PATCH",
 
-            conn.connect();
+            // Delete an item
+            "DELETE"
+    };
 
-            Response _response = new Response(conn.getResponseCode(), conn.getResponseMessage());
-            InputStream is;
-
-            if (String.valueOf(conn.getResponseCode()).startsWith("2"))
-                is = conn.getInputStream();
-            else if (String.valueOf(conn.getResponseCode()).startsWith("4") || String.valueOf(conn.getResponseCode()).startsWith("5"))
-                is = conn.getErrorStream();
-            else
-                throw new IOException("Unknown code " + conn.getResponseCode() + " received");
-
-            return new WebIOStream(_response, conn, new DataInputStream(is));
-        } catch (URISyntaxException e) {
-            throw new ApplicationIOException("Error in creating a URI", e);
-        }
-    }
-
-    public static WebIOStream openStream(String urlParam, String method, Map<String, String> headers, String pushContents) throws IOException {
+    public static WebIOStream openStream(String urlParam, String method, Map<String, String> headers, byte[] payload) throws IOException {
         try {
             URI _u = new URI(urlParam);
             URL url = _u.toURL();
@@ -67,9 +48,27 @@ public class WebIOStream {
                 }
             }
 
-            try (OutputStream os = conn.getOutputStream()) {
-                os.write(pushContents.getBytes());
-                os.flush();
+            //try (OutputStream os = conn.getOutputStream()) {
+            //    os.write(payload.getBytes());
+            //    os.flush();
+            //}
+
+            boolean doPayload = false;
+            for (String _method : PAYLOAD_METHODS) {
+                if (method.equals(_method)) {
+                    doPayload = true;
+                    break;
+                }
+            }
+
+            if (doPayload) {
+                if (payload == null)
+                    throw new NullPointerException("Payload cannot be null; can be empty, if server supports non-required payload requests");
+
+                try (OutputStream os = conn.getOutputStream()) {
+                    os.write(payload);
+                    os.flush();
+                }
             }
 
             conn.connect();

@@ -84,17 +84,25 @@ public class Utility {
         return lastSep;
     }
 
-    public static String exceptionToString(Exception ex) {
+    public static String throwableToString(Throwable th) {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
 
-        ex.printStackTrace(pw);
+        th.printStackTrace(pw);
 
         return sw.toString();
     }
 
-    public static long getRandomLong() {
-        return new Random().nextLong();
+    public static long getRandomLong(long min, long max) {
+        return new Random().nextLong() % (max - min + 1) + min;
+    }
+
+    public static double getRandomDouble(double min, double max) {
+        return new Random().nextDouble() * (max - min) + min;
+    }
+
+    public static float getRandomFloat(float min, float max) {
+        return new Random().nextFloat() * (max - min) + min;
     }
 
     public static int getRandomInteger(int min, int max) {

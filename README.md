@@ -1,9 +1,10 @@
 # OSINTgram (OSINT for Instagram)
-Remember on how old our old, beloved Osintgram project by Datalux barely even
-functions? Yeah, ever since the lack of updates and Instagram API changes, the
-[base repository](https://github.com/Datalux/Osintgram) barely works anymore. For
-that, I decided to rewrite the whole project in my favorite language of all time,
-Java.
+Remember on how good our old, beloved Osintgram project became famous by Datalux,
+and nowadays, it barely even functions? Yeah, ever since the lack of updates and
+Instagram API changes, the original project on the
+[base repository](https://github.com/Datalux/Osintgram) barely works anymore.
+What I decided to do is to rewrite the whole entire project, including the IG
+Private APIs, in my favorite language of all time, Java.
 
 Note that this is still a work in the progress, as the original code is still
 being analyzed, so that I can convert them into the functional Java code. It is
@@ -80,8 +81,8 @@ Pre-Release versions. If you'd like to modify the behavior, go to
 `src/net/bc100dev/osintgram4j/res/AppSettings.cfg` and change the line, where it
 says `SoftUpd.UpdateCheck = true`, replacing the `true` value with `false`. If
 you want to disable the behavior of always asking you for updating the Application,
-modify `SoftUpd.AskForUpdate = true`. Same tactic, replacing the true value with
-false.
+modify `SoftUpd.AskForUpdate = true`. Same tactic, replacing the `true` value with
+`false`.
 
 After creating the Application on the Instagram Developer Console, run the Shell
 Script command to get an initialized state of this project on your machine by

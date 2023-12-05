@@ -3,6 +3,7 @@ package net.bc100dev.osintgram4j.sh;
 import net.bc100dev.commons.CLIParser;
 import net.bc100dev.commons.ResourceManager;
 import net.bc100dev.commons.Terminal;
+import net.bc100dev.commons.utils.Utility;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,7 +18,7 @@ import static net.bc100dev.osintgram4j.TitleBlock.TITLE_BLOCK;
  */
 public class Shell {
 
-    private final Scanner scIn;
+    public static Scanner scIn;
 
     private final List<ShellConfig> shellConfigList = new ArrayList<>();
     private final List<ShellCaller> shellCallers = new ArrayList<>();
@@ -31,7 +32,7 @@ public class Shell {
      * @throws IOException    Throws an exception, when cannot read any command entries
      */
     public Shell() throws IOException, ShellException {
-        this.scIn = new Scanner(System.in);
+        Shell.scIn = new Scanner(System.in);
 
         appendCallers(Shell.class, "/net/bc100dev/osintgram4j/res/cmd_list_d/app-core.json");
     }
@@ -273,7 +274,7 @@ public class Shell {
 
                     break;
                 } catch (ShellException ex) {
-                    ex.printStackTrace();
+                    Terminal.println(Terminal.TermColor.RED, Utility.throwableToString(ex), true);
                 }
             } else {
                 for (String alternate : caller.getAlternateCommands()) {
@@ -287,7 +288,7 @@ public class Shell {
                                         alternate + ": exit code " + code, true);
                             }
                         } catch (ShellException ex) {
-                            ex.printStackTrace();
+                            Terminal.println(Terminal.TermColor.RED, Utility.throwableToString(ex), true);
                         }
                     }
                 }
@@ -295,7 +296,7 @@ public class Shell {
         }
 
         if (!cmdFound)
-            Terminal.println(Terminal.TermColor.RED, String.format("%s: Command not found", exec), true);
+            Terminal.println(Terminal.TermColor.RED, String.format("%s: command not found", exec), true);
     }
 
     /**

@@ -5,14 +5,16 @@ import java.awt.*;
 public class Terminal {
 
     public static void print(TermColor color, String msg, boolean reset) {
-        System.out.print(translateColor(color) + msg);
+        if (msg != null)
+            System.out.print(translateColor(color) + msg);
 
         if (reset)
             System.out.print(translateColor(TermColor.RESET));
     }
 
     public static void println(TermColor color, String msg, boolean reset) {
-        System.out.print(translateColor(color) + msg);
+        if (msg != null)
+            System.out.print(translateColor(color) + msg);
 
         if (reset)
             System.out.print(translateColor(TermColor.RESET));
@@ -21,14 +23,16 @@ public class Terminal {
     }
 
     public static void errPrint(TermColor color, String msg, boolean reset) {
-        System.out.print(translateColor(color) + msg);
+        if (msg != null)
+            System.out.print(translateColor(color) + msg);
 
         if (reset)
             System.out.print(translateColor(TermColor.RESET));
     }
 
     public static void errPrintln(TermColor color, String msg, boolean reset) {
-        System.out.print(translateColor(color) + msg);
+        if (msg != null)
+            System.out.print(translateColor(color) + msg);
 
         if (reset)
             System.out.print(translateColor(TermColor.RESET));
@@ -38,7 +42,7 @@ public class Terminal {
 
     private static String translateColor(TermColor color) {
         if (color == null)
-            return "";
+            return translateColor(TermColor.RESET);
 
         return switch (color) {
             case RESET -> "\033[0m";
@@ -50,7 +54,6 @@ public class Terminal {
             case PURPLE -> "\033[0;35m";
             case CYAN -> "\033[0;36m";
             case WHITE -> "\033[0;37m";
-            default -> translateColor(TermColor.RESET);
         };
     }
 

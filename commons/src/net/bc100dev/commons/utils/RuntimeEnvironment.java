@@ -121,4 +121,12 @@ public class RuntimeEnvironment {
             throw new RuntimeException("Unsupported operating system");
     }
 
+    public static String getOperatingSystemLabel(OperatingSystem os) {
+        return switch (os) {
+            case WINDOWS -> "Windows";
+            case MAC_OS -> "macOS";
+            case LINUX -> "Linux";
+        };
+    }
+
 }

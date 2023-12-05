@@ -6,4 +6,6 @@ public interface AuthenticationCallback {
 
     void onError(int responseCode, String responseMessage, String body);
 
+    void onMfaRequire(String mfaCode);
+
 }

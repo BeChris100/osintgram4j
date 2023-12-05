@@ -12,7 +12,7 @@ import java.util.List;
 public class Release {
 
     public static List<ReleaseData> getReleases(String user, String repo) throws IOException, ApplicationException {
-        WebIOStream stream = WebIOStream.openStream("https://api.github.com/repos/" + user + "/" + repo + "/releases", "GET", null);
+        WebIOStream stream = WebIOStream.openStream("https://api.github.com/repos/" + user + "/" + repo + "/releases", "GET", null, null);
         byte[] buff = stream.readContents();
         stream.close();
 

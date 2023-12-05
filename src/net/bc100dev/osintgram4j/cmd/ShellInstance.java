@@ -13,8 +13,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static net.bc100dev.commons.utils.RuntimeEnvironment.getOperatingSystem;
-import static net.bc100dev.commons.utils.RuntimeEnvironment.isWindows;
+import static net.bc100dev.commons.utils.RuntimeEnvironment.*;
 
 public class ShellInstance {
 
@@ -157,13 +156,18 @@ public class ShellInstance {
     // Invoked manually by `Method.invoke`
     // Currently only works under Linux (Ubuntu 22.04.3 LTS)
     public static int launchCmd(String[] args, List<ShellConfig> ignore) {
-        String shellEnv = null;
+        String shellEnv;
 
-        if (!isWindows()) {
+        if (isWindows())
+            shellEnv = System.getenv("SystemRoot") + "\\system32\\cmd.exe";
+        else {
             shellEnv = System.getenv("SHELL");
-            if (shellEnv == null)
-                // set to linux default
-                shellEnv = "/bin/sh";
+            if (shellEnv == null) {
+                if (isLinux())
+                    shellEnv = "/bin/bash";
+                else if (isMac())
+                    shellEnv = "/bin/zsh";
+            }
         }
 
         List<String> cmdArgs = new ArrayList<>();
@@ -179,7 +183,7 @@ public class ShellInstance {
                 }
                 case "--bash", "-b" -> {
                     if (isWindows()) {
-                        Terminal.errPrintln(Terminal.TermColor.RED, getOperatingSystem() + ": not allowed", true);
+                        Terminal.errPrintln(Terminal.TermColor.RED, getOperatingSystemLabel(getOperatingSystem()) + ": not allowed", true);
                         return 1;
                     }
 
@@ -187,7 +191,7 @@ public class ShellInstance {
                 }
                 case "--zsh", "-z" -> {
                     if (isWindows()) {
-                        Terminal.errPrintln(Terminal.TermColor.RED, getOperatingSystem() + ": not allowed", true);
+                        Terminal.errPrintln(Terminal.TermColor.RED, getOperatingSystemLabel(getOperatingSystem()) + ": not allowed", true);
                         return 1;
                     }
 
@@ -195,7 +199,7 @@ public class ShellInstance {
                 }
                 case "--fish", "-f" -> {
                     if (isWindows()) {
-                        Terminal.errPrintln(Terminal.TermColor.RED, getOperatingSystem() + ": not allowed", true);
+                        Terminal.errPrintln(Terminal.TermColor.RED, getOperatingSystemLabel(getOperatingSystem()) + ": not allowed", true);
                         return 1;
                     }
 
@@ -203,7 +207,7 @@ public class ShellInstance {
                 }
                 case "--cmd", "-c" -> {
                     if (!isWindows()) {
-                        Terminal.errPrintln(Terminal.TermColor.RED, getOperatingSystem() + ": not allowed", true);
+                        Terminal.errPrintln(Terminal.TermColor.RED, getOperatingSystemLabel(getOperatingSystem()) + ": not allowed", true);
                         return 1;
                     }
 
@@ -211,7 +215,7 @@ public class ShellInstance {
                 }
                 case "--powershell", "-p" -> {
                     if (!isWindows()) {
-                        Terminal.errPrintln(Terminal.TermColor.RED, getOperatingSystem() + ": not allowed", true);
+                        Terminal.errPrintln(Terminal.TermColor.RED, getOperatingSystemLabel(getOperatingSystem()) + ": not allowed", true);
                         return 1;
                     }
 
@@ -220,7 +224,7 @@ public class ShellInstance {
                     } catch (IOException ex) {
                         Terminal.errPrintln(Terminal.TermColor.RED, "could not find Powershell", false);
                         Terminal.errPrintln(Terminal.TermColor.RED, "stacktrace:", false);
-                        Terminal.errPrintln(Terminal.TermColor.RED, Utility.exceptionToString(ex), true);
+                        Terminal.errPrintln(Terminal.TermColor.RED, Utility.throwableToString(ex), true);
 
                         return 1;
                     }
@@ -241,7 +245,7 @@ public class ShellInstance {
                                     shellEnv = findShell(opts[1]);
                                 } catch (IOException ex) {
                                     Terminal.errPrintln(Terminal.TermColor.RED, "an error has occurred:", false);
-                                    Terminal.errPrintln(Terminal.TermColor.RED, Utility.exceptionToString(ex), true);
+                                    Terminal.errPrintln(Terminal.TermColor.RED, Utility.throwableToString(ex), true);
                                 }
                             } else
                                 shellEnv = opts[1];
@@ -260,8 +264,10 @@ public class ShellInstance {
             }
         }
 
-        if (shellEnv == null)
-            throw new NullPointerException("Shell Environment is not initialized correctly");
+        if (shellEnv == null) {
+            Terminal.errPrintln(Terminal.TermColor.RED, "Shell Environment CMD Variable was not initialized properly.", true);
+            return 1;
+        }
 
         // validate the Shell
         File shellFile = new File(shellEnv);
@@ -281,16 +287,12 @@ public class ShellInstance {
         for (int i = 0; i < cmdArgs.size(); i++)
             _args[i] = cmdArgs.get(i);
 
-        if (!isWindows()) {
-            try {
-                return startShell(new File(shellEnv), _args);
-            } catch (IOException | InterruptedException ex) {
-                Terminal.errPrintln(Terminal.TermColor.RED, Utility.exceptionToString(ex), true);
-                return 1;
-            }
+        try {
+            return startShell(new File(shellEnv), _args);
+        } catch (IOException | InterruptedException ex) {
+            Terminal.errPrintln(Terminal.TermColor.RED, Utility.throwableToString(ex), true);
+            return 1;
         }
-
-        return 0;
     }
 
     // Invoked manually by `Method.invoke`
