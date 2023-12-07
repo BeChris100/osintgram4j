@@ -47,22 +47,19 @@ fi
 mkdir -p build/pkg build/project/input build/project/commons build/project/instagram-api build/project/core
 
 echo "## Compiling CXX code"
-CURRENT_WORKDIR=$(pwd)
-cd "cxx"
-mkdir -p build
-cd "build"
-cmake ..
-make
-
-if [ "$OS_TYPE" == "linux" ]; then
-    cp libosintgram4j-cxx.so "$CURRENT_WORKDIR/build/project/input"
-fi
-
 if [ "$OS_TYPE" == "osx" ]; then
     echo "* CXX code unsupported on macOS"
-fi
+else
+    CURRENT_WORKDIR=$(pwd)
+    cd "cxx"
+    mkdir -p build
+    cd "build"
+    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=/usr/bin/x86_64-pc-linux-gnu-gcc -DCMAKE_CXX_COMPILER=/usr/bin/x86_64-pc-linux-gnu-gcc -DCMAKE_CPP_COMPILER=/usr/bin/x86_64-pc-linux-gnu-g++ ..
+    make
+    cp libosintgram4j-cxx.so "$CURRENT_WORKDIR/build/project/input"
 
-cd "$CURRENT_WORKDIR"
+    cd "$CURRENT_WORKDIR"
+fi
 
 echo "## Compiling the Commons Library"
 find commons/src -name "*.java" -type f -print0 | xargs -0 "$JAVAC_CMD" -d build/project/commons
@@ -104,7 +101,7 @@ fi
 
 echo '## Building the Application Package'
 cp build/libs/json.jar build/project/input/json.jar
-"$JPACKAGE_CMD" -t app-image -n "$BUILD_NAME" --app-version "$BUILD_VERSION-$BUILD_VERSION_CODE" --runtime-image build/runtime -i build/project/input --main-jar core.jar --main-class net.bc100dev.osintgram4j.MainClass -d build/pkg --verbose
+"$JPACKAGE_CMD" -t app-image -n "$BUILD_NAME" --app-version "$BUILD_VERSION-$BUILD_VERSION_CODE" --runtime-image build/runtime -i build/project/input --main-jar core.jar --main-class net.bc100dev.osintgram4j.MainClass -d build/pkg --icon "extres/icon.png" --verbose
 
 read -p "Do you want to install Osintgram (requires sudo privileges)? (Y/N): " INSTALL_CHOICE
 if [[ "$INSTALL_CHOICE" =~ ^[Yy]$ ]]; then

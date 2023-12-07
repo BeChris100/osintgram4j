@@ -26,14 +26,15 @@ echo "Preparing files (JDK, Libraries)"
 echo ""
 
 if [ "$IS_LINUX" == "true" ]; then
-    echo "OS_TYPE=linux"
+    echo "OS_TYPE=linux" > .build-info
 elif [ "$IS_OSX" == "true" ]; then
-    echo "OS_TYPE=osx"
+    echo "OS_TYPE=osx" > .build-info
 fi
 
-function verify_gcc() {
+REQ_PKG="tar wget cmake make gcc"
+
+function verify_tools() {
     # GCC/clang Verification
-    CLANG_CMD=$(command -v "clang")
     GCC_CMD=$(command -v "gcc")
     CMAKE_CMD=$(command -v "cmake")
     MAKE_CMD=$(command -v "make")
@@ -41,13 +42,15 @@ function verify_gcc() {
     # shellcheck disable=SC2236
     if [ -z "$CMAKE_CMD" ]; then
         echo "cmake command not found."
-        echo "To proceed with the build, you need to have GCC/clang installed, along with cmake and make."
+        echo "To proceed with the build, install the following packages:"
+        echo "$REQ_PKG"
         exit 1
     fi
 
     if [ -z "$MAKE_CMD" ]; then
         echo "make command not found (required for cmake)"
-        echo "To proceed with the build, you need to have GCC/clang installed, along with cmake and make."
+        echo "To proceed with the build, install the following packages:"
+        echo "$REQ_PKG"
         exit 1
     fi
 
@@ -55,12 +58,29 @@ function verify_gcc() {
 
     if [ -n "$GCC_CMD" ]; then
         echo "CXX_CMD=gcc:$GCC_CMD" >> .build-info
-    elif [ -n "$CLANG_CMD" ]; then
-        echo "CXX_CMD=clang:$CLANG_CMD" >> .build-info
     else
-        echo "No C/C++ compiler present."
+        echo "No C/C++ compiler present. Requires gcc present."
         exit 1
     fi
+
+    TAR_CMD=$(command -v "tar")
+    WGET_CMD=$(command -v "wget")
+
+    if [ -z "$TAR_CMD" ]; then
+        echo "tar command not found."
+        echo "Required for extracting necessary files."
+        echo "To proceed with the build, install the following packages:"
+        echo "$REQ_PKG"
+        exit 1
+    fi
+
+    if [ -z "$WGET_CMD" ]; then
+            echo "wget command not found."
+            echo "Required for downloading necessary files."
+            echo "To proceed with the build, install the following packages:"
+            echo "$REQ_PKG"
+            exit 1
+        fi
 }
 
 function presence_java_tools() {
@@ -79,6 +99,14 @@ function presence_java_tools() {
 
     if [ -n "$java_cmd" ] && [ -n "$jar_cmd" ] && [ -n "$javac_cmd" ] && [ -n "$jlink_cmd" ] && [ -n "$jdeps_cmd" ] && [ -n "$jpackage_cmd" ]; then
         echo "JDK Tools have been found."
+        
+        JAVA_VERSION=$($JAVA_CMD --version 2>&1 | grep -oP 'openjdk \K\d+' | cut -d. -f1)
+        if [ "$JAVA_VERSION" -ge 21 ]; then
+            echo "JDK version $JAVA_VERSION found; require download"
+            
+            get_jdk
+            return 0
+        fi
 
         echo "JAVA_CMD=$java_cmd" >>.build-info
         echo "JAR_CMD=$jar_cmd" >>.build-info
@@ -153,7 +181,7 @@ function get_libs() {
     fi
 }
 
-verify_gcc
+verify_tools
 
 if [ "$#" -ge 1 ]; then
     if [ "$1" == "--force-download" ]; then
