@@ -73,7 +73,6 @@ find src -name "*.java" -type f -print0 | xargs -0 "$JAVAC_CMD" -cp build/projec
 echo "## Adding resources to the Core Application"
 cp -r src/net/bc100dev/osintgram4j/res build/project/core/net/bc100dev/osintgram4j/
 cp src/net/bc100dev/osintgram4j/app_ver.cfg build/project/core/net/bc100dev/osintgram4j/app_ver.cfg
-cp src/net/bc100dev/osintgram4j/titleblock.txt build/project/core/net/bc100dev/osintgram4j/titleblock.txt
 
 echo '## Making "commons.jar"'
 "$JAR_CMD" -cf build/project/input/commons.jar -C build/project/commons .
