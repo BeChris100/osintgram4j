@@ -25,6 +25,44 @@ echo ""
 echo "Preparing files (JDK, Libraries)"
 echo ""
 
+if [ "$IS_LINUX" == "true" ]; then
+    echo "OS_TYPE=linux"
+elif [ "$IS_OSX" == "true" ]; then
+    echo "OS_TYPE=osx"
+fi
+
+function verify_gcc() {
+    # GCC/clang Verification
+    CLANG_CMD=$(command -v "clang")
+    GCC_CMD=$(command -v "gcc")
+    CMAKE_CMD=$(command -v "cmake")
+    MAKE_CMD=$(command -v "make")
+
+    # shellcheck disable=SC2236
+    if [ -z "$CMAKE_CMD" ]; then
+        echo "cmake command not found."
+        echo "To proceed with the build, you need to have GCC/clang installed, along with cmake and make."
+        exit 1
+    fi
+
+    if [ -z "$MAKE_CMD" ]; then
+        echo "make command not found (required for cmake)"
+        echo "To proceed with the build, you need to have GCC/clang installed, along with cmake and make."
+        exit 1
+    fi
+
+    echo "CMAKE_CMD=$CMAKE_CMD" >> .build-info
+
+    if [ -n "$GCC_CMD" ]; then
+        echo "CXX_CMD=gcc:$GCC_CMD" >> .build-info
+    elif [ -n "$CLANG_CMD" ]; then
+        echo "CXX_CMD=clang:$CLANG_CMD" >> .build-info
+    else
+        echo "No C/C++ compiler present."
+        exit 1
+    fi
+}
+
 function presence_java_tools() {
     local java_cmd
     local javac_cmd
@@ -42,13 +80,13 @@ function presence_java_tools() {
     if [ -n "$java_cmd" ] && [ -n "$jar_cmd" ] && [ -n "$javac_cmd" ] && [ -n "$jlink_cmd" ] && [ -n "$jdeps_cmd" ] && [ -n "$jpackage_cmd" ]; then
         echo "JDK Tools have been found."
 
-        echo "JAVA_CMD=$java_cmd" >.java-tools
-        echo "JAR_CMD=$jar_cmd" >>.java-tools
-        echo "JAVAC_CMD=$javac_cmd" >>.java-tools
-        echo "JLINK_CMD=$jlink_cmd" >>.java-tools
-        echo "JDEPS_CMD=$jdeps_cmd" >>.java-tools
-        echo "JPACKAGE_CMD=$jpackage_cmd" >>.java-tools
-        echo "JAVA_DEFAULT_HOME=$(dirname "$(dirname "$(command -v java)")")" >>.java-tools
+        echo "JAVA_CMD=$java_cmd" >>.build-info
+        echo "JAR_CMD=$jar_cmd" >>.build-info
+        echo "JAVAC_CMD=$javac_cmd" >>.build-info
+        echo "JLINK_CMD=$jlink_cmd" >>.build-info
+        echo "JDEPS_CMD=$jdeps_cmd" >>.build-info
+        echo "JPACKAGE_CMD=$jpackage_cmd" >>.build-info
+        echo "JAVA_DEFAULT_HOME=$(dirname "$(dirname "$(command -v java)")")" >>.build-info
 
         return 0
     else
@@ -87,13 +125,13 @@ function get_jdk() {
 
         chmod +x build/jdk/bin/*
 
-        echo "JAVA_CMD=$PWD/build/jdk/bin/java" >.java-tools
-        echo "JAR_CMD=$PWD/build/jdk/bin/jar" >>.java-tools
-        echo "JAVAC_CMD=$PWD/build/jdk/bin/javac" >>.java-tools
-        echo "JLINK_CMD=$PWD/build/jdk/bin/jlink" >>.java-tools
-        echo "JDEPS_CMD=$PWD/build/jdk/bin/jdeps" >>.java-tools
-        echo "JPACKAGE_CMD=$PWD/build/jdk/bin/jpackage" >>.java-tools
-        echo "JAVA_DEFAULT_HOME=$PWD/build/jdk" >>.java-tools
+        echo "JAVA_CMD=$PWD/build/jdk/bin/java" >>.build-info
+        echo "JAR_CMD=$PWD/build/jdk/bin/jar" >>.build-info
+        echo "JAVAC_CMD=$PWD/build/jdk/bin/javac" >>.build-info
+        echo "JLINK_CMD=$PWD/build/jdk/bin/jlink" >>.build-info
+        echo "JDEPS_CMD=$PWD/build/jdk/bin/jdeps" >>.build-info
+        echo "JPACKAGE_CMD=$PWD/build/jdk/bin/jpackage" >>.build-info
+        echo "JAVA_DEFAULT_HOME=$PWD/build/jdk" >>.build-info
     fi
 }
 
@@ -114,6 +152,8 @@ function get_libs() {
         wget "https://repo1.maven.org/maven2/org/json/json/20231013/json-20231013.jar" -O build/libs/json.jar
     fi
 }
+
+verify_gcc
 
 if [ "$#" -ge 1 ]; then
     if [ "$1" == "--force-download" ]; then

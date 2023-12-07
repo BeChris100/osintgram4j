@@ -35,3 +35,4 @@ bin/
 .java-tools
 build
 cmdline
+apprun.sh

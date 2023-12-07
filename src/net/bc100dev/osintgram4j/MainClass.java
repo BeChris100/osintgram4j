@@ -1,6 +1,9 @@
 package net.bc100dev.osintgram4j;
 
+import net.bc100dev.commons.ApplicationException;
+import net.bc100dev.commons.Terminal;
 import net.bc100dev.commons.utils.Utility;
+import net.bc100dev.commons.utils.io.UserIO;
 import net.bc100dev.osintgram4j.sh.Shell;
 import net.bc100dev.osintgram4j.sh.ShellConfig;
 import net.bc100dev.osintgram4j.sh.ShellException;
@@ -80,6 +83,14 @@ public class MainClass {
     }
 
     public static void main(String[] args) {
+        if (NativeLoader.hasLibrary())
+            NativeLoader.load();
+
+        if (!NativeLoader.isLoaded())
+            throw new RuntimeException("native library unable to load");
+
+        boolean adminCheck = true;
+
         List<ShellConfig> configList = new ArrayList<>();
 
         if (args.length >= 1) {
@@ -109,6 +120,7 @@ public class MainClass {
 
                     System.exit(0);
                 }
+                case "--no-admin-check" -> adminCheck = false;
             }
 
             for (String arg : args) {
@@ -146,6 +158,22 @@ public class MainClass {
                         }
                     }
                 }
+            }
+        }
+
+        if (adminCheck) {
+            try {
+                if (UserIO.isAdmin()) {
+                    if (isWindows())
+                        System.out.println("The current process is running with elevated privileges. If you have encountered errors that may relate to not being executed without administrative privileges, you may continue, otherwise consider running processes without administrative privileges, as it may bring unexpected damages.");
+                    else
+                        System.out.println("The current process is running as the Root user. If you have encountered errors that may relate to not being executed without administrative privileges, you may continue, otherwise consider running processes as normal users, as it may bring unexpected damages.");
+
+                    System.out.println("As a security warning: Do not run any programs with high privileges, unless that you trust the Software that you are about to execute and you know, what you are doing.");
+                    System.out.println("To disable this warning message, either pass '--no-admin-check' or head over to the Settings file.");
+                }
+            } catch (ApplicationException ex) {
+                ex.printStackTrace();
             }
         }
 

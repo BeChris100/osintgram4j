@@ -123,24 +123,14 @@ public class FileUtil {
         }
     }
 
-    public static String removeName(String path) {
-        String cutPath = removePath(path);
-        return path.replaceFirst(cutPath, "");
-    }
-
-    public static String removePath(String path) {
-        int sep = Utility.getLastPathSeparator(path, false);
-        return path.substring(sep + 1);
-    }
-
     public static void makeDirs(String dirPath) throws Exception {
-        File dir = new File(removeName(dirPath));
+        File dir = new File(dirPath);
 
         if (dir.exists())
             return;
 
         if (!dir.mkdirs())
-            throw new AccessDeniedException(String.format("Could not make new directories at \"%s\"", removeName(dirPath)));
+            throw new AccessDeniedException(String.format("Could not create new directories at \"%s\"", dirPath));
     }
 
     public static void write(String filePath, char[] contents) throws IOException {
@@ -219,7 +209,7 @@ public class FileUtil {
             data.add(dirPath);
 
             if (removePaths)
-                data.set(0, removePath(data.get(0)));
+                data.set(0, new File(data.get(0)).getName());
 
             return data;
         }
@@ -233,7 +223,7 @@ public class FileUtil {
 
         if (removePaths) {
             if (!data.isEmpty())
-                data.replaceAll(FileUtil::removePath);
+                data.replaceAll(pathName -> new File(pathName).getName());
         }
 
         if (nameSort) {

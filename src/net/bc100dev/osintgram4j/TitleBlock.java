@@ -11,10 +11,10 @@ public class TitleBlock {
     public static String TITLE_BLOCK() {
         try {
             ResourceManager mgr = new ResourceManager(TitleBlock.class, true);
-            if (!mgr.resourceExists("titleblock.txt"))
+            if (!mgr.resourceExists("res/titleblock.txt"))
                 return "OSINTgram v0.1";
 
-            InputStream is = mgr.getResourceInputStream("titleblock.txt");
+            InputStream is = mgr.getResourceInputStream("res/titleblock.txt");
             StringBuilder str = new StringBuilder();
             int d;
             byte[] b = new byte[1024];

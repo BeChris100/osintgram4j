@@ -3,11 +3,12 @@
 # shellcheck disable=SC2074
 # shellcheck disable=SC2162
 # shellcheck disable=SC2016
+# shellcheck disable=SC2164
 
 source app_ver
 
-if [ -f ".java-tools" ]; then
-    source .java-tools
+if [ -f ".build-info" ]; then
+    source .build-info
 
     if [ -z "$JAR_CMD" ] || [ -z "$JAVA_CMD" ] || [ -z "$JAVAC_CMD" ] || [ -z "$JLINK_CMD" ] || [ -z "$JDEPS_CMD" ] || [ -z "$JPACKAGE_CMD" ]; then
         echo "Error: Some JDK tools are missing. Please re-run the setup.sh to set up the required tools."
@@ -44,6 +45,24 @@ else
 fi
 
 mkdir -p build/pkg build/project/input build/project/commons build/project/instagram-api build/project/core
+
+echo "## Compiling CXX code"
+CURRENT_WORKDIR=$(pwd)
+cd "cxx"
+mkdir -p build
+cd "build"
+cmake ..
+make
+
+if [ "$OS_TYPE" == "linux" ]; then
+    cp libosintgram4j-cxx.so "$CURRENT_WORKDIR/build/project/input"
+fi
+
+if [ "$OS_TYPE" == "osx" ]; then
+    echo "* CXX code unsupported on macOS"
+fi
+
+cd "$CURRENT_WORKDIR"
 
 echo "## Compiling the Commons Library"
 find commons/src -name "*.java" -type f -print0 | xargs -0 "$JAVAC_CMD" -d build/project/commons
