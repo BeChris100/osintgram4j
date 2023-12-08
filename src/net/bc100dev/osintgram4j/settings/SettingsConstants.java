@@ -1,7 +1,6 @@
 package net.bc100dev.osintgram4j.settings;
 
 import net.bc100dev.commons.Terminal;
-import net.bc100dev.osintgram4j.releases.UpdateChannel;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -50,14 +49,6 @@ public class SettingsConstants {
 
         public static long CONNECTION_TIMEOUT = 30000;
         public static long READ_TIMEOUT = 20000;
-
-    }
-
-    public static class SoftwareUpdates {
-
-        public static boolean UPDATE_CHECK = false;
-        public static UpdateChannel CHANNEL = UpdateChannel.RELEASE;
-        public static String URL = "https://github.com/BeChris100/osintgram4j";
 
     }
 
