@@ -28,12 +28,11 @@ public class MainClass {
         System.out.println();
         System.out.println("usage:");
 
-        String cmd;
+        String cmd = "." + (isWindows() ? "\\" : "/") + "osintgram4j" + (isWindows() ? ".exe" : "");
         if (ph.info().command().isPresent()) {
             File f = new File(ph.info().command().get());
             cmd = f.getName().equals("java") ? "osintgram4j.jar" : f.getName();
-        } else
-            cmd = "./osintgram4j" + (isWindows() ? ".exe" : "");
+        }
 
         System.out.println("$ " + cmd + " [options]");
         System.out.println();
