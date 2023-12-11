@@ -1,10 +1,12 @@
 package net.bc100dev.commons.utils.io;
 
-import net.bc100dev.commons.ApplicationException;
 import net.bc100dev.commons.ApplicationIOException;
 
 import javax.net.ssl.HttpsURLConnection;
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -47,11 +49,6 @@ public class WebIOStream {
                         conn.setRequestProperty(key, headers.get(key));
                 }
             }
-
-            //try (OutputStream os = conn.getOutputStream()) {
-            //    os.write(payload.getBytes());
-            //    os.flush();
-            //}
 
             boolean doPayload = false;
             for (String _method : PAYLOAD_METHODS) {

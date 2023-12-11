@@ -206,7 +206,7 @@ public class Shell {
                     List<String> cmd = new ArrayList<>(helps.keySet());
 
                     if (cmd.size() == 1)
-                        Terminal.println(Terminal.TermColor.BLUE, helps.get(cmd.get(0)), true);
+                        Terminal.println(Terminal.TermColor.BLUE, helps.get(cmd.getFirst()), true);
                     else {
                         for (int i = 0; i < cmd.size(); i++) {
                             Terminal.println(Terminal.TermColor.CYAN, cmd.get(i), true);

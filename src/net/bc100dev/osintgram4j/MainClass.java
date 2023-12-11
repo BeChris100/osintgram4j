@@ -43,6 +43,7 @@ public class MainClass {
         helpPage.addArg("-h, --help", null, "Display this message and exit");
         helpPage.addArg("--append-env", "[env]", "Appends environment to the Application Shell from either CLI or File");
         helpPage.addArg("-gI [count]", null, "Generates new Identifiers for a development package");
+        helpPage.addArg("--no-admin-check", null, "Does not display the Administrative Privilege Warning, when running " + (isWindows() ? "with administrative privileges" : "as root"));
         helpPage.display(System.out);
 
         System.out.println();
@@ -57,7 +58,6 @@ public class MainClass {
         }
 
         List<String> list = new ArrayList<>();
-
         String map = "0123456789abcdefghijklmnopqrstuvwxyz";
 
         for (int l = 0; l < count; l++) {

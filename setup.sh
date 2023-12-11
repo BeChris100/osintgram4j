@@ -35,7 +35,8 @@ REQ_PKG="tar wget cmake make gcc"
 
 function verify_tools() {
     # GCC/clang Verification
-    GCC_CMD=$(command -v "gcc")
+    GCC_CMD=$(command -v "x86_64-linux-gnu-gcc")
+    GPP_CMD=$(command -v "x86_64-linux-gnu-g++")
     CMAKE_CMD=$(command -v "cmake")
     MAKE_CMD=$(command -v "make")
 
@@ -56,9 +57,12 @@ function verify_tools() {
 
     echo "CMAKE_CMD=$CMAKE_CMD" >> .build-info
 
-    if [ -n "$GCC_CMD" ]; then
-        echo "CXX_CMD=gcc:$GCC_CMD" >> .build-info
-    else
+    if [ -z "$GCC_CMD" ]; then
+        echo "No C/C++ compiler present. Requires gcc present."
+        exit 1
+    fi
+
+    if [ -z "$GPP_CMD" ]; then
         echo "No C/C++ compiler present. Requires gcc present."
         exit 1
     fi
@@ -100,9 +104,9 @@ function presence_java_tools() {
     if [ -n "$java_cmd" ] && [ -n "$jar_cmd" ] && [ -n "$javac_cmd" ] && [ -n "$jlink_cmd" ] && [ -n "$jdeps_cmd" ] && [ -n "$jpackage_cmd" ]; then
         echo "JDK Tools have been found."
         
-        JAVA_VERSION=$($JAVA_CMD --version 2>&1 | grep -oP 'openjdk \K\d+' | cut -d. -f1)
-        if [ "$JAVA_VERSION" -ge 21 ]; then
-            echo "JDK version $JAVA_VERSION found; require download"
+        JAVA_VERSION=$($java_cmd --version 2>&1 | grep -oP 'openjdk \K\d+' | cut -d. -f1)
+        if [ "$JAVA_VERSION" -le 20 ]; then
+            echo "JDK version $JAVA_VERSION found, requires 21; require download"
             
             get_jdk
             return 0
