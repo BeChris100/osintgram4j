@@ -7,6 +7,7 @@ import net.bc100dev.commons.utils.io.UserIO;
 import net.bc100dev.osintgram4j.sh.Shell;
 import net.bc100dev.osintgram4j.sh.ShellConfig;
 import net.bc100dev.osintgram4j.sh.ShellException;
+import net.bc100dev.osintgram4j.sh.ShellFile;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -88,9 +89,10 @@ public class MainClass {
         if (!NativeLoader.isLoaded())
             throw new RuntimeException("native library unable to load");
 
-        boolean adminCheck = true;
-
         List<ShellConfig> configList = new ArrayList<>();
+        ShellFile shellFile = null;
+
+        StringBuilder suppressStr = new StringBuilder();
 
         if (args.length >= 1) {
             switch (args[0]) {
@@ -119,7 +121,25 @@ public class MainClass {
 
                     System.exit(0);
                 }
-                case "--no-admin-check" -> adminCheck = false;
+                default -> {
+                    String n = args[0];
+                    File file = new File(n);
+                    if (!file.exists()) {
+                        configList.add(ShellConfig.create("CmdArgument.UserTarget", n));
+                        break;
+                    }
+
+                    if (!file.canRead()) {
+                        System.err.println("\"" + file.getPath() + "\": Permission denied");
+                        break;
+                    }
+
+                    try {
+                        shellFile = ShellFile.open(file);
+                    } catch (IOException ex) {
+                        ex.printStackTrace(System.err);
+                    }
+                }
             }
 
             for (String arg : args) {
@@ -157,19 +177,38 @@ public class MainClass {
                         }
                     }
                 }
+
+                if (arg.startsWith("-S")) {
+                    switch (arg) {
+                        case "-Sscript_uses" -> {
+                            if (suppressStr.toString().contains("scripts"))
+                                break;
+
+                            suppressStr.append("scripts ");
+                        }
+                        case "-Sadmin_checks" -> {
+                            if (suppressStr.toString().contains("admin_checks"))
+                                break;
+
+                            suppressStr.append("admin_checks ");
+                        }
+                    }
+                }
             }
         }
 
-        if (adminCheck) {
+        if (!suppressStr.toString().contains("admin_checks")) {
             try {
-                if (UserIO.isAdmin()) {
-                    if (isWindows())
-                        System.out.println("The current process is running with elevated privileges. If you have encountered errors that may relate to not being executed without administrative privileges, you may continue, otherwise consider running processes without administrative privileges, as it may bring unexpected damages.");
-                    else
-                        System.out.println("The current process is running as the Root user. If you have encountered errors that may relate to not being executed without administrative privileges, you may continue, otherwise consider running processes as normal users, as it may bring unexpected damages.");
+                if (NativeLoader.isLoaded()) {
+                    if (UserIO.isAdmin()) {
+                        if (isWindows())
+                            System.out.println("The current process is running with elevated privileges. If you have encountered errors that may relate to not being executed without administrative privileges, you may continue, otherwise consider running processes without administrative privileges, as it may bring unexpected damages.");
+                        else
+                            System.out.println("The current process is running as the Root user. If you have encountered errors that may relate to not being executed without administrative privileges, you may continue, otherwise consider running processes as normal users, as it may bring unexpected damages.");
 
-                    System.out.println("As a security warning: Do not run any programs with high privileges, unless that you trust the Software that you are about to execute and you know, what you are doing.");
-                    System.out.println("To disable this warning message, either pass '--no-admin-check' or head over to the Settings file.");
+                        System.out.println("As a security warning: Do not run any programs with high privileges, unless that you trust the Software that you are about to execute and you know, what you are doing.");
+                        System.out.println("To disable this warning message, either pass '-Sadmin_checks' or head over to the Settings file.");
+                    }
                 }
             } catch (ApplicationException ex) {
                 ex.printStackTrace();
@@ -177,10 +216,19 @@ public class MainClass {
         }
 
         try {
-            Shell appShell = new Shell();
+            String suppress = suppressStr.toString();
+            if (!suppress.trim().isEmpty())
+                suppress = suppress.substring(0, suppress.length() - 1);
+
+            Shell appShell = new Shell(suppress);
 
             if (!configList.isEmpty())
                 appShell.appendConfig(configList);
+
+            if (shellFile != null) {
+                appShell.runScript(shellFile);
+                return;
+            }
 
             appShell.launch();
         } catch (IOException | ShellException ex) {

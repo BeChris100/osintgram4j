@@ -11,7 +11,7 @@
 
 
 JNIEXPORT jint JNICALL Java_net_bc100dev_commons_utils_io_UserIO_getGid(JNIEnv* env, jclass javaClass) {
-    int gid = -1;
+    unsigned int gid = -1;
 
 #ifdef __linux__
     gid = getgid();
@@ -20,11 +20,11 @@ JNIEXPORT jint JNICALL Java_net_bc100dev_commons_utils_io_UserIO_getGid(JNIEnv* 
     if (gid == -1)
         throwJavaAppException(env, "GetGID method outside of Linux environments not allowed");
 
-    return gid;
+    return static_cast<int>(gid);
 }
 
 JNIEXPORT jint JNICALL Java_net_bc100dev_commons_utils_io_UserIO_getUid(JNIEnv* env, jclass javaClass) {
-    int uid = -1;
+    unsigned int uid = -1;
 
 #ifdef __linux__
     uid = getuid();
@@ -33,7 +33,7 @@ JNIEXPORT jint JNICALL Java_net_bc100dev_commons_utils_io_UserIO_getUid(JNIEnv* 
     if (uid == -1)
         throwJavaAppException(env, "GetUID method outside of Linux environments not allowed");
 
-    return uid;
+    return static_cast<int>(uid);
 }
 
 JNIEXPORT jboolean JNICALL Java_net_bc100dev_commons_utils_io_UserIO_nIsAdmin(JNIEnv *, jclass) {

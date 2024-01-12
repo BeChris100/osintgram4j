@@ -25,7 +25,7 @@ public class NativeLoader {
 
     public static boolean isLoaded() {
         if (isMac())
-            return true;
+            return false;
 
         return loaded;
     }

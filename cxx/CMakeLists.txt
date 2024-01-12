@@ -15,7 +15,9 @@ add_library(osintgram4j-cxx SHARED
         src/ConsoleSize.cpp src/ConsoleSize.h
         src/UserIO.cpp src/UserIO.h
         src/ExceptionHandle.cpp
-        src/ExceptionHandle.h)
+        src/ExceptionHandle.h
+        src/MemoryInfo.cpp
+)
 
 # Windows on Linux compilation
 if (${CMAKE_CXX_COMPILER} MATCHES "mingw" OR ${CMAKE_SYSTEM_NAME} MATCHES "win")

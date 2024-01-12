@@ -4,11 +4,14 @@ import net.bc100dev.commons.CLIParser;
 import net.bc100dev.commons.ResourceManager;
 import net.bc100dev.commons.Terminal;
 import net.bc100dev.commons.utils.Utility;
+import net.bc100dev.osintgram4j.MainClass;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.List;
 
+import static net.bc100dev.commons.Terminal.TermColor.*;
 import static net.bc100dev.osintgram4j.TitleBlock.TITLE_BLOCK;
 
 /**
@@ -18,6 +21,11 @@ import static net.bc100dev.osintgram4j.TitleBlock.TITLE_BLOCK;
  */
 public class Shell {
 
+    private boolean running = false, scriptWarning = false;
+
+    private final boolean terminal = System.console() != null;
+    private final String suppress;
+
     public static Scanner scIn;
 
     private final List<ShellConfig> shellConfigList = new ArrayList<>();
@@ -25,14 +33,18 @@ public class Shell {
 
     private String PS1 = "==> ";
 
+    // Since I already hate you all, you guys have to reset the color manually via the Script itself. No automatic resets here!
+    private Terminal.TermColor termColor = null;
+
     /**
      * Initializes the PCL with the necessary Input and the necessary commands.
      *
      * @throws ShellException May throw an exception during initializing the commands.
      * @throws IOException    Throws an exception, when cannot read any command entries
      */
-    public Shell() throws IOException, ShellException {
+    public Shell(String suppress) throws IOException, ShellException {
         Shell.scIn = new Scanner(System.in);
+        this.suppress = suppress;
 
         appendCallers(Shell.class, "/net/bc100dev/osintgram4j/res/cmd_list_d/app-core.json");
     }
@@ -129,31 +141,11 @@ public class Shell {
         }
     }
 
-    /**
-     * The beauty happens here: The interactive application shell.
-     */
-    private void cmd() {
-        System.out.print(PS1);
-        String ln = scIn.nextLine().trim();
+    private ShellExecution getExecutionLine(String line) {
+        String[] lnSplits = CLIParser.translateCmdLine(line);
 
-        if (ln.isEmpty()) {
-            cmd();
-            return;
-        }
-
-        if (ln.startsWith("&")) {
-            assignCfg(ln);
-            cmd();
-            return;
-        }
-
-        String[] lnSplits = CLIParser.translateCmdLine(ln);
-
-        if (lnSplits.length == 0) {
-            Terminal.println(Terminal.TermColor.RED, String.format("Syntax error with parsing line \"%s\"", ln), true);
-            cmd();
-            return;
-        }
+        if (lnSplits.length == 0)
+            return null;
 
         String exec = lnSplits[0];
         String[] givenArgs = new String[lnSplits.length - 1];
@@ -161,112 +153,224 @@ public class Shell {
         if (lnSplits.length > 1)
             System.arraycopy(lnSplits, 1, givenArgs, 0, lnSplits.length - 1);
 
-        switch (exec) {
-            case "help", "app-help", "?" -> {
-                StringTokenizer tok = new StringTokenizer(ln, " ");
-                Map<String, String> helps = new HashMap<>();
+        return new ShellExecution(exec, givenArgs);
+    }
 
-                while (tok.hasMoreTokens()) {
-                    String tokVal = tok.nextToken();
+    /**
+     * The beauty happens here: The interactive application shell.
+     */
+    private void cmd() {
+        while (running) {
+            try {
+                if (terminal)
+                    System.out.print(PS1);
 
-                    if (tokVal.equals("help"))
-                        // We do not need any help from the "help" command
-                        continue;
+                String ln = scIn.nextLine().trim();
 
-                    for (ShellCaller caller : shellCallers) {
-                        if (caller.getCommand().equals(tokVal)) {
-                            try {
-                                if (helps.containsKey(tokVal))
-                                    continue;
+                if (ln.isEmpty())
+                    continue;
 
-                                helps.put(tokVal, caller.retrieveLongHelp());
-                            } catch (ShellException ignore) {
-                                Terminal.println(Terminal.TermColor.RED,
-                                        String.format("Unknown command \"%s\"", tokVal), true);
-                            }
-                        } else {
-                            for (String altCommand : caller.getAlternateCommands()) {
-                                if (altCommand.equals(tokVal)) {
+                if (ln.startsWith("&")) {
+                    assignCfg(ln);
+                    continue;
+                }
+
+                ShellExecution execution = getExecutionLine(ln);
+                if (execution == null)
+                    continue;
+
+                String exec = execution.exec();
+                String[] givenArgs = execution.args();
+
+                switch (exec) {
+                    case "help", "app-help", "?" -> {
+                        StringTokenizer tok = new StringTokenizer(ln, " ");
+                        Map<String, String> helps = new HashMap<>();
+
+                        while (tok.hasMoreTokens()) {
+                            String tokVal = tok.nextToken();
+
+                            if (tokVal.equalsIgnoreCase("help"))
+                                // We do not need any help from the "help" command
+                                continue;
+
+                            for (ShellCaller caller : shellCallers) {
+                                if (caller.getCommand().equals(tokVal)) {
                                     try {
-                                        if (helps.containsKey(caller.getCommand()))
+                                        if (helps.containsKey(tokVal))
                                             continue;
 
-                                        helps.put(caller.getCommand(), caller.retrieveLongHelp());
+                                        helps.put(tokVal, caller.retrieveLongHelp());
                                     } catch (ShellException ignore) {
                                         Terminal.println(Terminal.TermColor.RED,
                                                 String.format("Unknown command \"%s\"", tokVal), true);
                                     }
+                                } else {
+                                    for (String altCommand : caller.getAlternateCommands()) {
+                                        if (altCommand.equals(tokVal)) {
+                                            try {
+                                                if (helps.containsKey(caller.getCommand()))
+                                                    continue;
+
+                                                helps.put(caller.getCommand(), caller.retrieveLongHelp());
+                                            } catch (ShellException ignore) {
+                                                Terminal.println(Terminal.TermColor.RED,
+                                                        String.format("Unknown command \"%s\"", tokVal), true);
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
-                    }
-                }
 
-                if (!helps.keySet().isEmpty()) {
-                    List<String> cmd = new ArrayList<>(helps.keySet());
+                        if (!helps.keySet().isEmpty()) {
+                            List<String> cmd = new ArrayList<>(helps.keySet());
 
-                    if (cmd.size() == 1)
-                        Terminal.println(Terminal.TermColor.BLUE, helps.get(cmd.getFirst()), true);
-                    else {
-                        for (int i = 0; i < cmd.size(); i++) {
-                            Terminal.println(Terminal.TermColor.CYAN, cmd.get(i), true);
-                            Terminal.println(Terminal.TermColor.BLUE, helps.get(cmd.get(i)), true);
+                            if (cmd.size() == 1)
+                                Terminal.println(Terminal.TermColor.BLUE, helps.get(cmd.getFirst()), true);
+                            else {
+                                for (int i = 0; i < cmd.size(); i++) {
+                                    Terminal.println(CYAN, cmd.get(i), true);
+                                    Terminal.println(Terminal.TermColor.BLUE, helps.get(cmd.get(i)), true);
 
-                            if (i != cmd.size() - 1)
-                                System.out.println();
+                                    if (i != cmd.size() - 1)
+                                        System.out.println();
+                                }
+                            }
+                        } else {
+                            Terminal.println(Terminal.TermColor.GREEN, TITLE_BLOCK(), true);
+                            System.out.println();
+
+                            int maxCmdLength = 0;
+
+                            for (ShellCaller caller : shellCallers) {
+                                String cmd = caller.getCommand();
+                                if (cmd.length() > maxCmdLength)
+                                    maxCmdLength = cmd.length();
+                            }
+
+                            maxCmdLength += 5;
+
+                            for (ShellCaller caller : shellCallers) {
+                                String cmd = caller.getCommand();
+                                int spaces = maxCmdLength - cmd.length();
+
+                                Terminal.print(CYAN, cmd + " ".repeat(spaces), true);
+                                Terminal.println(Terminal.TermColor.YELLOW, caller.retrieveShortHelp(), true);
+                            }
                         }
                     }
-                } else {
-                    Terminal.println(Terminal.TermColor.GREEN, TITLE_BLOCK(), true);
-                    System.out.println();
+                    case "echo", "print" -> {
+                        if (!suppress.contains("scripts")) {
+                            if (!scriptWarning) {
+                                Terminal.errPrintln(YELLOW, "Some commands are meant for Script-use only.", false);
+                                Terminal.errPrintln(YELLOW, "See https://github.com/BeChris100/osintgram4j/wiki/Scripting-Guide", false);
+                                Terminal.errPrintln(YELLOW, "To disable this warning for one Application Session, pass '-Sscript-uses'.", true);
+                                scriptWarning = true;
+                            }
+                        }
 
-                    int maxCmdLength = 0;
-
-                    for (ShellCaller caller : shellCallers) {
-                        String cmd = caller.getCommand();
-                        if (cmd.length() > maxCmdLength)
-                            maxCmdLength = cmd.length();
+                        print_ln(givenArgs);
                     }
+                    case "exit", "quit", "close" -> stopShell();
+                    default -> execCommand(shellConfigList, exec, givenArgs);
+                }
+            } catch (NoSuchElementException ignore) {
+                // This exception can be ignored: can occur, when a pipe is being used in the Shell Execution Code
+                // For example: 'echo help | osintgram4j'
+                stopShell();
+            }
+        }
 
-                    maxCmdLength += 5;
+        scIn.close();
+        System.exit(0);
+    }
 
-                    for (ShellCaller caller : shellCallers) {
-                        String cmd = caller.getCommand();
-                        int spaces = maxCmdLength - cmd.length();
+    private void print_ln(String[] args) {
+        for (int i = 0; i < args.length; i++) {
+            String arg = args[i];
+            boolean lastArg = i != args.length - 1;
 
-                        Terminal.print(Terminal.TermColor.CYAN, cmd + " ".repeat(spaces), true);
-                        Terminal.println(Terminal.TermColor.YELLOW, caller.retrieveShortHelp(), true);
+            if (!arg.contains("%"))
+                Terminal.print(termColor, arg + (lastArg ? " " : ""), false);
+
+            int colorIndex;
+
+            if (arg.contains("%c_")) {
+                colorIndex = arg.indexOf("%c_") + "%c_".length();
+                int lastPos = arg.indexOf('%', colorIndex);
+
+                String sb = arg.substring(colorIndex, lastPos).toLowerCase();
+
+                switch (sb) {
+                    case "reset" -> {
+                        Terminal.print(RESET, null, false);
+                        termColor = RESET;
+                    }
+                    case "black" -> {
+                        Terminal.print(BLACK, null, false);
+                        termColor = BLACK;
+                    }
+                    case "red" -> {
+                        Terminal.print(RED, null, false);
+                        termColor = RED;
+                    }
+                    case "green" -> {
+                        Terminal.print(GREEN, null, false);
+                        termColor = GREEN;
+                    }
+                    case "yellow" -> {
+                        Terminal.print(YELLOW, null, false);
+                        termColor = YELLOW;
+                    }
+                    case "blue" -> {
+                        Terminal.print(BLUE, null, false);
+                        termColor = BLUE;
+                    }
+                    case "purple" -> {
+                        Terminal.print(PURPLE, null, false);
+                        termColor = PURPLE;
+                    }
+                    case "cyan" -> {
+                        Terminal.print(CYAN, null, false);
+                        termColor = CYAN;
+                    }
+                    case "white" -> {
+                        Terminal.print(WHITE, null, false);
+                        termColor = WHITE;
+                    }
+                    default -> {
+                        Terminal.print(null, null, false);
+                        termColor = null;
                     }
                 }
 
-                cmd();
-                return;
+                String text = arg.substring(lastPos + 1);
+                if (text.isEmpty())
+                    continue;
+
+                Terminal.print(termColor, text + (lastArg ? " " : ""), false);
             }
-            case "exit", "quit", "close" -> {
-                scIn.close();
-                System.exit(0);
-                return;
-            }
-            default -> execCommand(exec, givenArgs);
         }
 
-        cmd();
+        Terminal.println(termColor, "", true);
     }
 
     /**
      * Executes a command from the parsed line.
      *
+     * @param env  The environment parameter
      * @param exec The command parameter
      * @param args Given PCL command parameters
      */
-    private void execCommand(String exec, String[] args) {
+    private void execCommand(List<ShellConfig> env, String exec, String[] args) {
         boolean cmdFound = false;
         for (ShellCaller caller : shellCallers) {
-            if (caller.getCommand().equals(exec)) {
+            if (caller.getCommand().equalsIgnoreCase(exec)) {
                 cmdFound = true;
 
                 try {
-                    int code = caller.execute(args, shellConfigList);
+                    int code = caller.execute(args, env);
                     if (code != 0) {
                         Terminal.println(Terminal.TermColor.RED,
                                 caller.getCommand() + ": exit code " + code, true);
@@ -282,7 +386,7 @@ public class Shell {
                         cmdFound = true;
 
                         try {
-                            int code = caller.execute(args, shellConfigList);
+                            int code = caller.execute(args, env);
                             if (code != 0) {
                                 Terminal.println(Terminal.TermColor.RED,
                                         alternate + ": exit code " + code, true);
@@ -303,6 +407,48 @@ public class Shell {
      * Launches the interactive Shell
      */
     public void launch() {
+        running = true;
         cmd();
     }
+
+    /**
+     * Stops the Application Shell
+     */
+    public void stopShell() {
+        running = false;
+    }
+
+    public void runScript(ShellFile shellFile) throws IOException, ShellException {
+        boolean shownHelpWarning = false;
+
+        appendCallers(MainClass.class, "/net/bc100dev/osintgram4j/res/cmd_list_d/defaults.json");
+
+        for (String inst : shellFile.getInstructions()) {
+            ShellExecution execution = getExecutionLine(inst);
+            if (execution == null)
+                continue;
+
+            String exec = execution.exec();
+            String[] args = execution.args();
+
+            switch (exec) {
+                case "help", "app-help", "?" -> {
+                    if (!shownHelpWarning) {
+                        Terminal.errPrintln(Terminal.TermColor.YELLOW, "The use of the `help` command during scripts are not shown.", true);
+                        shownHelpWarning = true;
+                    }
+                }
+                case "exit", "quit", "close" -> {
+                    stopShell();
+                    System.exit(0);
+                }
+                case "echo", "print" -> print_ln(args);
+                default -> execCommand(shellFile.getEnvironment(), exec, args);
+            }
+        }
+    }
+
+    private record ShellExecution(String exec, String[] args) {
+    }
+
 }

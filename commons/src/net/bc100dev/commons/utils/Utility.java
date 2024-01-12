@@ -31,9 +31,9 @@ public class Utility {
         if (counts[0] == counts[1])
             return "\r\n";
         else if (counts[1] >= 1 && counts[0] == 0)
-            return "\r";
-        else if (counts[0] >= 1 && counts[1] == 0)
             return "\n";
+        else if (counts[0] >= 1 && counts[1] == 0)
+            return "\r";
         else
             return System.lineSeparator();
     }

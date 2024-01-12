@@ -2,13 +2,21 @@ package net.bc100dev.osintgram4j.cmd;
 
 import net.bc100dev.commons.Terminal;
 import net.bc100dev.osintgram4j.HelpPage;
+import net.bc100dev.osintgram4j.NativeLoader;
 import net.bc100dev.osintgram4j.sh.ShellConfig;
 
 import java.util.List;
 
+import static net.bc100dev.commons.utils.RuntimeEnvironment.isMac;
 import static net.bc100dev.commons.utils.SizeConvert.byteCountSI;
 
 public class AppRuntime {
+
+    private static native long sysTotalMemory();
+
+    private static native long sysAvailableMemory();
+
+    private static native long sysFreeMemory();
 
     private static String maxMem(Runtime runtime) {
         return byteCountSI(runtime.maxMemory());
@@ -32,6 +40,13 @@ public class AppRuntime {
                 "Total Memory: " + totalMem(runtime) + "\n" +
                 "Allocated Memory: " + allocMem(runtime);
 
+        if (NativeLoader.isLoaded()) {
+            str += "\n" +
+                    "System Total Memory: " + byteCountSI(sysTotalMemory()) + "\n" +
+                    "System Available Memory: " + byteCountSI(sysAvailableMemory()) + "\n" +
+                    "System Free Memory: " + byteCountSI(sysFreeMemory());
+        }
+
         Terminal.println(null, str, false);
 
         return 0;
@@ -40,15 +55,16 @@ public class AppRuntime {
     public static int launchCmd(String[] args, List<ShellConfig> shellConfigs) {
         Runtime rn = Runtime.getRuntime();
 
-        Terminal.println(Terminal.TermColor.YELLOW, "Note: this is the current Application runtime, not system information", true);
-
         if (args == null || args.length == 0)
             return defaultInvoke(rn);
 
         boolean bMaxMem = false,
                 bTotalMem = false,
                 bFreeMem = false,
-                bAllocMem = false;
+                bAllocMem = false,
+                bSysTotalMem = false,
+                bSysAvailableMem = false,
+                bSysFreeMem = false;
 
         boolean invokeGc = false;
 
@@ -59,6 +75,20 @@ public class AppRuntime {
                 case "-mf" -> bFreeMem = true;
                 case "-mt" -> bTotalMem = true;
                 case "-mc" -> bAllocMem = true;
+                case "-m" -> {
+                    bMaxMem = true;
+                    bFreeMem = true;
+                    bTotalMem = true;
+                    bAllocMem = true;
+                }
+                case "-st" -> bSysTotalMem = true;
+                case "-sa" -> bSysAvailableMem = true;
+                case "-sf" -> bSysFreeMem = true;
+                case "-s" -> {
+                    bSysTotalMem = true;
+                    bSysAvailableMem = true;
+                    bSysFreeMem = true;
+                }
                 case "-h", "--help", "?" -> {
                     Terminal.println(Terminal.TermColor.CYAN, helpCmd(), true);
                     return 0;
@@ -66,17 +96,33 @@ public class AppRuntime {
             }
         }
 
+        if (bTotalMem)
+            Terminal.println(null, "Total memory: " + totalMem(rn), false);
+
         if (bMaxMem)
             Terminal.println(null, "Maximum memory: " + maxMem(rn), false);
+
+        if (bAllocMem)
+            Terminal.println(null, "Allocated memory: " + allocMem(rn), false);
 
         if (bFreeMem)
             Terminal.println(null, "Free memory: " + freeMem(rn), false);
 
-        if (bTotalMem)
-            Terminal.println(null, "Total memory: " + totalMem(rn), false);
+        if (bSysTotalMem || bSysAvailableMem || bSysFreeMem) {
+            if (NativeLoader.isLoaded()) {
+                Terminal.println(Terminal.TermColor.YELLOW, "System Memory Info: some values are not 100% accurate", true);
 
-        if (bAllocMem)
-            Terminal.println(null, "Allocated memory: " + allocMem(rn), false);
+                if (bSysTotalMem)
+                    Terminal.println(null, "System Total Memory: " + byteCountSI(sysTotalMemory()), false);
+
+                if (bSysAvailableMem)
+                    Terminal.println(null, "System Available Memory: " + byteCountSI(sysAvailableMemory()), false);
+
+                if (bSysFreeMem)
+                    Terminal.println(null, "System Free Memory: " + byteCountSI(sysFreeMemory()), false);
+            }
+        } else
+            Terminal.errPrintln(Terminal.TermColor.RED, "Cannot retrieve System Memory Information: library not loaded", true);
 
         if (invokeGc) {
             Terminal.println(Terminal.TermColor.YELLOW, "Invoking GC...", true);
@@ -95,6 +141,14 @@ public class AppRuntime {
         helpPage.addArg("-mf", null, "Displays free memory");
         helpPage.addArg("-mt", null, "Displays total memory");
         helpPage.addArg("-mc", null, "Displays currently allocated memory");
+        helpPage.addArg("-m", null, "Displays the current Application Runtime Memory");
+
+        if (!isMac()) {
+            helpPage.addArg("-st", null, "Displays the System Total Memory");
+            helpPage.addArg("-sa", null, "Displays the System Available Memory");
+            helpPage.addArg("-sf", null, "Displays the System Free Memory (not 100% accurate)");
+            helpPage.addArg("-s", null, "Displays the current System Memory state");
+        }
 
         return "Displays the current Application Java Runtime.\n\nOptions:\n" + helpPage.display();
     }

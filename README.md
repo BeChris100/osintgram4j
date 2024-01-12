@@ -14,8 +14,9 @@ Osintgram for Java.
 ---
 
 ## Disclaimer
-Yes, I know that I used ChatGPT, but just bare with the disclaimer. It is necessary
-to follow all laws, Terms of Service and to follow ethical guidelines.
+Yes, I know that I used ChatGPT, but please take a moment to carefully read the
+disclaimer below. It contains important information about the legal and ethical use
+of this software, along following all laws and Terms of Service.
 
 This software, OSINTgram (OSINT for Instagram), is indented for legitimate and
 ethical use only. Me, [the developer](https://github.com/Datalux) and other
@@ -51,12 +52,14 @@ contact to ensure the legitimacy between me and the developer.
 ## Reasoning on Development
 The main reason on why the development started for this project is to have the
 stability of the project Osintgram back, being kept up with the Instagram APIs and
-make the setup easy (even though Python is easy, but Java is my favorite). But why
-won't I go for Maven nor Gradle? Because in my own eyes, both of them suck,
-especially on projects with multiple modules that I mainly make. Since they give me
-headache, I do not work with those Build Systems, and will decide to make a better
-alternative to those Build Systems. It will still use the Maven Repository, so no
-worries.
+make the setup easy (even though Python is easy, but Java is my favorite). The
+project does not utilize Maven or Gradle as build tools. This decision was made
+after considering various factors, including personal preference and the specific
+requirements of this project. I am working on an alternative approach that might
+better align with the project's structure, and my workflow. The fact that I often
+use multiple modules instead of just one in IntelliJ gives me a headache with Maven
+and Gradle, which often makes IntelliJ hang on me. My own build tool will still use
+the Maven Repository (hope with permission), so no worries.
 
 Also, it might look like I bloated this project to the max, but I am still trying
 to keep it as lightweight as possible. Note that Java Development can receive more
@@ -116,3 +119,5 @@ Section coming soon.
 
 ## Usage
 Refer to [the Usage file](USAGE.md) for this project.
+
+Oh, and also... can you find all the Easter eggs in this project?

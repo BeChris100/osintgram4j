@@ -81,7 +81,8 @@
                 "Application-Runtime",
                 "App-Runtime",
                 "Get-ApplicationRuntime",
-                "Get-AppRuntime"
+                "Get-AppRuntime",
+                "Get-Runtime"
             ]
         },
         {

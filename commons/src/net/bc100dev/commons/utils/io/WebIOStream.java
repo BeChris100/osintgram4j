@@ -52,7 +52,7 @@ public class WebIOStream {
 
             boolean doPayload = false;
             for (String _method : PAYLOAD_METHODS) {
-                if (method.equals(_method)) {
+                if (method.equalsIgnoreCase(_method)) {
                     doPayload = true;
                     break;
                 }
@@ -71,16 +71,10 @@ public class WebIOStream {
             conn.connect();
 
             Response _response = new Response(conn.getResponseCode(), conn.getResponseMessage());
-            InputStream is;
+            String code = String.valueOf(_response.getCode());
+            boolean isErrStream = code.startsWith("4") || code.startsWith("5");
 
-            if (String.valueOf(conn.getResponseCode()).startsWith("2"))
-                is = conn.getInputStream();
-            else if (String.valueOf(conn.getResponseCode()).startsWith("4") || String.valueOf(conn.getResponseCode()).startsWith("5"))
-                is = conn.getErrorStream();
-            else
-                throw new IOException("Unknown code " + conn.getResponseCode() + " received");
-
-            return new WebIOStream(_response, conn, new DataInputStream(is));
+            return new WebIOStream(_response, conn, isErrStream ? new DataInputStream(conn.getErrorStream()) : new DataInputStream(conn.getInputStream()));
         } catch (URISyntaxException e) {
             throw new ApplicationIOException("Error in creating a URI", e);
         }
