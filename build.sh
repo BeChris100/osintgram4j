@@ -54,7 +54,7 @@ else
     cd "cxx"
     mkdir -p build
     cd "build"
-    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=/usr/bin/x86_64-linux-gnu-gcc -DCMAKE_CXX_COMPILER=/usr/bin/x86_64-linux-gnu-gcc -DCMAKE_CPP_COMPILER=/usr/bin/x86_64-linux-gnu-g++ ..
+    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=/usr/bin/x86_64-linux-gnu-gcc -DCMAKE_CXX_COMPILER=/usr/bin/x86_64-linux-gnu-g++ ..
     make
     cp libosintgram4j-cxx.so "$CURRENT_WORKDIR/build/project/input"
 
