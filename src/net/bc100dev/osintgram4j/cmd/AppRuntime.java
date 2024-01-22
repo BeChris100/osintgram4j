@@ -90,7 +90,7 @@ public class AppRuntime {
                     bSysFreeMem = true;
                 }
                 case "-h", "--help", "?" -> {
-                    Terminal.println(Terminal.TermColor.CYAN, helpCmd(), true);
+                    Terminal.println(Terminal.TermColor.CYAN, helpCmd(args), true);
                     return 0;
                 }
             }
@@ -120,9 +120,9 @@ public class AppRuntime {
 
                 if (bSysFreeMem)
                     Terminal.println(null, "System Free Memory: " + byteCountSI(sysFreeMemory()), false);
-            }
-        } else
-            Terminal.errPrintln(Terminal.TermColor.RED, "Cannot retrieve System Memory Information: library not loaded", true);
+            } else
+                Terminal.errPrintln(Terminal.TermColor.RED, "Cannot retrieve System Memory Information: library not loaded", true);
+        }
 
         if (invokeGc) {
             Terminal.println(Terminal.TermColor.YELLOW, "Invoking GC...", true);
@@ -133,7 +133,7 @@ public class AppRuntime {
     }
 
     // Invoked manually by `Method.invoke`
-    public static String helpCmd() {
+    public static String helpCmd(String[] args) {
         HelpPage helpPage = new HelpPage();
         helpPage.setSpaceWidth(5);
         helpPage.addArg("-gc", null, "Invoke the Garbage Collector");

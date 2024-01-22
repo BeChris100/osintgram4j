@@ -61,7 +61,7 @@ public class FileEncryption {
 
         decData = new byte[padded];
 
-        inStream.read(decData);
+        int ignore = inStream.read(decData);
         inStream.close();
 
         for (int i = (int) sourceFile.length(); i < padded; ++i)
@@ -89,7 +89,7 @@ public class FileEncryption {
 
         FileInputStream inStream = new FileInputStream(sourceFile);
         encData = new byte[(int) sourceFile.length()];
-        inStream.read(encData);
+        int ignore = inStream.read(encData);
         inStream.close();
 
         decData = cipher.doFinal(encData);

@@ -1,40 +1,29 @@
 package com.instagram.api.auth;
 
 import com.instagram.api.ApiNetworkException;
-import net.bc100dev.commons.ApplicationRuntimeException;
-import net.bc100dev.commons.utils.io.FileEncryption;
-import net.bc100dev.commons.utils.io.FileUtil;
-import net.bc100dev.commons.utils.io.WebIOStream;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static net.bc100dev.commons.utils.RuntimeEnvironment.USER_HOME;
-import static net.bc100dev.commons.utils.RuntimeEnvironment.getOperatingSystem;
-
-public class UserAuthentication {
+public class UserManager {
 
     private final String username, password;
 
     private boolean authorized = false;
 
-    protected UserAuthentication(String username, String password) {
+    protected UserManager(String username, String password) {
         this.username = username;
         this.password = password;
     }
 
-    public static UserAuthentication openAuthentication(String username, String password) {
-        return new UserAuthentication(username, password);
+    public static UserManager openAuthentication(String username, String password) {
+        return new UserManager(username, password);
     }
 
     public boolean isAuthorized() {
@@ -70,7 +59,7 @@ public class UserAuthentication {
         return URLEncoder.encode(payloadStr.toString(), StandardCharsets.UTF_8);
     }
 
-    public void login(AuthenticationCallback callback) throws IOException {
+    public void login(AuthenticationCallback callback) throws IOException, GeneralSecurityException {
         if (username == null || password == null || username.trim().isEmpty() || password.trim().isEmpty())
             throw new ApiNetworkException("Username/Password is blank");
 
@@ -103,30 +92,14 @@ public class UserAuthentication {
             headers.put(opt[0].trim(), opt[1].trim());
         }
 
-        JSONObject payload = new JSONObject();
-        payload.put("username", username);
-        payload.put("queryParams", new JSONObject());
-        payload.put("trustedDeviceRecords", new JSONObject());
-        payload.put("optIntoOneTap", false);
-        // Commented out code: Password encryption not implemented
-        //payload.put("enc_password", mkAuthPass());
-        //payload.put("password", password);
+        PassEnc enc = new PassEnc("", (byte) 5);
+        String passEncrypted = enc.encryptPassword("bc100gaming");
+    }
 
-        String payloadStr = mkPayload(payload);
+    public void twoFactorLogin(TwoFactorIdentifier identifier, String code) throws IOException, GeneralSecurityException {
+    }
 
-        System.out.println("Payload: " + payloadStr);
-        System.out.println("Decoded Payload: " + URLDecoder.decode(payloadStr, StandardCharsets.UTF_8));
-
-        headers.put("Content-Length", String.valueOf(payloadStr.length()));
-
-        WebIOStream stream = WebIOStream.openStream("https://www.instagram.com/accounts/login/ajax/", "POST", headers, payloadStr.getBytes());
-        WebIOStream.Response response = stream.getResponse();
-        System.out.println("Login Result: " + response.getCode() + " - " + response.getMessage());
-
-        byte[] buff = stream.readContents();
-        stream.close();
-
-        System.out.println("Received data:\n" + new String(buff));
+    public void logout() throws IOException, GeneralSecurityException {
     }
 
 }

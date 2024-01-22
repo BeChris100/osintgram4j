@@ -18,8 +18,14 @@ import static net.bc100dev.osintgram4j.TitleBlock.TITLE_BLOCK;
  * The PCL (Process Command Line) is an interactive shell, used for
  * interacting with the Instagram Private APIs, along with the interaction
  * of the official and publicly available Instagram Graph API.
+ *
+ * The Shell class provides an interactive Shell Instance for the Application,
+ * used for interacting with the built-in Application commands, along with
+ * the interaction of
  */
 public class Shell {
+
+    private static Shell instance;
 
     private boolean running = false, scriptWarning = false;
 
@@ -28,8 +34,8 @@ public class Shell {
 
     public static Scanner scIn;
 
-    private final List<ShellConfig> shellConfigList = new ArrayList<>();
-    private final List<ShellCaller> shellCallers = new ArrayList<>();
+    private static final List<ShellConfig> shellConfigList = new ArrayList<>();
+    private static final List<ShellCaller> shellCallers = new ArrayList<>();
 
     private String PS1 = "==> ";
 
@@ -49,6 +55,10 @@ public class Shell {
         appendCallers(Shell.class, "/net/bc100dev/osintgram4j/res/cmd_list_d/app-core.json");
     }
 
+    public static Shell getInstance() {
+        return instance;
+    }
+
     public void appendConfig(List<ShellConfig> configList) {
         shellConfigList.addAll(configList);
     }
@@ -60,7 +70,7 @@ public class Shell {
      * @throws IOException    Will throw on Input Readers
      * @throws ShellException Will throw on classes/methods that are not found
      */
-    public void appendCallers(File jsonFile) throws IOException, ShellException {
+    public static void appendCallers(File jsonFile) throws IOException, ShellException {
         ShellCommandEntry entry = ShellCommandEntry.initialize(jsonFile);
         shellCallers.addAll(entry.getCommands());
     }
@@ -73,10 +83,10 @@ public class Shell {
      * @throws IOException    Will throw on Input Readers
      * @throws ShellException Will throw on classes/methods that are not found
      */
-    public void appendCallers(Class<?> correspondingClass, String resourceFile) throws IOException, ShellException {
+    public static void appendCallers(Class<?> correspondingClass, String resourceFile) throws IOException, ShellException {
         ResourceManager resMgr = new ResourceManager(correspondingClass, false);
         ShellCommandEntry entry = ShellCommandEntry.initialize(resMgr, resourceFile);
-        shellCallers.addAll(entry.getCommands());
+        Shell.shellCallers.addAll(entry.getCommands());
     }
 
     /**

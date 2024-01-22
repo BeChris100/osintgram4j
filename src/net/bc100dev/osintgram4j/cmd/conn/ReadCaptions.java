@@ -11,7 +11,7 @@ public class ReadCaptions {
     }
 
     // Invoked manually by `Method.invoke`
-    public static String helpCmd() {
+    public static String helpCmd(String[] args) {
         return """
                 Simple Return Page""";
     }

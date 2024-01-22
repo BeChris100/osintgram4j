@@ -230,7 +230,15 @@ public class ShellInstance {
                     }
                 }
                 case "--help", "-h", "?" -> {
-                    Terminal.println(Terminal.TermColor.BLUE, helpCmd(), true);
+                    String[] _args;
+
+                    if (args.length > 1) {
+                        _args = new String[args.length - 1];
+                        System.arraycopy(args, 1, _args, args.length, args.length - 1);
+                    } else
+                        _args = new String[0];
+
+                    Terminal.println(Terminal.TermColor.BLUE, helpCmd(_args), true);
                     return 0;
                 }
                 default -> {
@@ -296,7 +304,7 @@ public class ShellInstance {
     }
 
     // Invoked manually by `Method.invoke`
-    public static String helpCmd() {
+    public static String helpCmd(String[] args) {
         String defStr = """
                 The Shell (sh) command launches an instance of the Shell.
                 This initially launches the default Shell that is given by the "SHELL" environment.

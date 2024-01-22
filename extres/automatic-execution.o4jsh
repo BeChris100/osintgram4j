@@ -1,8 +1,8 @@
 #!/usr/bin/osintgram4j
 
-&Shell.RequireOS = linux
+&ShellInstance.CompatibleOS = linux,win
+&ShellInstance.RequireAdmin = false
 &Username = bc100dev
-&CookieFileLocation = {home}
 
 echo "Displays are cool"
 echo By the way, that also works now.
@@ -10,4 +10,6 @@ echo By the way, that also works now.
 echo %c_red%This is red; %c_green%along with being green and %c_yellow%yellow text also works now.
 echo Otherwise, you will encounter %c_reset%this.
 
-Get-Runtime -s
+Get-Runtime
+Get-ApplicationVersion
+*CliContinue

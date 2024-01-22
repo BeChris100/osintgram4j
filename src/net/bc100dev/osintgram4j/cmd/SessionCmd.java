@@ -64,7 +64,7 @@ public class SessionCmd {
     }
 
     private static int testImpl(String[] args, List<ShellConfig> shellConfigs) {
-        if (args.length != 0) {
+        if (args != null && args.length != 0) {
             switch (args[0]) {
                 case "--encrypt", "-e" -> {
                     if (args.length == 1) {
@@ -107,7 +107,7 @@ public class SessionCmd {
     }
 
     // Invoked manually by `Method.invoke`
-    public static String helpCmd() {
+    public static String helpCmd(String[] args) {
         return """
                 Session Manager for the Instagram Connection Status""";
     }

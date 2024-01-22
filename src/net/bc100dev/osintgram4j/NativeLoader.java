@@ -12,6 +12,11 @@ public class NativeLoader {
     private static boolean loaded = false;
 
     public static boolean hasLibrary() {
+        if (isMac()) {
+            Logger.verbose(NativeLoader.class, "Native Library Management on macOS is not implemented");
+            return false;
+        }
+
         String[] paths = System.getProperty("java.library.path").split(File.pathSeparator);
         for (String path : paths) {
             File libFile = new File(path, System.mapLibraryName("osintgram4j-cxx"));

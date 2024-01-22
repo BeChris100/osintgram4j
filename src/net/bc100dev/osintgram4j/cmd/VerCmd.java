@@ -59,7 +59,7 @@ public class VerCmd {
         try {
             Properties props = new Properties();
             ResourceManager mgr = new ResourceManager(MainClass.class, true);
-            InputStream is = mgr.getResourceInputStream("app_ver.cfg");
+            InputStream is = mgr.getResourceInputStream("res/app_ver.cfg");
 
             props.load(is);
 
@@ -121,7 +121,7 @@ public class VerCmd {
     }
 
     // Invoked manually by `Method.invoke`
-    public static String helpCmd() {
+    public static String helpCmd(String[] args) {
         HelpPage helpPage = new HelpPage();
         helpPage.setSpaceWidth(5);
         helpPage.addArg("-v", null, "Displays Version");
@@ -130,14 +130,6 @@ public class VerCmd {
         helpPage.addArg("-N", null, "Displays the Display name");
         helpPage.addArg("-f", null, "Displays current Flavor");
         helpPage.addArg("-F", null, "Displays current Flavor, but more readable");
-
-        /*
-        return """
-                Displays the current Application Version and Information.
-                
-                Options:
-                -v      Displays only the """;
-         */
 
         return "Displays the current Application Version and Information.\n\nOptions:\n" + helpPage.display();
     }

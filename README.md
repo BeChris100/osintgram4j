@@ -119,25 +119,19 @@ Step-by-step explanation:
    them will make sure that the files are executable.
 3. First Shell script (`setup.sh`) will create a working Build Environment. It
    will create a `build` folder, putting every necessary files, including external
-   libraries (`org.json` is only currently involved), 
+   libraries (`org.json` is only currently involved) and prepare the necessary
+   files.
+4. Running `build.sh` script will invoke the necessary CXX (C/C++ Commands) and
+   run the Java Compiler. Along the Java Compiler, the necessary resource files
+   are also being copied. After that, the `jdeps`, `jlink` and `jpackage` are being
+   executed, so that it generates an Application Package, making a native executable
+   of this project. When that is complete, a prompt will be displayed, if the
+   Application will be installed in `/usr/share/osintgram4j`, linking the binary
+   to `/usr/bin/osintgram4j`, making a persistent binary execution from anywhere.
 
-After creating the Application on the Instagram Developer Console, run the Shell
-Script command to get an initialized state of this project on your machine by
-running `setup.sh` (assuming that you have `wget` installed). Afterward, run
-`build.sh` to compile the project, placing all JAR files into the "build" directory.
-With that, it will generate the prepared binaries for the execution, which should
-be located under "build/pkg". To run the final build, do:
-
-```shell
-cd "build/pkg/osintgram4j"
-./bin/osintgram4j
-```
-
-What binaries were built there? The binaries that were built are produced by
-`jpackage`. It is a tool that deploys executables without the requirement of
-having to download the JRE/JDK. However, if you download the latest stable release
-for macOS, you will have to run `osintgram4j.sh` because I do not own a MacBook
-nor a macOS.
+However, if you wish to not install directly, the Application Package will be stored
+at the current working directory under `build/pkg/osintgram4j`, with the executable
+being under `bin/osintgram4j`.
 
 ---
 

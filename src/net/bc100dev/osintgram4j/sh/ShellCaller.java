@@ -28,7 +28,7 @@ public class ShellCaller {
                 throw new ShellException("No methods are given for the method");
 
             Method execMethod = this.callableClass.getDeclaredMethod("launchCmd", String[].class, List.class);
-            Method helpMethod = this.callableClass.getDeclaredMethod("helpCmd");
+            Method helpMethod = this.callableClass.getDeclaredMethod("helpCmd", String[].class);
 
             if (execMethod.getReturnType() != int.class)
                 throw new IllegalArgumentException("Execution Method does not return an Integer Value");

@@ -39,12 +39,12 @@ public class CacheCmd {
     // Invoked manually by `Method.invoke`
     public static int launchCmd(String[] args, List<ShellConfig> ignore) {
         if (args == null) {
-            Terminal.println(Terminal.TermColor.BLUE, helpCmd(), true);
+            Terminal.println(Terminal.TermColor.BLUE, helpCmd(new String[0]), true);
             return 0;
         }
 
         if (args.length == 0) {
-            Terminal.println(Terminal.TermColor.BLUE, helpCmd(), true);
+            Terminal.println(Terminal.TermColor.BLUE, helpCmd(new String[0]), true);
             return 0;
         }
 
@@ -68,7 +68,7 @@ public class CacheCmd {
                 }
             }
             case "-h", "--help" -> {
-                Terminal.println(Terminal.TermColor.BLUE, helpCmd(), true);
+                Terminal.println(Terminal.TermColor.BLUE, helpCmd(new String[0]), true);
                 return 0;
             }
         }
@@ -77,7 +77,7 @@ public class CacheCmd {
     }
 
     // Invoked manually by `Method.invoke`
-    public static String helpCmd() {
+    public static String helpCmd(String[] args) {
         return """
                 Manages the use of Cache, and if necessary, wipes them.
                 

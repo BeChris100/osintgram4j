@@ -9,18 +9,40 @@ import net.bc100dev.osintgram4j.sh.ShellConfig;
 import net.bc100dev.osintgram4j.sh.ShellException;
 import net.bc100dev.osintgram4j.sh.ShellFile;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import static net.bc100dev.commons.utils.RuntimeEnvironment.isMac;
 import static net.bc100dev.commons.utils.RuntimeEnvironment.isWindows;
 import static net.bc100dev.osintgram4j.TitleBlock.DISPLAY;
 import static net.bc100dev.osintgram4j.TitleBlock.TITLE_BLOCK;
 
 public class MainClass {
+
+    private static void init() {
+        Terminal.TermColor cRed = Terminal.TermColor.RED;
+
+        Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+
+            throwable.printStackTrace(pw);
+
+            Terminal.errPrintln(cRed, "While running the Application, the Main Thread crashed.", false);
+
+            if (throwable instanceof Error)
+                Terminal.errPrintln(cRed, "Java Errors cannot be caught, and can be only fixed within the code itself.", false);
+
+            if (throwable instanceof Exception)
+                Terminal.errPrintln(cRed, "For some reason, a piece of code was not surrounded within a try-catch, or a Runtime Error was encountered.", true);
+
+            Terminal.errPrintln(null, null, true);
+            Terminal.errPrintln(cRed, "Error/Exception Stacktrace:", true);
+            Terminal.errPrintln(cRed, sw.toString(), true);
+        });
+    }
 
     private static void usage(ProcessHandle ph) {
         System.out.println(TITLE_BLOCK());
@@ -83,11 +105,22 @@ public class MainClass {
     }
 
     public static void main(String[] args) {
-        if (NativeLoader.hasLibrary())
-            NativeLoader.load();
+        init();
 
-        if (!NativeLoader.isLoaded())
-            throw new RuntimeException("native library unable to load");
+        if (NativeLoader.hasLibrary()) {
+            NativeLoader.load();
+            Logger.info(MainClass.class, "Native Library successfully loaded");
+        } else
+            Logger.info(NativeLoader.class, "No Library found");
+
+        if (!NativeLoader.isLoaded()) {
+            if (!isMac()) {
+                Logger.error(MainClass.class, "Native Library unable to load");
+                throw new RuntimeException("native library unable to load");
+            }
+
+            Logger.warn(MainClass.class, "Skipping Native Library Load Check");
+        }
 
         List<ShellConfig> configList = new ArrayList<>();
         ShellFile shellFile = null;

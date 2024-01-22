@@ -14,7 +14,7 @@ public class ClsScr {
     }
 
     // Invoked manually by `Method.invoke`
-    public static String helpCmd() {
+    public static String helpCmd(String[] args) {
         return """
                 Clears the Terminal Screen, just like `clear` command on Linux/macOS or `cls` on Windows.""";
     }

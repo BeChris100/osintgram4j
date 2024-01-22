@@ -18,7 +18,7 @@ public class EnvCmd {
     }
 
     // Invoked manually by `Method.invoke`
-    public static String helpCmd() {
+    public static String helpCmd(String[] args) {
         return """
                 Environment command""";
     }

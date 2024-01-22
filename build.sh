@@ -44,6 +44,24 @@ else
     exit 1
 fi
 
+PREFIX=""
+if [ "$EUID" -ne 0 ]; then
+    if [ -n "$(command -v sudo)" ]; then
+        PREFIX="sudo"
+    elif [ -n "$(command -v doas)" ]; then
+        PREFIX="doas"
+    fi
+fi
+
+if [ "$#" -ne 0 ]; then
+    if [ "$1" == "--uninstall" ]; then
+        echo "Uninstalling osintgram4j"
+        "$PREFIX" rm -rf /usr/bin/osintgram4j /usr/share/osintgram4j
+    fi
+
+    exit 0
+fi
+
 mkdir -p build/pkg build/project/input build/project/commons build/project/instagram-api build/project/core
 
 echo "## Compiling CXX code"
@@ -104,12 +122,13 @@ cp build/libs/json.jar build/project/input/json.jar
 
 read -p "Do you want to install Osintgram (requires sudo privileges)? (Y/N): " INSTALL_CHOICE
 if [[ "$INSTALL_CHOICE" =~ ^[Yy]$ ]]; then
-    PREFIX=""
-
-    if [ "$EUID" -ne 0 ]; then
-        PREFIX="sudo"
+    if [ -f "/usr/bin/osintgram4j" ]; then
+        echo "Deleting previous installation"
+        "$PREFIX" rm /usr/bin/osintgram4j
+        "$PREFIX" rm -rf /usr/share/osintgram4j
     fi
 
+    echo "Copying built files"
     "$PREFIX" mkdir -p /usr/share/osintgram4j/
     "$PREFIX" cp -r build/pkg/osintgram4j/* /usr/share/osintgram4j
     "$PREFIX" ln -s /usr/share/osintgram4j/bin/osintgram4j /usr/bin/osintgram4j

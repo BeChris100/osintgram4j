@@ -25,6 +25,18 @@ public class Utility {
         }
     }
 
+    public static boolean convertToBoolean(String value, boolean defValue) {
+        if (value == null || value.trim().isEmpty())
+            return false;
+
+        if (value.equalsIgnoreCase("Y") || value.equalsIgnoreCase("Yes") ||
+                value.equalsIgnoreCase("1") || value.equalsIgnoreCase("true") ||
+                value.equalsIgnoreCase("enabled") || value.equalsIgnoreCase("active"))
+            return true;
+
+        return defValue;
+    }
+
     public static String getLineSeparator(String contents) {
         int[] counts = getLineSeparatorCounts(contents);
 
