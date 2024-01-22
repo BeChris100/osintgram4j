@@ -5,15 +5,6 @@
     "label": "Osintgram4j Commands",
     "command_list": [
         {
-            "command": "connection",
-            "description": "Connection Management via Client and Instagram APIs",
-            "class": ".cmd.Connection",
-            "alternates": [
-                "Manage-Connection",
-                "ConnectionManager"
-            ]
-        },
-        {
             "command": "sh",
             "description": "Runs a system interactive shell",
             "class": ".cmd.ShellInstance",
@@ -66,6 +57,10 @@
                 "CacheManager",
                 "Cache-Control",
                 "Cache-Manager",
+                "Cache-Ctl",
+                "Cache-Mgr",
+                "CacheCtl",
+                "CacheMgr",
                 "Cache",
                 "cache"
             ]

@@ -13,32 +13,36 @@ Osintgram for Java.
 
 ---
 
-## Disclaimer
-Yes, I know that I used ChatGPT, but please take a moment to carefully read the
-disclaimer below. It contains important information about the legal and ethical use
-of this software, along following all laws and Terms of Service.
+## Disclaimer (Rules)
+The use of any software, Osintgram / Osintgram4j included, is intended for
+legitimate and ethical use only. [Me](https://github.com/BeChris100),
+[the developer](https://github.com/Datalux) and other contributors of the Osintgram
+project do not condone or support any form of unethical activities, such as Illegal
+/ Black-Hat Hacking, or having malicious intents in the first place. It is essential
+to follow all relevant laws and Instagram's ToS (Terms of Service), while using
+this software.
 
-This software, OSINTgram (OSINT for Instagram), is indented for legitimate and
-ethical use only. Me, [the developer](https://github.com/Datalux) and other
-contributors of the Osintgram project do not condone or support any form of
-illegal, malicious, or unethical activities. It is essential to adhere to all
-relevant laws and Instagram's ToS (Terms of Service) when using this software.
+By using the Osintgram Project, you acknowledge and agree that:
 
-By using this project, you acknowledge and agree that:
+- You are responsible for your actions and usage of this software. That means, your
+  actions might, and could be, held reliable by the law enforcement. We, as the
+  devs, cannot replace the actions that the law should do.
+- Any misuse, illegal activities or violations of Instagram's policies are
+  prohibited. By breaking the rule, you agree that your account can be banned, if
+  this tool is being misused.
+- We, the developers of this project are not responsible for any consequences or
+  damages that might result from the use of this software. This project is designed
+  for information gathering purpose only, not to use for Blackmail or other things
+  that could be held reliable.
 
-- You are solely responsible for your actions and usage of this software.
-- Any misuse, illegal activities, or violations of Instagram's policies are
- strictly prohibited.
-- Me, the developer and other contributors of this project are not responsible for
- any consequences or damages resulting from the use of this software.
-
-Please use OSINTgram responsibly, respect privacy, and maintain ethical standards
-in all your activities.
+Please use the Osintgram project responsibly, respect privacy, maintain ethical
+standards in all your activities, and use the tool with explicit permission. For
+legal reasons, always have a legal document that you explicitly gained permission
+for your actions.
 
 ---
 
 ## Potential Takedown
-
 Another point to mention is that the original developer has all the right to tell
 me, if I am required to archive, delete or completely dump the project. While I am
 still happy on the development in this project, I am still trying to get in touch
@@ -50,42 +54,72 @@ contact to ensure the legitimacy between me and the developer.
 ---
 
 ## Reasoning on Development
-The main reason on why the development started for this project is to have the
-stability of the project Osintgram back, being kept up with the Instagram APIs and
-make the setup easy (even though Python is easy, but Java is my favorite). The
-project does not utilize Maven or Gradle as build tools. This decision was made
-after considering various factors, including personal preference and the specific
-requirements of this project. I am working on an alternative approach that might
-better align with the project's structure, and my workflow. The fact that I often
-use multiple modules instead of just one in IntelliJ gives me a headache with Maven
-and Gradle, which often makes IntelliJ hang on me. My own build tool will still use
-the Maven Repository (hope with permission), so no worries.
+The first reason that I started the development on this project is to have the
+stability of the Osintgram project back. Since the Instagram APIs have changed, and
+a single API Call have been removed, the use of the
+[original Project](https://github.com/Datalux/Osintgram) have broken the main
+method, which the project can no longer start. This is due to a single line, which
+I debugged, and will work with it, commented out. See
+[the Restoration Process](OrigRestore.md).
 
-Also, it might look like I bloated this project to the max, but I am still trying
-to keep it as lightweight as possible. Note that Java Development can receive more
-and more bloat from time to time, so this needs to be an expectation.
+Also, even though that Python is easy, I decided to switch to a different language.
+It is none other than Java itself. Yes, I use Java and C++, by the way. However,
+since I can be stubborn at some times, I decided to reject the offer that Gradle and
+Maven suggests, and go with the more controllable form, writing my own Build Process
+for the project. The reason that I don't use Maven or Gradle is because I have
+problems with IntelliJ, when I need to handle multiple modules, or when I want to
+separate packages into modules. It will always bug the IDE out, giving me headache
+on where the problem is. And also, I use IntelliJ Ultimate and CLion, by the way.
+
+To fill up the conception about me not using Gradle or Maven, I will be considering
+on working an alternative way on building any type of project that will support
+multiple languages that will like you using multiple modules instead of just one.
+This will be a time-saver, especially that I might choose to dump the Shell scripts
+for the Build Process, and use the new-style Building. I hear you, you don't like
+bloat on your system, but we live in 2024, as of now.
+
+Also, it might look like I bloated this project to the max, but I will try to keep
+it lightweight as possible. Please do note that Java Development can receive more
+and more bloat from time to time, since it can be time-consuming, or the fact that
+Java is very much verbose and that it forces you into OOP (Object oriented
+programming). The bloat should be more than an expectation.
+
+Another point to mention is that I won't provide the direct builds for Windows via
+the Batch / Powershell files, but I'll still provide the releases for the Windows
+platform. It is meant to be run on Linux instead of on Windows, since I'm an Arch
+Linux user, by the way.
 
 ---
 
-## Setup
-To set up with the new Osintgram project, you need to do a few steps. On Windows,
-use WSL, as the build process only supports Linux and macOS. However, you are able
-to download the stable release of Osintgram from the Releases Page, due to the
-complications within its Shell Script for the "Operating System Check" along with
-its WSL Check.
+## Build Process
+To set up your workspace for the Osintgram project, you can select this project,
+or [the original project](https://github.com/Datalux/Osintgram). However, this is
+Osintgram4j project, which is a part of the OSINT and the Osintgram Family.
 
-(Note that the creation of an Application on the Instagram Developer Console
-isn't relevant as of by the time of this update, but as soon as this Project
-asks you to state your Application ID, then it will mean that it shifted towards
-the Instagram default APIs.)
+This project is mainly targeted for the Linux platform, meaning that on Windows or
+macOS, you'll need a VM or a Cloud Shell Instance. A VM (Virtual Machine) is the
+recommended option, if you don't want to waste your money on a Cloud Shell / Web
+Server. On Windows, the recommended option is to use the WSL (Windows Subsystem
+for Linux), since it is an optional feature on the latest Windows versions (10 &
+11).
 
-By default, the application checks for updates via the Releases Tab, using non
-Pre-Release versions. If you'd like to modify the behavior, go to
-`src/net/bc100dev/osintgram4j/res/AppSettings.cfg` and change the line, where it
-says `SoftUpd.UpdateCheck = true`, replacing the `true` value with `false`. If
-you want to disable the behavior of always asking you for updating the Application,
-modify `SoftUpd.AskForUpdate = true`. Same tactic, replacing the `true` value with
-`false`.
+After having a Linux shell instance, you can run these following commands:
+```shell
+git clone https://github.com/BeChris100/osintgram4j && cd osintgram4j
+chmod +x setup.sh build.sh
+./setup.sh
+./build.sh
+```
+
+Step-by-step explanation:
+1. Via the `git` command, the project gets downloaded, and will automatically
+   change the working directory into the `osintgram4j` folder.
+2. The `chmod` command will set the Shell files executable. By default, `git`
+   will automatically mark the Shell files executable, but might fail. Running
+   them will make sure that the files are executable.
+3. First Shell script (`setup.sh`) will create a working Build Environment. It
+   will create a `build` folder, putting every necessary files, including external
+   libraries (`org.json` is only currently involved), 
 
 After creating the Application on the Instagram Developer Console, run the Shell
 Script command to get an initialized state of this project on your machine by
