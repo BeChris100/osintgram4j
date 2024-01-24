@@ -3,6 +3,9 @@ The library that I wrote, being the "commons" library, can be used anywhere, by
 anyone without the requirement of asking me. However, these following rules should
 remain in mind.
 
+In use with other projects:
+- [chilled-system](https://github.com/BeChris100/chilled-system)
+
 ---
 
 ## Ownership
