@@ -1,3 +1,8 @@
+## Compilation Error: Please read
+Since I didn't have the time lately to update the codebase and fix the errors that
+even IntelliJ was telling me, when I was about to commit, I couldn't get the Errors
+fixed by now. Once I get back from my trip, I'll make sure to fix those errors.
+
 # OSINTgram (OSINT for Instagram)
 Remember on how good our old, beloved Osintgram project became famous by Datalux,
 and nowadays, it barely even functions? Yeah, ever since the lack of updates and
