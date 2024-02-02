@@ -1,4 +1,4 @@
-package net.bc100dev.osintgram4j.sh;
+package osintgram4j.api.sh;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

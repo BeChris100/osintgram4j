@@ -135,13 +135,22 @@ being under `bin/osintgram4j`.
 
 ---
 
-## Mods
-This is a planned feature for the future, but as of now, it currently does not
-support the use of Client Modifications. However, this also comes in Security Risks,
-which also involve Malware, Spyware and other malicious Software that may come into
-your hands. Always be on the lookout for any malicious Software.
+## Client Mods
+The release of Osintgram4j Version v1, or rather pretty soon, v0.1, is introducing
+a Modding API, which the original project does not have. Now, I wouldn't say that
+it is a bad thing, but it is a cool feature. The use of client modifications is to
+enhance the features that the stock Osintgram4j might not have delivered that you
+might have expected.
 
-Section coming soon.
+While the use of Modifications is still a cool thing, you have to prioritize
+Privacy, Data Safety and Security. That means, you should only download from sources
+that I marked as "trusted", or from the original marketplace that does not exist
+yet. Developers should follow the best practices to prevent the introduction of
+Malware, Spyware, Ransomware or other software that might be harmful for yo' system.
+
+Documentation on this GitHub Repository will be coming soon. Also, please, don't
+mind that I'll use ChatGPT in some sections because sometimes, I just need help in
+writing.
 
 ---
 

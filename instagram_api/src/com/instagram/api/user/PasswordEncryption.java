@@ -1,4 +1,4 @@
-package com.instagram.api.auth;
+package com.instagram.api.user;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.GCMParameterSpec;
@@ -11,19 +11,13 @@ import java.security.SecureRandom;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
-class PassEnc {
+class PasswordEncryption {
 
-    private final PublicKey publicKey;
-    private final byte passEncKeyId;
-
-    public PassEnc(String b64PublicKey, byte passEncKeyId) throws GeneralSecurityException {
-        this.passEncKeyId = passEncKeyId;
+    public static String toEncryptedPassword(String b64PublicKey, byte passEncKeyId, String password) throws GeneralSecurityException {
         KeyFactory keyFact = KeyFactory.getInstance("RSA");
         X509EncodedKeySpec pubKeySpec = new X509EncodedKeySpec(Base64.getDecoder().decode(b64PublicKey));
-        this.publicKey = keyFact.generatePublic(pubKeySpec);
-    }
+        PublicKey publicKey = keyFact.generatePublic(pubKeySpec);
 
-    public String encryptPassword(String password) throws GeneralSecurityException {
         SecureRandom secRand = new SecureRandom();
         byte[] randKey = new byte[32];
         secRand.nextBytes(randKey);

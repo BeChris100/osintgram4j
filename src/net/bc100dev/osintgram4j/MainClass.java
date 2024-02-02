@@ -2,12 +2,12 @@ package net.bc100dev.osintgram4j;
 
 import net.bc100dev.commons.ApplicationException;
 import net.bc100dev.commons.Terminal;
+import net.bc100dev.commons.utils.HelpPage;
 import net.bc100dev.commons.utils.Utility;
 import net.bc100dev.commons.utils.io.UserIO;
-import net.bc100dev.osintgram4j.sh.Shell;
-import net.bc100dev.osintgram4j.sh.ShellConfig;
-import net.bc100dev.osintgram4j.sh.ShellException;
-import net.bc100dev.osintgram4j.sh.ShellFile;
+import osintgram4j.api.sh.ShellConfig;
+import osintgram4j.api.sh.ShellException;
+import osintgram4j.api.sh.ShellFile;
 
 import java.io.*;
 import java.util.ArrayList;

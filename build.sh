@@ -85,8 +85,11 @@ find commons/src -name "*.java" -type f -print0 | xargs -0 "$JAVAC_CMD" -d build
 echo "## Compiling the Instagram API"
 find instagram_api/src -name "*.java" -type f -print0 | xargs -0 "$JAVAC_CMD" -cp build/project/commons:build/libs/json.jar -d build/project/instagram-api
 
+echo "## Compiling the Osintgram4j API"
+find modapi/src -name "*.java" -type f -print0 | xargs -0 "$JAVAC_CMD" -cp build/project/commons:build/libs/json.jar -d build/project/modapi
+
 echo "## Compiling the Core Application"
-find src -name "*.java" -type f -print0 | xargs -0 "$JAVAC_CMD" -cp build/project/commons:build/project/instagram-api:build/libs/json.jar -d build/project/core
+find src -name "*.java" -type f -print0 | xargs -0 "$JAVAC_CMD" -cp build/project/modapi:build/project/commons:build/project/instagram-api:build/libs/json.jar -d build/project/core
 
 echo "## Adding resources to the Core Application"
 cp -r src/net/bc100dev/osintgram4j/res build/project/core/net/bc100dev/osintgram4j/
@@ -97,6 +100,9 @@ echo '## Making "commons.jar"'
 
 echo '## Making "instagram-api.jar"'
 "$JAR_CMD" -cf build/project/input/instagram-api.jar -C build/project/instagram-api .
+
+echo '## Making "modapi.jar"'
+"$JAR_CMD" -cf build/project/input/modapi.jar -C build/project/modapi .
 
 echo '## Making "core.jar"'
 "$JAR_CMD" -cfm build/project/input/core.jar META-INF/MANIFEST.MF -C build/project/core .

@@ -5,8 +5,9 @@ import net.bc100dev.commons.Terminal;
 import net.bc100dev.commons.utils.RuntimeEnvironment;
 import net.bc100dev.commons.utils.Utility;
 import net.bc100dev.commons.utils.io.FileUtil;
-import net.bc100dev.osintgram4j.HelpPage;
-import net.bc100dev.osintgram4j.sh.ShellConfig;
+import net.bc100dev.commons.utils.HelpPage;
+import osintgram4j.api.Command;
+import osintgram4j.api.sh.ShellConfig;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,7 +16,7 @@ import java.util.List;
 
 import static net.bc100dev.commons.utils.RuntimeEnvironment.*;
 
-public class ShellInstance {
+public class ShellInstance extends Command {
 
     private static int startShell(File shellExec, String... args) throws IOException, InterruptedException {
         if (shellExec == null) {
@@ -153,9 +154,9 @@ public class ShellInstance {
         return shellPath;
     }
 
-    // Invoked manually by `Method.invoke`
-    // Currently only works under Linux (Ubuntu 22.04.3 LTS)
-    public static int launchCmd(String[] args, List<ShellConfig> ignore) {
+    // Mainly working under Ubuntu 22.04.3 LTS
+    @Override
+    public int launchCmd(String[] args, List<ShellConfig> ignore) {
         String shellEnv;
 
         if (isWindows())
@@ -303,8 +304,8 @@ public class ShellInstance {
         }
     }
 
-    // Invoked manually by `Method.invoke`
-    public static String helpCmd(String[] args) {
+    @Override
+    public String helpCmd(String[] args) {
         String defStr = """
                 The Shell (sh) command launches an instance of the Shell.
                 This initially launches the default Shell that is given by the "SHELL" environment.

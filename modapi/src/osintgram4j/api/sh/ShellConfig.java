@@ -1,17 +1,13 @@
-package net.bc100dev.osintgram4j.sh;
+package osintgram4j.api.sh;
 
 public class ShellConfig {
 
     private final String name;
     private String value;
 
-    protected ShellConfig(String name, String value) {
+    public ShellConfig(String name, String value) {
         this.name = name;
         this.value = value;
-    }
-
-    public static ShellConfig create(String name, String value) {
-        return new ShellConfig(name, value);
     }
 
     public String getName() {

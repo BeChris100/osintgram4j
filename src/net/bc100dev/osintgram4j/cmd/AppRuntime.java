@@ -1,16 +1,17 @@
 package net.bc100dev.osintgram4j.cmd;
 
 import net.bc100dev.commons.Terminal;
-import net.bc100dev.osintgram4j.HelpPage;
+import net.bc100dev.commons.utils.HelpPage;
 import net.bc100dev.osintgram4j.NativeLoader;
-import net.bc100dev.osintgram4j.sh.ShellConfig;
+import osintgram4j.api.Command;
+import osintgram4j.api.sh.ShellConfig;
 
 import java.util.List;
 
 import static net.bc100dev.commons.utils.RuntimeEnvironment.isMac;
 import static net.bc100dev.commons.utils.SizeConvert.byteCountSI;
 
-public class AppRuntime {
+public class AppRuntime extends Command {
 
     private static native long sysTotalMemory();
 
@@ -52,7 +53,8 @@ public class AppRuntime {
         return 0;
     }
 
-    public static int launchCmd(String[] args, List<ShellConfig> shellConfigs) {
+    @Override
+    public int launchCmd(String[] args, List<ShellConfig> shellConfigs) {
         Runtime rn = Runtime.getRuntime();
 
         if (args == null || args.length == 0)
@@ -132,8 +134,8 @@ public class AppRuntime {
         return 0;
     }
 
-    // Invoked manually by `Method.invoke`
-    public static String helpCmd(String[] args) {
+    @Override
+    public String helpCmd(String[] args) {
         HelpPage helpPage = new HelpPage();
         helpPage.setSpaceWidth(5);
         helpPage.addArg("-gc", null, "Invoke the Garbage Collector");

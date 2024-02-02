@@ -2,16 +2,17 @@ package net.bc100dev.osintgram4j.cmd;
 
 import net.bc100dev.commons.ResourceManager;
 import net.bc100dev.commons.Terminal;
-import net.bc100dev.osintgram4j.HelpPage;
+import net.bc100dev.commons.utils.HelpPage;
 import net.bc100dev.osintgram4j.MainClass;
-import net.bc100dev.osintgram4j.sh.ShellConfig;
+import osintgram4j.api.Command;
+import osintgram4j.api.sh.ShellConfig;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Properties;
 
-public class VerCmd {
+public class VerCmd extends Command {
 
     private static String version(Properties props) {
         return "v" + props.getProperty("BUILD_VERSION");
@@ -55,7 +56,8 @@ public class VerCmd {
                 versionCode(props) + " " + flavor(props) + " (" + rFlavor(props) + ")";
     }
 
-    public static int launchCmd(String[] args, List<ShellConfig> pclConfigs) {
+    @Override
+    public int launchCmd(String[] args, List<ShellConfig> env) {
         try {
             Properties props = new Properties();
             ResourceManager mgr = new ResourceManager(MainClass.class, true);
@@ -120,8 +122,8 @@ public class VerCmd {
         }
     }
 
-    // Invoked manually by `Method.invoke`
-    public static String helpCmd(String[] args) {
+    @Override
+    public String helpCmd(String[] args) {
         HelpPage helpPage = new HelpPage();
         helpPage.setSpaceWidth(5);
         helpPage.addArg("-v", null, "Displays Version");

@@ -1,4 +1,4 @@
-package net.bc100dev.osintgram4j;
+package net.bc100dev.commons.utils;
 
 import java.io.PrintStream;
 import java.util.ArrayList;

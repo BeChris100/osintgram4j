@@ -4,7 +4,8 @@ import net.bc100dev.commons.ApplicationException;
 import net.bc100dev.commons.Terminal;
 import com.instagram.api.ConnectionStateException;
 import net.bc100dev.commons.utils.io.FileUtil;
-import net.bc100dev.osintgram4j.sh.ShellConfig;
+import osintgram4j.api.Command;
+import osintgram4j.api.sh.ShellConfig;
 import org.json.JSONArray;
 
 import java.io.*;
@@ -13,7 +14,7 @@ import java.util.List;
 
 import static net.bc100dev.commons.utils.RuntimeEnvironment.*;
 
-public class SessionCmd {
+public class SessionCmd extends Command {
 
     private static File getSessionLocationFile() {
         return switch (getOperatingSystem()) {
@@ -100,14 +101,14 @@ public class SessionCmd {
         return 1;
     }
 
-    // Invoked manually by `Method.invoke`
-    public static int launchCmd(String[] args, List<ShellConfig> shellConfigs) {
+    @Override
+    public int launchCmd(String[] args, List<ShellConfig> shellConfigs) {
         Terminal.println(Terminal.TermColor.RED, "Session Manager is not implemented yet", true);
         return testImpl(args, shellConfigs);
     }
 
-    // Invoked manually by `Method.invoke`
-    public static String helpCmd(String[] args) {
+    @Override
+    public String helpCmd(String[] args) {
         return """
                 Session Manager for the Instagram Connection Status""";
     }

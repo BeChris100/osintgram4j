@@ -2,7 +2,8 @@ package net.bc100dev.osintgram4j.cmd;
 
 import net.bc100dev.commons.Terminal;
 import net.bc100dev.commons.utils.io.FileUtil;
-import net.bc100dev.osintgram4j.sh.ShellConfig;
+import osintgram4j.api.Command;
+import osintgram4j.api.sh.ShellConfig;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,7 +13,7 @@ import java.util.List;
 
 import static net.bc100dev.commons.utils.RuntimeEnvironment.*;
 
-public class CacheCmd {
+public class CacheCmd extends Command {
 
     private static void clearCache() throws IOException {
         File relDir;
@@ -36,8 +37,8 @@ public class CacheCmd {
         }
     }
 
-    // Invoked manually by `Method.invoke`
-    public static int launchCmd(String[] args, List<ShellConfig> ignore) {
+    @Override
+    public int launchCmd(String[] args, List<ShellConfig> ignore) {
         if (args == null) {
             Terminal.println(Terminal.TermColor.BLUE, helpCmd(new String[0]), true);
             return 0;
@@ -76,8 +77,8 @@ public class CacheCmd {
         return 0;
     }
 
-    // Invoked manually by `Method.invoke`
-    public static String helpCmd(String[] args) {
+    @Override
+    public String helpCmd(String[] args) {
         return """
                 Manages the use of Cache, and if necessary, wipes them.
                 

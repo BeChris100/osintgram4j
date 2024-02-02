@@ -1,17 +1,20 @@
 package net.bc100dev.osintgram4j.cmd;
 
-import net.bc100dev.osintgram4j.HelpPage;
-import net.bc100dev.osintgram4j.sh.ShellConfig;
+import net.bc100dev.commons.utils.HelpPage;
+import osintgram4j.api.Command;
+import osintgram4j.api.sh.ShellConfig;
 
 import java.util.List;
 
-public class UserCmd {
+public class UserCmd extends Command {
 
-    public static int launchCmd(String[] args, List<ShellConfig> shellConfigs) {
+    @Override
+    public int launchCmd(String[] args, List<ShellConfig> shellConfigs) {
         return 0;
     }
 
-    public static String helpCmd(String[] args) {
+    @Override
+    public String helpCmd(String[] args) {
         HelpPage page = new HelpPage();
         if (args == null || args.length == 0) {
             page.addArg("mk", null, "Creates a new Account, prompting for Username, Password, E-Mail Address and First Name");

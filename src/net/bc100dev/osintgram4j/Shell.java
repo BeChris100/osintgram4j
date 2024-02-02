@@ -1,24 +1,24 @@
-package net.bc100dev.osintgram4j.sh;
+package net.bc100dev.osintgram4j;
 
 import net.bc100dev.commons.CLIParser;
 import net.bc100dev.commons.ResourceManager;
 import net.bc100dev.commons.Terminal;
 import net.bc100dev.commons.utils.Utility;
-import net.bc100dev.osintgram4j.MainClass;
+import osintgram4j.api.sh.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
-import java.util.List;
 
 import static net.bc100dev.commons.Terminal.TermColor.*;
 import static net.bc100dev.osintgram4j.TitleBlock.TITLE_BLOCK;
 
 /**
- * The PCL (Process Command Line) is an interactive shell, used for
- * interacting with the Instagram Private APIs, along with the interaction
- * of the official and publicly available Instagram Graph API.
- *
+ * The Shell class is an interactive shell (as the name says), used for
+ * interacting with the Instagram Private APIs.
+ * <br>
+ * <br>
  * The Shell class provides an interactive Shell Instance for the Application,
  * used for interacting with the built-in Application commands, along with
  * the interaction of
@@ -49,10 +49,15 @@ public class Shell {
      * @throws IOException    Throws an exception, when cannot read any command entries
      */
     public Shell(String suppress) throws IOException, ShellException {
+        if (instance != null)
+            throw new ShellException("A Shell has been already initialized. Close the previously initialized Shell first.");
+
+        Shell.instance = this;
+
         Shell.scIn = new Scanner(System.in);
         this.suppress = suppress;
 
-        appendCallers(Shell.class, "/net/bc100dev/osintgram4j/res/cmd_list_d/app-core.json");
+        addCallersFromResource(Shell.class, "/net/bc100dev/osintgram4j/res/cmd_list_d/app-core.json");
     }
 
     public static Shell getInstance() {
@@ -70,7 +75,7 @@ public class Shell {
      * @throws IOException    Will throw on Input Readers
      * @throws ShellException Will throw on classes/methods that are not found
      */
-    public static void appendCallers(File jsonFile) throws IOException, ShellException {
+    public static void addCallersFromFile(File jsonFile) throws IOException, ShellException {
         ShellCommandEntry entry = ShellCommandEntry.initialize(jsonFile);
         shellCallers.addAll(entry.getCommands());
     }
@@ -82,11 +87,33 @@ public class Shell {
      * @param resourceFile       The resource file within its Class Path
      * @throws IOException    Will throw on Input Readers
      * @throws ShellException Will throw on classes/methods that are not found
+     * @deprecated Cannot be used due to potential Class Path errors.
+     * Use {@link Shell#addCallersFromData(String)} instead
      */
-    public static void appendCallers(Class<?> correspondingClass, String resourceFile) throws IOException, ShellException {
-        ResourceManager resMgr = new ResourceManager(correspondingClass, false);
-        ShellCommandEntry entry = ShellCommandEntry.initialize(resMgr, resourceFile);
-        Shell.shellCallers.addAll(entry.getCommands());
+    @Deprecated
+    public static void addCallersFromResource(Class<?> correspondingClass, String resourceFile) throws IOException, ShellException {
+        ResourceManager mgr = new ResourceManager(correspondingClass, false);
+        if (mgr.resourceExists(resourceFile))
+            throw new ShellException("Resource File at \"" + resourceFile + "\" does not exist");
+
+        InputStream is = mgr.getResourceInputStream(resourceFile);
+        byte[] buff = is.readAllBytes();
+        is.close();
+
+        ShellCommandEntry e = ShellCommandEntry.initialize(new String(buff));
+        shellCallers.addAll(e.getCommands());
+    }
+
+    /**
+     * Reads a JSON File and parses into the necessary commands and other relevant information for the Shell
+     *
+     * @param jsonData The JSON Data that is being used for the appending method
+     * @throws IOException    Will throw on Input Readers
+     * @throws ShellException Will throw on classes/methods that are not found
+     */
+    public static void addCallersFromData(String jsonData) throws IOException, ShellException {
+        ShellCommandEntry e = ShellCommandEntry.initialize(jsonData);
+        shellCallers.addAll(e.getCommands());
     }
 
     /**
@@ -426,12 +453,13 @@ public class Shell {
      */
     public void stopShell() {
         running = false;
+        Shell.instance = null;
     }
 
     public void runScript(ShellFile shellFile) throws IOException, ShellException {
         boolean shownHelpWarning = false;
 
-        appendCallers(MainClass.class, "/net/bc100dev/osintgram4j/res/cmd_list_d/defaults.json");
+        addCallersFromResource(Shell.class, "/net/bc100dev/osintgram4j/res/cmd_list_d/defaults.json");
 
         for (String inst : shellFile.getInstructions()) {
             ShellExecution execution = getExecutionLine(inst);

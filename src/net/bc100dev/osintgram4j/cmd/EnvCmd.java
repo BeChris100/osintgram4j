@@ -1,13 +1,14 @@
 package net.bc100dev.osintgram4j.cmd;
 
-import net.bc100dev.osintgram4j.sh.ShellConfig;
+import osintgram4j.api.Command;
+import osintgram4j.api.sh.ShellConfig;
 
 import java.util.List;
 
-public class EnvCmd {
+public class EnvCmd extends Command {
 
-    // Invoked manually by `Method.invoke`
-    public static int launchCmd(String[] ignore, List<ShellConfig> configs) {
+    @Override
+    public int launchCmd(String[] ignore, List<ShellConfig> configs) {
         if (configs.isEmpty())
             return 0;
 
@@ -17,8 +18,8 @@ public class EnvCmd {
         return 0;
     }
 
-    // Invoked manually by `Method.invoke`
-    public static String helpCmd(String[] args) {
+    @Override
+    public String helpCmd(String[] args) {
         return """
                 Environment command""";
     }

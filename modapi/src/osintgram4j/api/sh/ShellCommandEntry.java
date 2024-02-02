@@ -1,4 +1,4 @@
-package net.bc100dev.osintgram4j.sh;
+package osintgram4j.api.sh;
 
 import net.bc100dev.commons.ResourceManager;
 import org.json.JSONArray;
@@ -110,14 +110,19 @@ public class ShellCommandEntry {
         return new ShellCommandEntry(version, label, pkgName, callerList);
     }
 
-    public static ShellCommandEntry initialize(ResourceManager resourceManager, String resourceFile) throws IOException, ShellException {
-        if (resourceManager == null)
-            throw new NullPointerException("Resource Manager is passed as null");
+    @Deprecated
+    public static ShellCommandEntry initialize(Class<?> cls, String resourceFile) throws IOException, ShellException {
+        if (cls == null)
+            throw new NullPointerException("The class cannot be passed as null, when accessing resource files");
 
-        if (!resourceManager.resourceExists(resourceFile))
-            throw new NullPointerException("Could not find resource file at \"" + resourceFile + "\"");
+        //.getResource(getLookupPath(resName)) != null;
+        if (cls.getResource(resourceFile) == null)
+            throw new ShellException("Resource file at \"" + resourceFile + "\" not found");
 
-        InputStream is = resourceManager.getResourceInputStream(resourceFile);
+        InputStream is = cls.getResourceAsStream(resourceFile);
+        if (is == null)
+            throw new IOException("Could not open an InputStream for \"" + resourceFile + "\"");
+
         byte[] buff = is.readAllBytes();
         is.close();
 
@@ -129,6 +134,18 @@ public class ShellCommandEntry {
             throw new JSONException("JSON Parse (not a valid ending point)");
 
         return parseJsonFile(data);
+    }
+
+    public static ShellCommandEntry initialize(String jsonData) throws ShellException {
+        jsonData = jsonData.trim();
+
+        if (!jsonData.startsWith("{"))
+            throw new JSONException("JSON Parse (not a valid starting point)");
+
+        if (!jsonData.endsWith("}"))
+            throw new JSONException("JSON Parse (not a valid ending point)");
+
+        return parseJsonFile(jsonData);
     }
 
     public static ShellCommandEntry initialize(File entryFile) throws IOException, ShellException {
