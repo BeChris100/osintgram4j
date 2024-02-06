@@ -37,10 +37,8 @@ By using the Osintgram Project, you acknowledge and agree that:
   that your account may or may not be banned, if this tool is being misused.
 - We, the developers of this project are not responsible for any consequences or
   damages that might result from the use of this software. This project is designed
-  for information gathering purpose only, not to use for Blackmail or other things
-  that could be held reliable.
-- We, the developers of this project are not responsible for any consequences or
-  damages that might result from the use of this software. 
+  for a specific purpose, being information gathering only. Using it for Blackmail
+  or other things, may or may not be held reliable.
 
 Please use the Osintgram project responsibly, respect privacy, maintain ethical
 standards in all your activities, and use the tool with explicit permission. For
