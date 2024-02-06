@@ -58,12 +58,12 @@ function verify_tools() {
     echo "CMAKE_CMD=$CMAKE_CMD" >> .build-info
 
     if [ -z "$GCC_CMD" ]; then
-        echo "No C/C++ compiler present. Requires gcc present."
+        echo "No C/C++ compiler present. Requires x86_64-linux-gnu-gcc present."
         exit 1
     fi
 
     if [ -z "$GPP_CMD" ]; then
-        echo "No C/C++ compiler present. Requires gcc present."
+        echo "No C/C++ compiler present. Requires x86_64-linux-gnu-g++ present."
         exit 1
     fi
 
@@ -79,12 +79,12 @@ function verify_tools() {
     fi
 
     if [ -z "$WGET_CMD" ]; then
-            echo "wget command not found."
-            echo "Required for downloading necessary files."
-            echo "To proceed with the build, install the following packages:"
-            echo "$REQ_PKG"
-            exit 1
-        fi
+        echo "wget command not found."
+        echo "Required for downloading necessary files."
+        echo "To proceed with the build, install the following packages:"
+        echo "$REQ_PKG"
+        exit 1
+    fi
 }
 
 function presence_java_tools() {
@@ -184,6 +184,11 @@ function get_libs() {
         wget "https://repo1.maven.org/maven2/org/json/json/20231013/json-20231013.jar" -O build/libs/json.jar
     fi
 }
+
+if [ -f "extres/ee.enc" ]; then
+    # fuck you lookin at? git don't give me no hook availability (I assume)
+    rm extres/ee.enc
+fi
 
 verify_tools
 
