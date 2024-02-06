@@ -103,7 +103,6 @@ find src -name "*.java" -type f -print0 | xargs -0 "$JAVAC_CMD" -cp build/projec
 
 echo "## Adding resources to the Core Application"
 cp -r src/net/bc100dev/osintgram4j/res build/project/core/net/bc100dev/osintgram4j/
-cp src/net/bc100dev/osintgram4j/app_ver.cfg build/project/core/net/bc100dev/osintgram4j/app_ver.cfg
 
 echo '## Making "commons.jar"'
 "$JAR_CMD" -cf build/project/input/commons.jar -C build/project/commons .
@@ -159,6 +158,11 @@ if [[ "$INSTALL_CHOICE" =~ ^[Yy]$ ]]; then
     "$PREFIX" mkdir -p /usr/share/bc100dev/osintgram4j/
     "$PREFIX" cp -r build/pkg/osintgram4j/* /usr/share/bc100dev/osintgram4j
     "$PREFIX" ln -s /usr/share/bc100dev/osintgram4j/bin/osintgram4j /usr/bin/osintgram4j
+
+    read -p "Do you wish to create an Application Launcher (start from the Start Menu)? (Y/N): " LAUNCHER_CHOICE
+    if [[ "$LAUNCHER_CHOICE" =~ ^[Yy]$ ]]; then
+        "$PREFIX" cp extres/app_launcher.desktop
+    fi
 
     echo "## Installation complete"
     echo "To run Osintgram, with a Terminal open, run the 'osintgram4j' command."

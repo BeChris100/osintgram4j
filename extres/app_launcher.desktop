@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Osintgram (4j)
+Exec=/usr/bin/osintgram4j
+Icon=/usr/share/bc100dev/osintgram4j/lib/osintgram4j.png
+Terminal=true
+Categories=Utility;Java;
+Comment=OSINT Tool for Instagram
+Description=The OSINT toolkit for Instagram Connectivity
