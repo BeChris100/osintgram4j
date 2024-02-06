@@ -56,7 +56,13 @@ fi
 if [ "$#" -ne 0 ]; then
     if [ "$1" == "--uninstall" ]; then
         echo "Uninstalling osintgram4j"
-        "$PREFIX" rm -rf /usr/bin/osintgram4j /usr/share/osintgram4j
+        "$PREFIX" rm -rf /usr/bin/osintgram4j
+
+        if [ -d "/usr/share/osintgram4j" ]; then
+            "$PREFIX" rm -rf /usr/share/osintgram4j
+        elif [ -d "/usr/share/bc100dev/osintgram4j" ]; then
+            "$PREFIX" rm -rf /usr/share/bc100dev/osintgram4j
+        fi
     fi
 
     exit 0
@@ -108,7 +114,7 @@ echo '## Making "core.jar"'
 "$JAR_CMD" -cfm build/project/input/core.jar META-INF/MANIFEST.MF -C build/project/core .
 
 echo '## Obtaining the Application Java Modules'
-JAVA_MODS="$($JDEPS_CMD --print-module-deps build/project/input/core.jar build/project/input/instagram-api.jar build/project/input/commons.jar build/libs/json.jar)"
+JAVA_MODS="$($JDEPS_CMD --print-module-deps build/project/input/core.jar build/project/input/instagram-api.jar build/project/input/commons.jar build/project/input/modapi.jar build/libs/json.jar)"
 
 # This adds the Certificates for the HTTPS Requests
 JAVA_MODS="jdk.crypto.cryptoki,jdk.crypto.ec,$JAVA_MODS"
@@ -131,19 +137,28 @@ if [[ "$INSTALL_CHOICE" =~ ^[Yy]$ ]]; then
     if [ -f "/usr/bin/osintgram4j" ]; then
         echo "Deleting previous installation"
         "$PREFIX" rm /usr/bin/osintgram4j
-        "$PREFIX" rm -rf /usr/share/osintgram4j
+
+        if [ -d "/usr/share/osintgram4j" ]; then
+            echo "Deleting old directory (moving to /usr/share/bc100dev/osintgram4j)"
+            "$PREFIX" rm -rf /usr/share/osintgram4j
+        else
+            "$PREFIX" rm -rf /usr/share/bc100dev/osintgram4j
+        fi
     fi
 
     echo "Copying built files"
-    "$PREFIX" mkdir -p /usr/share/osintgram4j/
-    "$PREFIX" cp -r build/pkg/osintgram4j/* /usr/share/osintgram4j
-    "$PREFIX" ln -s /usr/share/osintgram4j/bin/osintgram4j /usr/bin/osintgram4j
+    "$PREFIX" mkdir -p /usr/share/bc100dev/osintgram4j/
+    "$PREFIX" cp -r build/pkg/osintgram4j/* /usr/share/bc100dev/osintgram4j
+    "$PREFIX" ln -s /usr/share/bc100dev/osintgram4j/bin/osintgram4j /usr/bin/osintgram4j
 
     echo "## Installation complete"
     echo "To run Osintgram, with a Terminal open, run the 'osintgram4j' command."
     echo
-    echo "In order to remove Osintgram4j from your system, delete the /usr/share/osintgram4j directory,"
-    echo 'and run "rm -rf $(which osintgram4j)" with root privileges.'
+    echo "In order to remove Osintgram4j from your system, delete the /usr/share/bc100dev/osintgram4j directory,"
+    echo "and run 'rm -rf \$(which osintgram4j)' with root privileges. On old installations, the default installation path was /usr/share/osintgram4j"
+    echo
+    echo "Otherwise, you can also re-run this building script with the argument '--uninstall' to have"
+    echo "Osintgram4j automatically uninstalled."
 else
     echo "You can run Osintgram from this directory and forwards by going to $PWD and run './build/pkg/osintgram4j/bin/osintgram4j'"
 fi
