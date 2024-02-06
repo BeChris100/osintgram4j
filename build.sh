@@ -50,6 +50,10 @@ if [ "$EUID" -ne 0 ]; then
         PREFIX="sudo"
     elif [ -n "$(command -v doas)" ]; then
         PREFIX="doas"
+        echo "Consider using 'sudo' for operations, since it will spare you time with entering your password."
+    else
+        echo "Could not determine the Root Prefix (sudo / doas). Install the specific package first."
+        exit 1
     fi
 fi
 
@@ -130,6 +134,11 @@ fi
 
 echo '## Building the Application Package'
 cp build/libs/json.jar build/project/input/json.jar
+
+if [ -d "build/pkg/osintgram4j" ]; then
+    rm -rf build/pkg/osintgram4j
+fi
+
 "$JPACKAGE_CMD" -t app-image -n "$BUILD_NAME" --app-version "$BUILD_VERSION-$BUILD_VERSION_CODE" --runtime-image build/runtime -i build/project/input --main-jar core.jar --main-class net.bc100dev.osintgram4j.MainClass -d build/pkg --icon "extres/icon.png" --verbose
 
 read -p "Do you want to install Osintgram (requires sudo privileges)? (Y/N): " INSTALL_CHOICE
