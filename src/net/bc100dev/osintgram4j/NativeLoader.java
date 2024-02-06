@@ -12,10 +12,8 @@ public class NativeLoader {
     private static boolean loaded = false;
 
     public static boolean hasLibrary() {
-        if (isMac()) {
-            Logger.verbose(NativeLoader.class, "Native Library Management on macOS is not implemented");
+        if (isMac())
             return false;
-        }
 
         String[] paths = System.getProperty("java.library.path").split(File.pathSeparator);
         for (String path : paths) {

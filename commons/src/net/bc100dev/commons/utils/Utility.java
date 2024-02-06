@@ -4,9 +4,32 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URISyntaxException;
+import java.util.Base64;
 import java.util.Random;
 
 public class Utility {
+
+    public static byte[] base64EncodeStr(byte[] data, int times) {
+        byte[] b64 = data;
+
+        for (int i = 0; i < times; i++)
+            b64 = Base64.getEncoder().encode(b64);
+
+        return b64;
+    }
+
+    public static byte[] base64DecodeStr(byte[] data, int times) {
+        try {
+            byte[] b64 = data;
+
+            for (int i = 0; i < times; i++)
+                b64 = Base64.getDecoder().decode(b64);
+
+            return b64;
+        } catch (IllegalArgumentException ignore) {
+            return new byte[0];
+        }
+    }
 
     public static File getRuntimeImage() {
         try {

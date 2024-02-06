@@ -10,6 +10,8 @@ import osintgram4j.api.sh.ShellException;
 import osintgram4j.api.sh.ShellFile;
 
 import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -107,19 +109,14 @@ public class MainClass {
     public static void main(String[] args) {
         init();
 
-        if (NativeLoader.hasLibrary()) {
+        new Thread(EE::attemptDecrypt, "EasterEgg-Thread").start();
+
+        if (NativeLoader.hasLibrary())
             NativeLoader.load();
-            Logger.info(MainClass.class, "Native Library successfully loaded");
-        } else
-            Logger.info(NativeLoader.class, "No Library found");
 
         if (!NativeLoader.isLoaded()) {
-            if (!isMac()) {
-                Logger.error(MainClass.class, "Native Library unable to load");
+            if (!isMac())
                 throw new RuntimeException("native library unable to load");
-            }
-
-            Logger.warn(MainClass.class, "Skipping Native Library Load Check");
         }
 
         List<ShellConfig> configList = new ArrayList<>();
@@ -158,7 +155,7 @@ public class MainClass {
                     String n = args[0];
                     File file = new File(n);
                     if (!file.exists()) {
-                        configList.add(ShellConfig.create("CmdArgument.UserTarget", n));
+                        configList.add(new ShellConfig("CmdArgument.UserTarget", n));
                         break;
                     }
 
@@ -184,7 +181,7 @@ public class MainClass {
                             env[0] = env[0].trim();
                             env[1] = env[1].trim();
 
-                            configList.add(ShellConfig.create(env[0], env[1]));
+                            configList.add(new ShellConfig(env[0], env[1]));
                         } else {
                             File envFile = new File(opts[1]);
                             if (!envFile.exists())
@@ -202,7 +199,7 @@ public class MainClass {
 
                                 if (!envProps.isEmpty()) {
                                     for (Object key : envProps.keySet())
-                                        configList.add(ShellConfig.create((String) key, envProps.getProperty((String) key)));
+                                        configList.add(new ShellConfig((String) key, envProps.getProperty((String) key)));
                                 }
                             } catch (IOException ex) {
                                 ex.printStackTrace();

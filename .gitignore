@@ -36,3 +36,5 @@ bin/
 build
 cmdline
 apprun.sh
+ee.txt
+src/net/bc100dev/osintgram4j/TestMain.java

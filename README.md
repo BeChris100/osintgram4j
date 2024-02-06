@@ -1,8 +1,3 @@
-## Compilation Error: Please read
-Since I didn't have the time lately to update the codebase and fix the errors that
-even IntelliJ was telling me, when I was about to commit, I couldn't get the Errors
-fixed by now. Once I get back from my trip, I'll make sure to fix those errors.
-
 # OSINTgram (OSINT for Instagram)
 Remember on how good our old, beloved Osintgram project became famous by Datalux,
 and nowadays, it barely even functions? Yeah, ever since the lack of updates and
@@ -15,6 +10,9 @@ Note that this is still a work in the progress, as the original code is still
 being analyzed, so that I can convert them into the functional Java code. It is
 not expected to be fully functional as of now, as I recently started working on
 Osintgram for Java.
+
+Oh, and also... can you find all the Easter eggs in this project? They might be
+nasty, but it might be worth the shot.
 
 ---
 
@@ -29,16 +27,20 @@ this software.
 
 By using the Osintgram Project, you acknowledge and agree that:
 
-- You are responsible for your actions and usage of this software. That means, your
-  actions might, and could be, held reliable by the law enforcement. We, as the
-  devs, cannot replace the actions that the law should do.
-- Any misuse, illegal activities or violations of Instagram's policies are
-  prohibited. By breaking the rule, you agree that your account can be banned, if
-  this tool is being misused.
+- You are responsible for your actions and usage of this software. This indicates
+  that your actions might, and could be, punishable by the law enforcement (police,
+  FBI etc.). We, as the developers, cannot replace the actions that the law should
+  do, but being vigilante and doing some actions that the law ***should*** do, when
+  no actions are taken, could be done.
+- Any actions, such as potential misuse, illegal activities or violations of
+  Instagram's policies, are prohibited. By breaking the policies, you acknowledge
+  that your account may or may not be banned, if this tool is being misused.
 - We, the developers of this project are not responsible for any consequences or
   damages that might result from the use of this software. This project is designed
   for information gathering purpose only, not to use for Blackmail or other things
   that could be held reliable.
+- We, the developers of this project are not responsible for any consequences or
+  damages that might result from the use of this software. 
 
 Please use the Osintgram project responsibly, respect privacy, maintain ethical
 standards in all your activities, and use the tool with explicit permission. For
@@ -161,5 +163,3 @@ writing.
 
 ## Usage
 Refer to [the Usage file](USAGE.md) for this project.
-
-Oh, and also... can you find all the Easter eggs in this project?

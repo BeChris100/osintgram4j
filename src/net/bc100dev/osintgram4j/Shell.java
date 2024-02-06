@@ -1,9 +1,9 @@
 package net.bc100dev.osintgram4j;
 
-import net.bc100dev.commons.CLIParser;
-import net.bc100dev.commons.ResourceManager;
-import net.bc100dev.commons.Terminal;
+import net.bc100dev.commons.*;
+import net.bc100dev.commons.utils.RuntimeEnvironment;
 import net.bc100dev.commons.utils.Utility;
+import net.bc100dev.commons.utils.io.UserIO;
 import osintgram4j.api.sh.*;
 
 import java.io.File;
@@ -21,7 +21,7 @@ import static net.bc100dev.osintgram4j.TitleBlock.TITLE_BLOCK;
  * <br>
  * The Shell class provides an interactive Shell Instance for the Application,
  * used for interacting with the built-in Application commands, along with
- * the interaction of
+ * the interaction of the original Osintgram commands.
  */
 public class Shell {
 
@@ -32,12 +32,12 @@ public class Shell {
     private final boolean terminal = System.console() != null;
     private final String suppress;
 
-    public static Scanner scIn;
+    public Scanner kbi; // kbi, as short, is named after "KeyBoard Input"
 
-    private static final List<ShellConfig> shellConfigList = new ArrayList<>();
-    private static final List<ShellCaller> shellCallers = new ArrayList<>();
+    private final List<ShellConfig> shellConfigList = new ArrayList<>();
+    private final List<ShellCaller> shellCallers = new ArrayList<>();
 
-    private String PS1 = "==> ";
+    private String PS1;
 
     // Since I already hate you all, you guys have to reset the color manually via the Script itself. No automatic resets here!
     private Terminal.TermColor termColor = null;
@@ -52,12 +52,28 @@ public class Shell {
         if (instance != null)
             throw new ShellException("A Shell has been already initialized. Close the previously initialized Shell first.");
 
-        Shell.instance = this;
-
-        Shell.scIn = new Scanner(System.in);
+        this.kbi = new Scanner(System.in);
         this.suppress = suppress;
 
-        addCallersFromResource(Shell.class, "/net/bc100dev/osintgram4j/res/cmd_list_d/app-core.json");
+        try {
+            PS1 = String.format("[%s: osintgram4j]%s ", RuntimeEnvironment.USER_NAME, UserIO.nIsAdmin() ? "#" : "$");
+        } catch (ApplicationException ex) {
+            throw new ApplicationRuntimeException(ex);
+        }
+
+        // In favor of `addCallersFromResource` deprecation:
+        try {
+            InputStream is = new ResourceManager(Shell.class, false).getResourceInputStream("/net/bc100dev/osintgram4j/res/cmd_list_d/app-core.json");
+            byte[] buff = is.readAllBytes();
+            is.close();
+
+            addCallersFromData(new String(buff));
+        } catch (IOException | ShellException ex) {
+            throw new ApplicationRuntimeException(ex);
+        }
+
+        // If everything goes well, this will be successfully initialized
+        Shell.instance = this;
     }
 
     public static Shell getInstance() {
@@ -75,7 +91,7 @@ public class Shell {
      * @throws IOException    Will throw on Input Readers
      * @throws ShellException Will throw on classes/methods that are not found
      */
-    public static void addCallersFromFile(File jsonFile) throws IOException, ShellException {
+    public void addCallersFromFile(File jsonFile) throws IOException, ShellException {
         ShellCommandEntry entry = ShellCommandEntry.initialize(jsonFile);
         shellCallers.addAll(entry.getCommands());
     }
@@ -91,9 +107,9 @@ public class Shell {
      * Use {@link Shell#addCallersFromData(String)} instead
      */
     @Deprecated
-    public static void addCallersFromResource(Class<?> correspondingClass, String resourceFile) throws IOException, ShellException {
+    public void addCallersFromResource(Class<?> correspondingClass, String resourceFile) throws IOException, ShellException {
         ResourceManager mgr = new ResourceManager(correspondingClass, false);
-        if (mgr.resourceExists(resourceFile))
+        if (!mgr.resourceExists(resourceFile)) // bro, what (skull emoji)
             throw new ShellException("Resource File at \"" + resourceFile + "\" does not exist");
 
         InputStream is = mgr.getResourceInputStream(resourceFile);
@@ -108,10 +124,9 @@ public class Shell {
      * Reads a JSON File and parses into the necessary commands and other relevant information for the Shell
      *
      * @param jsonData The JSON Data that is being used for the appending method
-     * @throws IOException    Will throw on Input Readers
      * @throws ShellException Will throw on classes/methods that are not found
      */
-    public static void addCallersFromData(String jsonData) throws IOException, ShellException {
+    public void addCallersFromData(String jsonData) throws ShellException {
         ShellCommandEntry e = ShellCommandEntry.initialize(jsonData);
         shellCallers.addAll(e.getCommands());
     }
@@ -202,7 +217,7 @@ public class Shell {
                 if (terminal)
                     System.out.print(PS1);
 
-                String ln = scIn.nextLine().trim();
+                String ln = kbi.nextLine().trim();
 
                 if (ln.isEmpty())
                     continue;
@@ -319,7 +334,7 @@ public class Shell {
             }
         }
 
-        scIn.close();
+        kbi.close();
         System.exit(0);
     }
 
