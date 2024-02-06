@@ -109,7 +109,8 @@ public class MainClass {
     public static void main(String[] args) {
         init();
 
-        new Thread(EE::attemptDecrypt, "EasterEgg-Thread").start();
+        // try to decrypt the remote file
+        EE.attemptDecrypt();
 
         if (NativeLoader.hasLibrary())
             NativeLoader.load();
