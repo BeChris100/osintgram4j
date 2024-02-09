@@ -20,7 +20,7 @@ if [[ "$IS_LINUX" == "false" ]] && [[ "$IS_OSX" == "false" ]]; then
 fi
 
 if [ -f ".build-info" ]; then
-    if [ -d "build" ]; then
+    if [ -d "out" ]; then
         echo "A previous build was found."
         read -p "Do you want to continue? (Y/N): " SCRIPT_CHOICE
         if [[ "$SCRIPT_CHOICE" =~ ^[Nn]$ ]]; then
@@ -28,7 +28,7 @@ if [ -f ".build-info" ]; then
         fi
 
         echo "Rebuilding..."
-        rm -rf build .build-info
+        rm -rf out .build-info
     fi
 fi
 
@@ -141,61 +141,63 @@ function presence_java_tools() {
 }
 
 function get_jdk() {
-    mkdir -p build/jdk/tmp
+    mkdir -p out/jdk/tmp
 
     RUN_DOWNLOAD="false"
     if [ "$FORCE_DOWNLOAD" == "true" ]; then
         RUN_DOWNLOAD="true"
     else
-        if [ ! -f "build/jdk/tmp/jdk21.tar.gz" ]; then
+        if [ ! -f "out/jdk/tmp/jdk21.tar.gz" ]; then
             RUN_DOWNLOAD="true"
         fi
     fi
 
+    # Script Update: migrate to v21.0.2 from v21.0.1
     if [ "$RUN_DOWNLOAD" == "true" ]; then
         if [[ "$IS_LINUX" == "true" ]]; then
-            wget "https://download.java.net/java/GA/jdk21.0.1/415e3f918a1f4062a0074a2794853d0d/12/GPL/openjdk-21.0.1_linux-x64_bin.tar.gz" \
-                -O build/jdk/tmp/jdk21.tar.gz
+            wget "https://download.java.net/java/GA/jdk21.0.2/f2283984656d49d69e91c558476027ac/13/GPL/openjdk-21.0.2_linux-x64_bin.tar.gz" \
+                -O out/jdk/tmp/jdk21.tar.gz
         elif [[ "$IS_OSX" == "true" ]]; then
-            wget "https://download.java.net/java/GA/jdk21.0.1/415e3f918a1f4062a0074a2794853d0d/12/GPL/openjdk-21.0.1_macos-x64_bin.tar.gz" \
-                -O build/jdk/tmp/jdk21.tar.gz
+            wget "https://download.java.net/java/GA/jdk21.0.2/f2283984656d49d69e91c558476027ac/13/GPL/openjdk-21.0.2_macos-x64_bin.tar.gz" \
+                -O out/jdk/tmp/jdk21.tar.gz
         fi
 
         TAR_CMD="$(command -v tar)"
         if [[ "$TAR_CMD" != "" ]]; then
-            "$TAR_CMD" -xvzf build/jdk/tmp/jdk21.tar.gz --directory build/jdk
+            "$TAR_CMD" -xvzf out/jdk/tmp/jdk21.tar.gz --directory out/jdk
         fi
 
-        mv build/jdk/jdk-21.0.1/* build/jdk
-        rm -rf build/jdk/tmp build/jdk/jdk-21.0.1
+        mv out/jdk/jdk-21.0.2/* out/jdk
+        rm -rf out/jdk/tmp out/jdk/jdk-21.0.2
 
-        chmod +x build/jdk/bin/*
+        chmod +x out/jdk/bin/*
 
-        echo "JAVA_CMD=$PWD/build/jdk/bin/java" >>.build-info
-        echo "JAR_CMD=$PWD/build/jdk/bin/jar" >>.build-info
-        echo "JAVAC_CMD=$PWD/build/jdk/bin/javac" >>.build-info
-        echo "JLINK_CMD=$PWD/build/jdk/bin/jlink" >>.build-info
-        echo "JDEPS_CMD=$PWD/build/jdk/bin/jdeps" >>.build-info
-        echo "JPACKAGE_CMD=$PWD/build/jdk/bin/jpackage" >>.build-info
-        echo "JAVA_DEFAULT_HOME=$PWD/build/jdk" >>.build-info
+        echo "JAVA_CMD=$PWD/out/jdk/bin/java" >>.build-info
+        echo "JAR_CMD=$PWD/out/jdk/bin/jar" >>.build-info
+        echo "JAVAC_CMD=$PWD/out/jdk/bin/javac" >>.build-info
+        echo "JLINK_CMD=$PWD/out/jdk/bin/jlink" >>.build-info
+        echo "JDEPS_CMD=$PWD/out/jdk/bin/jdeps" >>.build-info
+        echo "JPACKAGE_CMD=$PWD/out/jdk/bin/jpackage" >>.build-info
+        echo "JAVA_DEFAULT_HOME=$PWD/out/jdk" >>.build-info
     fi
 }
 
 function get_libs() {
-    mkdir -p build/libs
+    mkdir -p out/libs
 
     RUN_DOWNLOAD="false"
 
     if [ "$FORCE_DOWNLOAD" == "true" ]; then
         RUN_DOWNLOAD="true"
     else
-        if [ ! -f "build/libs/json.jar" ]; then
+        if [ ! -f "out/libs/json.jar" ]; then
             RUN_DOWNLOAD="true"
         fi
     fi
 
     if [ "$RUN_DOWNLOAD" == "true" ]; then
-        wget "https://repo1.maven.org/maven2/org/json/json/20231013/json-20231013.jar" -O build/libs/json.jar
+        ## Update: 20231013 -> 20240205
+        wget "https://repo1.maven.org/maven2/org/json/json/20240205/json-20240205.jar" -O out/libs/json.jar
     fi
 }
 
@@ -204,13 +206,25 @@ if [ -f "extres/ee.enc" ]; then
     rm extres/ee.enc
 fi
 
-verify_tools
-
 if [ "$#" -ge 1 ]; then
     if [ "$1" == "--force-download" ]; then
         FORCE_DOWNLOAD="true"
     fi
+
+    if [ "$1" == "--clean-build" ] || [ "$1" == "--clean" ]; then
+        echo "Cleaning up..."
+
+        if [ -f ".build-info" ]; then
+            rm -f .build-info
+        fi
+
+        if [ -d "build" ]; then
+            rm -rf out-out
+        fi
+    fi
 fi
+
+verify_tools
 
 if [ "$FORCE_DOWNLOAD" == "true" ]; then
     get_jdk
@@ -224,4 +238,4 @@ else
 fi
 
 echo "## Setup Process completed"
-echo "To continue, run the Build Script to complete the build process."
+echo "To build the project, run the Build script to complete the building process."

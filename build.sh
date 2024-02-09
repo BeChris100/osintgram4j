@@ -72,7 +72,7 @@ if [ "$#" -ne 0 ]; then
     exit 0
 fi
 
-mkdir -p build/pkg build/project/input build/project/commons build/project/instagram-api build/project/core
+mkdir -p out/pkg out/project/input out/project/commons out/project/instagram-api out/project/core
 
 echo "## Compiling CXX code"
 if [ "$OS_TYPE" == "osx" ]; then
@@ -80,65 +80,65 @@ if [ "$OS_TYPE" == "osx" ]; then
 else
     CURRENT_WORKDIR=$(pwd)
     cd "cxx"
-    mkdir -p build
-    cd "build"
+    mkdir -p out
+    cd "out"
     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=/usr/bin/x86_64-linux-gnu-gcc -DCMAKE_CXX_COMPILER=/usr/bin/x86_64-linux-gnu-g++ ..
     make
-    cp libosintgram4j-cxx.so "$CURRENT_WORKDIR/build/project/input"
+    cp libosintgram4j-cxx.so "$CURRENT_WORKDIR/out/project/input"
 
     cd "$CURRENT_WORKDIR"
 fi
 
 echo "## Compiling the Commons Library"
-find commons/src -name "*.java" -type f -print0 | xargs -0 "$JAVAC_CMD" -d build/project/commons
+find commons/src -name "*.java" -type f -print0 | xargs -0 "$JAVAC_CMD" -d out/project/commons
 
 echo "## Compiling the Instagram API"
-find instagram_api/src -name "*.java" -type f -print0 | xargs -0 "$JAVAC_CMD" -cp build/project/commons:build/libs/json.jar -d build/project/instagram-api
+find instagram_api/src -name "*.java" -type f -print0 | xargs -0 "$JAVAC_CMD" -cp out/project/commons:out/libs/json.jar -d out/project/instagram-api
 
 echo "## Compiling the Osintgram4j API"
-find modapi/src -name "*.java" -type f -print0 | xargs -0 "$JAVAC_CMD" -cp build/project/commons:build/libs/json.jar -d build/project/modapi
+find modapi/src -name "*.java" -type f -print0 | xargs -0 "$JAVAC_CMD" -cp out/project/commons:out/libs/json.jar -d out/project/modapi
 
 echo "## Compiling the Core Application"
-find src -name "*.java" -type f -print0 | xargs -0 "$JAVAC_CMD" -cp build/project/modapi:build/project/commons:build/project/instagram-api:build/libs/json.jar -d build/project/core
+find src -name "*.java" -type f -print0 | xargs -0 "$JAVAC_CMD" -cp out/project/modapi:out/project/commons:out/project/instagram-api:out/libs/json.jar -d out/project/core
 
 echo "## Adding resources to the Core Application"
-cp -r src/net/bc100dev/osintgram4j/res build/project/core/net/bc100dev/osintgram4j/
+cp -r src/net/bc100dev/osintgram4j/res out/project/core/net/bc100dev/osintgram4j/
 
 echo '## Making "commons.jar"'
-"$JAR_CMD" -cf build/project/input/commons.jar -C build/project/commons .
+"$JAR_CMD" -cf out/project/input/commons.jar -C out/project/commons .
 
 echo '## Making "instagram-api.jar"'
-"$JAR_CMD" -cf build/project/input/instagram-api.jar -C build/project/instagram-api .
+"$JAR_CMD" -cf out/project/input/instagram-api.jar -C out/project/instagram-api .
 
 echo '## Making "modapi.jar"'
-"$JAR_CMD" -cf build/project/input/modapi.jar -C build/project/modapi .
+"$JAR_CMD" -cf out/project/input/modapi.jar -C out/project/modapi .
 
 echo '## Making "core.jar"'
-"$JAR_CMD" -cfm build/project/input/core.jar META-INF/MANIFEST.MF -C build/project/core .
+"$JAR_CMD" -cfm out/project/input/core.jar META-INF/MANIFEST.MF -C out/project/core .
 
 echo '## Obtaining the Application Java Modules'
-JAVA_MODS="$($JDEPS_CMD --print-module-deps build/project/input/core.jar build/project/input/instagram-api.jar build/project/input/commons.jar build/project/input/modapi.jar build/libs/json.jar)"
+JAVA_MODS="$($JDEPS_CMD --multi-release 21 --print-module-deps out/project/input/core.jar out/project/input/instagram-api.jar out/project/input/commons.jar out/project/input/modapi.jar out/libs/json.jar)"
 
 # This adds the Certificates for the HTTPS Requests
 JAVA_MODS="jdk.crypto.cryptoki,jdk.crypto.ec,$JAVA_MODS"
 echo "Modules: $JAVA_MODS"
 
 echo '## Building the Java Runtime'
-if [ -d "build/runtime" ]; then
+if [ -d "out/runtime" ]; then
     echo "Cleaning up previous Runtime Image"
-    rm -rf build/runtime
+    rm -rf out/runtime
 fi
 
-"$JLINK_CMD" --module-path "$JAVA_DEFAULT_HOME/jmods" --output build/runtime --add-modules "$JAVA_MODS" --verbose
+"$JLINK_CMD" --module-path "$JAVA_DEFAULT_HOME/jmods" --output out/runtime --add-modules "$JAVA_MODS" --verbose
 
 echo '## Building the Application Package'
-cp build/libs/json.jar build/project/input/json.jar
+cp out/libs/json.jar out/project/input/json.jar
 
-if [ -d "build/pkg/osintgram4j" ]; then
-    rm -rf build/pkg/osintgram4j
+if [ -d "out/pkg/osintgram4j" ]; then
+    rm -rf out/pkg/osintgram4j
 fi
 
-"$JPACKAGE_CMD" -t app-image -n "$BUILD_NAME" --app-version "$BUILD_VERSION-$BUILD_VERSION_CODE" --runtime-image build/runtime -i build/project/input --main-jar core.jar --main-class net.bc100dev.osintgram4j.MainClass -d build/pkg --icon "extres/icon.png" --verbose
+"$JPACKAGE_CMD" -t app-image -n "$BUILD_NAME" --app-version "$BUILD_VERSION-$BUILD_VERSION_CODE" --runtime-image out/runtime -i out/project/input --main-jar core.jar --main-class net.bc100dev.osintgram4j.MainClass -d out/pkg --icon "extres/icon.png" --verbose
 
 read -p "Do you want to install Osintgram (requires sudo privileges)? (Y/N): " INSTALL_CHOICE
 if [[ "$INSTALL_CHOICE" =~ ^[Yy]$ ]]; then
@@ -156,7 +156,7 @@ if [[ "$INSTALL_CHOICE" =~ ^[Yy]$ ]]; then
 
     echo "Copying built files"
     "$PREFIX" mkdir -p /usr/share/bc100dev/osintgram4j/
-    "$PREFIX" cp -r build/pkg/osintgram4j/* /usr/share/bc100dev/osintgram4j
+    "$PREFIX" cp -r out/pkg/osintgram4j/* /usr/share/bc100dev/osintgram4j
     "$PREFIX" ln -s /usr/share/bc100dev/osintgram4j/bin/osintgram4j /usr/bin/osintgram4j
 
     read -p "Do you wish to create an Application Launcher (start from the Start Menu)? (Y/N): " LAUNCHER_CHOICE
@@ -168,10 +168,10 @@ if [[ "$INSTALL_CHOICE" =~ ^[Yy]$ ]]; then
     echo "To run Osintgram, with a Terminal open, run the 'osintgram4j' command."
     echo
     echo "In order to remove Osintgram4j from your system, delete the /usr/share/bc100dev/osintgram4j directory,"
-    echo "and run 'rm -rf \$(which osintgram4j)' with root privileges. On old installations, the default installation path was /usr/share/osintgram4j"
+    echo "and run 'rm -rf \$(which osintgram4j)' with root privileges. On old installations, the installation path was /usr/share/osintgram4j"
     echo
     echo "Otherwise, you can also re-run this building script with the argument '--uninstall' to have"
     echo "Osintgram4j automatically uninstalled."
 else
-    echo "You can run Osintgram from this directory and forwards by going to $PWD and run './build/pkg/osintgram4j/bin/osintgram4j'"
+    echo "You can run Osintgram from this directory and forwards by going to $PWD and run './out/pkg/osintgram4j/bin/osintgram4j'"
 fi
