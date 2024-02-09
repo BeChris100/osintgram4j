@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # shellcheck disable=SC2129
+# shellcheck disable=SC2162
 
 IS_LINUX="false"
 IS_OSX="false"
@@ -16,6 +17,19 @@ fi
 if [[ "$IS_LINUX" == "false" ]] && [[ "$IS_OSX" == "false" ]]; then
     echo "The operating system could not be checked correctly."
     exit 1
+fi
+
+if [ -f ".build-info" ]; then
+    if [ -d "build" ]; then
+        echo "A previous build was found."
+        read -p "Do you want to continue? (Y/N): " SCRIPT_CHOICE
+        if [[ "$SCRIPT_CHOICE" =~ ^[Nn]$ ]]; then
+            exit 0
+        fi
+
+        echo "Rebuilding..."
+        rm -rf build .build-info
+    fi
 fi
 
 echo "## Operating System State"
@@ -152,8 +166,8 @@ function get_jdk() {
             "$TAR_CMD" -xvzf build/jdk/tmp/jdk21.tar.gz --directory build/jdk
         fi
 
-        mv build/jdk/jdk-21/* build/jdk
-        rm -rf build/jdk/tmp build/jdk/jdk-21
+        mv build/jdk/jdk-21.0.1/* build/jdk
+        rm -rf build/jdk/tmp build/jdk/jdk-21.0.1
 
         chmod +x build/jdk/bin/*
 
