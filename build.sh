@@ -161,7 +161,7 @@ if [[ "$INSTALL_CHOICE" =~ ^[Yy]$ ]]; then
 
     read -p "Do you wish to create an Application Launcher (start from the Start Menu)? (Y/N): " LAUNCHER_CHOICE
     if [[ "$LAUNCHER_CHOICE" =~ ^[Yy]$ ]]; then
-        "$PREFIX" cp extres/app_launcher.desktop
+        "$PREFIX" cp extres/app_launcher.desktop /usr/share/applications/bc100dev-osintgram4j.desktop
     fi
 
     echo "## Installation complete"
