@@ -1,6 +1,7 @@
-package osintgram4j.api.sh;
+package net.bc100dev.osintgram4j.sh;
 
 import net.bc100dev.commons.utils.Utility;
+import osintgram4j.commons.ShellConfig;
 
 import java.io.*;
 import java.nio.file.AccessDeniedException;

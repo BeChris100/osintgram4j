@@ -44,18 +44,11 @@ public class EE {
     }
 
     private static void decryptToSource(File srcFile, String pass, File destFile) throws IOException, GeneralSecurityException {
-        byte[] buff = FileEncryption.toDecrypted(srcFile, pass);
-        String data = new String(buff);
+        String data = new String(FileEncryption.toDecrypted(srcFile, pass));
 
-        String[] lines = data.split("\n");
-        StringBuilder str = new StringBuilder();
-
-        for (String line : lines)
-            str.append(line).append("\n");
-
-        if (!isDataEqual(str.toString(), destFile)) {
+        if (!isDataEqual(data, destFile)) {
             FileOutputStream fos = new FileOutputStream(destFile);
-            fos.write(str.toString().getBytes());
+            fos.write(data.getBytes());
             fos.close();
 
             System.out.println("A new file has appeared in your Home Directory.");

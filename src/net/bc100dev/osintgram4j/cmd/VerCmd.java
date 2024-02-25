@@ -5,7 +5,7 @@ import net.bc100dev.commons.Terminal;
 import net.bc100dev.commons.utils.HelpPage;
 import net.bc100dev.osintgram4j.MainClass;
 import osintgram4j.api.Command;
-import osintgram4j.api.sh.ShellConfig;
+import osintgram4j.commons.ShellConfig;
 
 import java.io.IOException;
 import java.io.InputStream;

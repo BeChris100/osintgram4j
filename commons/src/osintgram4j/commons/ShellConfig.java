@@ -1,4 +1,4 @@
-package osintgram4j.api.sh;
+package osintgram4j.commons;
 
 public class ShellConfig {
 

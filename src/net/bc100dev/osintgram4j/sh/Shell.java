@@ -1,10 +1,10 @@
-package net.bc100dev.osintgram4j;
+package net.bc100dev.osintgram4j.sh;
 
 import net.bc100dev.commons.*;
 import net.bc100dev.commons.utils.RuntimeEnvironment;
 import net.bc100dev.commons.utils.Utility;
 import net.bc100dev.commons.utils.io.UserIO;
-import osintgram4j.api.sh.*;
+import osintgram4j.commons.ShellConfig;
 
 import java.io.File;
 import java.io.IOException;
@@ -252,7 +252,7 @@ public class Shell {
                                         if (helps.containsKey(tokVal))
                                             continue;
 
-                                        helps.put(tokVal, caller.retrieveLongHelp());
+                                        helps.put(tokVal, caller.retrieveLongHelp(new String[0]));
                                     } catch (ShellException ignore) {
                                         Terminal.println(Terminal.TermColor.RED,
                                                 String.format("Unknown command \"%s\"", tokVal), true);
@@ -264,7 +264,7 @@ public class Shell {
                                                 if (helps.containsKey(caller.getCommand()))
                                                     continue;
 
-                                                helps.put(caller.getCommand(), caller.retrieveLongHelp());
+                                                helps.put(caller.getCommand(), caller.retrieveLongHelp(new String[0]));
                                             } catch (ShellException ignore) {
                                                 Terminal.println(Terminal.TermColor.RED,
                                                         String.format("Unknown command \"%s\"", tokVal), true);

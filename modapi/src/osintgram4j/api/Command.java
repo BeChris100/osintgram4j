@@ -1,6 +1,6 @@
 package osintgram4j.api;
 
-import osintgram4j.api.sh.ShellConfig;
+import osintgram4j.commons.ShellConfig;
 
 import java.util.List;
 

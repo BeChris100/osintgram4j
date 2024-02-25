@@ -1,4 +1,4 @@
-package osintgram4j.api.sh;
+package net.bc100dev.osintgram4j.sh;
 
 public class ShellException extends Exception {
 

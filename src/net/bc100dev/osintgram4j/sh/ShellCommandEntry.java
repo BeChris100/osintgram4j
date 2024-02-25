@@ -1,6 +1,5 @@
-package osintgram4j.api.sh;
+package net.bc100dev.osintgram4j.sh;
 
-import net.bc100dev.commons.ResourceManager;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

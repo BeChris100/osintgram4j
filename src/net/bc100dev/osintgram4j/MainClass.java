@@ -3,15 +3,15 @@ package net.bc100dev.osintgram4j;
 import net.bc100dev.commons.ApplicationException;
 import net.bc100dev.commons.Terminal;
 import net.bc100dev.commons.utils.HelpPage;
+import net.bc100dev.commons.utils.StringGenerator;
 import net.bc100dev.commons.utils.Utility;
 import net.bc100dev.commons.utils.io.UserIO;
-import osintgram4j.api.sh.ShellConfig;
-import osintgram4j.api.sh.ShellException;
-import osintgram4j.api.sh.ShellFile;
+import net.bc100dev.osintgram4j.sh.Shell;
+import osintgram4j.commons.ShellConfig;
+import net.bc100dev.osintgram4j.sh.ShellException;
+import net.bc100dev.osintgram4j.sh.ShellFile;
 
 import java.io.*;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -68,7 +68,7 @@ public class MainClass {
         helpPage.addArg("-h, --help", null, "Display this message and exit");
         helpPage.addArg("--append-env", "[env]", "Appends environment to the Application Shell from either CLI or File");
         helpPage.addArg("-gI [count]", null, "Generates new Identifiers for a development package");
-        helpPage.addArg("--no-admin-check", null, "Does not display the Administrative Privilege Warning, when running " + (isWindows() ? "with administrative privileges" : "as root"));
+        helpPage.addArg("-S[suppress]", null, "Suppresses warning messages, temporarily disabling them");
         helpPage.display(System.out);
 
         System.out.println();
@@ -86,16 +86,11 @@ public class MainClass {
         String map = "0123456789abcdefghijklmnopqrstuvwxyz";
 
         for (int l = 0; l < count; l++) {
-            StringBuilder str = new StringBuilder();
+            String ident = StringGenerator.generateString(35, map);
+            if (list.contains(ident))
+                System.err.println("#! Duplicate entry found; continuing");
 
-            for (int i = 0; i < 35; i++) {
-                str.append(map.charAt(Utility.getRandomInteger(0, map.length() - 1)));
-            }
-
-            if (list.contains(str.toString()))
-                continue;
-
-            list.add(str.toString());
+            list.add(ident);
 
             if (l + 1 != Integer.MAX_VALUE)
                 System.out.print("## Generated " + (l + 1) + " identifiers\r");
@@ -126,90 +121,44 @@ public class MainClass {
         StringBuilder suppressStr = new StringBuilder();
 
         if (args.length >= 1) {
-            switch (args[0]) {
-                case "-h", "--help", "-help", "?" -> {
-                    usage(ProcessHandle.current());
-                    System.exit(0);
-                    return;
-                }
-                case "--generate-identifiers", "-gI", "--identifiers" -> {
-                    if (args.length == 1) {
-                        System.err.println("## Required [count] parameter.");
-                        System.exit(1);
-                        return;
-                    }
-
-                    int count = 1;
-                    try {
-                        count = Integer.parseInt(args[1]);
-                    } catch (NumberFormatException ignore) {
-                        System.err.println("## Invalid argument \"" + args[1] + "\": using count of 1");
-                    }
-
-                    List<String> identifierList = generateIdentifiers(count);
-                    for (String identifier : identifierList)
-                        System.out.println(identifier);
-
-                    System.exit(0);
-                }
-                default -> {
-                    String n = args[0];
-                    File file = new File(n);
-                    if (!file.exists()) {
-                        configList.add(new ShellConfig("CmdArgument.UserTarget", n));
-                        break;
-                    }
-
-                    if (!file.canRead()) {
-                        System.err.println("\"" + file.getPath() + "\": Permission denied");
-                        break;
-                    }
-
-                    try {
-                        shellFile = ShellFile.open(file);
-                    } catch (IOException ex) {
-                        ex.printStackTrace(System.err);
-                    }
-                }
-            }
-
             for (String arg : args) {
-                if (arg.contains("=")) {
-                    String[] opts = arg.split("=", 2);
-                    if (opts[0].equals("--append-env")) {
-                        if (opts[1].contains("=")) {
-                            String[] env = opts[1].split("=", 2);
-                            env[0] = env[0].trim();
-                            env[1] = env[1].trim();
+                String[] opts;
+                if (arg.contains("="))
+                    opts = arg.split("=", 2);
+                else
+                    opts = new String[]{arg};
 
-                            configList.add(new ShellConfig(env[0], env[1]));
-                        } else {
-                            File envFile = new File(opts[1]);
-                            if (!envFile.exists())
-                                System.err.println("Environment file at \"" + envFile.getPath() + "\" does not exist");
+                if (opts[0].equals("--append-env")) {
+                    if (opts[1].contains("=")) {
+                        String[] env = opts[1].split("=", 2);
+                        env[0] = env[0].trim();
+                        env[1] = env[1].trim();
 
-                            if (!envFile.canRead())
-                                System.err.println("Cannot read env file at \"" + envFile.getPath() + "\" (Permission denied)");
+                        configList.add(new ShellConfig(env[0], env[1]));
+                    } else {
+                        File envFile = new File(opts[1]);
+                        if (!envFile.exists())
+                            System.err.println("Environment file at \"" + envFile.getPath() + "\" does not exist");
 
-                            try {
-                                FileInputStream fis = new FileInputStream(envFile);
-                                Properties envProps = new Properties();
-                                envProps.load(fis);
+                        if (!envFile.canRead())
+                            System.err.println("Cannot read env file at \"" + envFile.getPath() + "\" (Permission denied)");
 
-                                fis.close();
+                        try {
+                            FileInputStream fis = new FileInputStream(envFile);
+                            Properties envProps = new Properties();
+                            envProps.load(fis);
 
-                                if (!envProps.isEmpty()) {
-                                    for (Object key : envProps.keySet())
-                                        configList.add(new ShellConfig((String) key, envProps.getProperty((String) key)));
-                                }
-                            } catch (IOException ex) {
-                                ex.printStackTrace();
+                            fis.close();
+
+                            if (!envProps.isEmpty()) {
+                                for (Object key : envProps.keySet())
+                                    configList.add(new ShellConfig((String) key, envProps.getProperty((String) key)));
                             }
+                        } catch (IOException ex) {
+                            ex.printStackTrace(System.err);
                         }
                     }
-                }
-
-                if (arg.startsWith("-S")) {
+                } else if (arg.startsWith("-S")) {
                     switch (arg) {
                         case "-Sscript_uses" -> {
                             if (suppressStr.toString().contains("scripts"))
@@ -222,6 +171,53 @@ public class MainClass {
                                 break;
 
                             suppressStr.append("admin_checks ");
+                        }
+                    }
+                } else {
+                    switch (args[0]) {
+                        case "-h", "--help", "-help", "?" -> {
+                            usage(ProcessHandle.current());
+                            System.exit(0);
+                            return;
+                        }
+                        case "--generate-identifiers", "-gI", "--identifiers" -> {
+                            if (args.length == 1) {
+                                System.err.println("## Required [count] parameter.");
+                                System.exit(1);
+                                return;
+                            }
+
+                            int count = 1;
+                            try {
+                                count = Integer.parseInt(args[1]);
+                            } catch (NumberFormatException ignore) {
+                                System.err.println("## Invalid argument \"" + args[1] + "\": using count of 1");
+                            }
+
+                            List<String> identifierList = generateIdentifiers(count);
+                            for (String identifier : identifierList)
+                                System.out.println(identifier);
+
+                            System.exit(0);
+                        }
+                        default -> {
+                            String n = args[0];
+                            File file = new File(n);
+                            if (!file.exists()) {
+                                configList.add(new ShellConfig("CmdArgument.UserTarget", n));
+                                break;
+                            }
+
+                            if (!file.canRead()) {
+                                System.err.println("\"" + file.getPath() + "\": Permission denied");
+                                break;
+                            }
+
+                            try {
+                                shellFile = ShellFile.open(file);
+                            } catch (IOException ex) {
+                                ex.printStackTrace(System.err);
+                            }
                         }
                     }
                 }
@@ -242,7 +238,7 @@ public class MainClass {
                     }
                 }
             } catch (ApplicationException ex) {
-                ex.printStackTrace();
+                ex.printStackTrace(System.err);
             }
         }
 
