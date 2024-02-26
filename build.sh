@@ -138,7 +138,9 @@ if [ -d "out/pkg/osintgram4j" ]; then
     rm -rf out/pkg/osintgram4j
 fi
 
-"$JPACKAGE_CMD" -t app-image -n "$BUILD_NAME" --app-version "$BUILD_VERSION-$BUILD_VERSION_CODE" --runtime-image out/runtime -i out/project/input --main-jar core.jar --main-class net.bc100dev.osintgram4j.MainClass -d out/pkg --icon "extres/icon.png" --verbose
+"$JPACKAGE_CMD" -t app-image -n "$BUILD_NAME" --app-version "$BUILD_VERSION-$BUILD_VERSION_CODE" --runtime-image out/runtime \
+ -i out/project/input --main-jar core.jar --main-class net.bc100dev.osintgram4j.MainClass -d out/pkg --icon "extres/icon.png" \
+ --java-options "-Xmx256m" --java-options "-Xms256m" --verbose
 
 read -p "Do you want to install Osintgram (requires sudo privileges)? (Y/N): " INSTALL_CHOICE
 if [[ "$INSTALL_CHOICE" =~ ^[Yy]$ ]]; then
