@@ -108,8 +108,6 @@ public class MainClass {
         init();
         loadSettings();
 
-        System.out.println(Utility.btrEnumString(OperatingSystem.LINUX));
-
         if (NativeLoader.hasLibrary())
             NativeLoader.load();
 
