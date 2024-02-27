@@ -9,6 +9,11 @@ import java.util.Random;
 
 public class Utility {
 
+    public static String btrEnumString(Enum<?> e) {
+        String s = e.toString();
+        return s.charAt(0) + s.substring(1).toLowerCase();
+    }
+
     public static byte[] base64EncodeStr(byte[] data, int times) {
         byte[] b64 = data;
 

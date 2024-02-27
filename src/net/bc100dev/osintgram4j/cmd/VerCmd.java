@@ -40,13 +40,11 @@ public class VerCmd extends Command {
 
     private static String rFlavor(Properties props) {
         return switch (flavor(props)) {
-            case "debug" -> "Development";
+            case "debug", "dev", "devel", "development" -> "Development";
             case "release" -> "Release";
             case "p_release" -> "Pre-Release";
-            case "arch_rel" -> "ArchLinux_Release";
-            case "arch_rel_dev" -> "ArchLinux_Pre-Release";
-            case "deb_rel" -> "Debian_Release";
-            case "deb_rel_dev" -> "Debian_Pre-Release";
+            case "v_alp" -> "Alpha";
+            case "v_bt" -> "Beta";
             default -> "Unknown_Flavor";
         };
     }

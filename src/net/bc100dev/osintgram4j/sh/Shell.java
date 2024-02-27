@@ -1,7 +1,6 @@
 package net.bc100dev.osintgram4j.sh;
 
 import net.bc100dev.commons.*;
-import net.bc100dev.commons.utils.RuntimeEnvironment;
 import net.bc100dev.commons.utils.Utility;
 import net.bc100dev.commons.utils.io.UserIO;
 import osintgram4j.commons.ShellConfig;
@@ -12,6 +11,8 @@ import java.io.InputStream;
 import java.util.*;
 
 import static net.bc100dev.commons.Terminal.TermColor.*;
+import static net.bc100dev.commons.utils.RuntimeEnvironment.USER_NAME;
+import static net.bc100dev.commons.utils.RuntimeEnvironment.getHostName;
 import static net.bc100dev.osintgram4j.TitleBlock.TITLE_BLOCK;
 
 /**
@@ -43,7 +44,7 @@ public class Shell {
     private Terminal.TermColor termColor = null;
 
     /**
-     * Initializes the PCL with the necessary Input and the necessary commands.
+     * Initializes the Shell with the necessary Input and the necessary commands.
      *
      * @throws ShellException May throw an exception during initializing the commands.
      * @throws IOException    Throws an exception, when cannot read any command entries
@@ -56,7 +57,7 @@ public class Shell {
         this.suppress = suppress;
 
         try {
-            PS1 = String.format("[%s: osintgram4j]%s ", RuntimeEnvironment.USER_NAME, UserIO.nIsAdmin() ? "#" : "$");
+            PS1 = String.format("[%s/%s: osintgram4j]%s ", USER_NAME, getHostName(), UserIO.nIsAdmin() ? "#" : "$");
         } catch (ApplicationException ex) {
             throw new ApplicationRuntimeException(ex);
         }
@@ -413,7 +414,7 @@ public class Shell {
      *
      * @param env  The environment parameter
      * @param exec The command parameter
-     * @param args Given PCL command parameters
+     * @param args Given Shell command parameters
      */
     private void execCommand(List<ShellConfig> env, String exec, String[] args) {
         boolean cmdFound = false;
@@ -474,7 +475,12 @@ public class Shell {
     public void runScript(ShellFile shellFile) throws IOException, ShellException {
         boolean shownHelpWarning = false;
 
-        addCallersFromResource(Shell.class, "/net/bc100dev/osintgram4j/res/cmd_list_d/defaults.json");
+        InputStream is = new ResourceManager(Shell.class, false)
+                .getResourceInputStream("/net/bc100dev/osintgram4j/res/cmd_list_d/defaults.json");
+        byte[] buff = is.readAllBytes();
+        is.close();
+
+        addCallersFromData(new String(buff));
 
         for (String inst : shellFile.getInstructions()) {
             ShellExecution execution = getExecutionLine(inst);

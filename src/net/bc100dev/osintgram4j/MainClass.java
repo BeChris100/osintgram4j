@@ -3,13 +3,14 @@ package net.bc100dev.osintgram4j;
 import net.bc100dev.commons.ApplicationException;
 import net.bc100dev.commons.Terminal;
 import net.bc100dev.commons.utils.HelpPage;
+import net.bc100dev.commons.utils.OperatingSystem;
 import net.bc100dev.commons.utils.StringGenerator;
 import net.bc100dev.commons.utils.Utility;
 import net.bc100dev.commons.utils.io.UserIO;
 import net.bc100dev.osintgram4j.sh.Shell;
-import osintgram4j.commons.ShellConfig;
 import net.bc100dev.osintgram4j.sh.ShellException;
 import net.bc100dev.osintgram4j.sh.ShellFile;
+import osintgram4j.commons.ShellConfig;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -18,6 +19,8 @@ import java.util.Properties;
 
 import static net.bc100dev.commons.utils.RuntimeEnvironment.isMac;
 import static net.bc100dev.commons.utils.RuntimeEnvironment.isWindows;
+import static net.bc100dev.osintgram4j.Settings.app_adminSecurityWarningEnabled;
+import static net.bc100dev.osintgram4j.Settings.loadSettings;
 import static net.bc100dev.osintgram4j.TitleBlock.DISPLAY;
 import static net.bc100dev.osintgram4j.TitleBlock.TITLE_BLOCK;
 
@@ -103,9 +106,9 @@ public class MainClass {
 
     public static void main(String[] args) {
         init();
+        loadSettings();
 
-        // try to decrypt the remote file
-        EE.attemptDecrypt();
+        System.out.println(Utility.btrEnumString(OperatingSystem.LINUX));
 
         if (NativeLoader.hasLibrary())
             NativeLoader.load();
@@ -224,7 +227,7 @@ public class MainClass {
             }
         }
 
-        if (!suppressStr.toString().contains("admin_checks")) {
+        if (!suppressStr.toString().contains("admin_checks") || app_adminSecurityWarningEnabled()) {
             try {
                 if (NativeLoader.isLoaded()) {
                     if (UserIO.isAdmin()) {

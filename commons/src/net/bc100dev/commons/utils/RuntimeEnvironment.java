@@ -5,6 +5,7 @@ import net.bc100dev.commons.utils.io.FileUtil;
 import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
+import java.nio.file.FileSystems;
 import java.util.List;
 
 public class RuntimeEnvironment {
@@ -12,19 +13,19 @@ public class RuntimeEnvironment {
     public static final String OS_NAME = System.getProperty("os.name");
     public static final String OS_ARCH = System.getProperty("os.arch");
     public static final String OS_VERSION = System.getProperty("os.version");
-    public static final String PATH_SEPARATOR = System.getProperty("path.separator");
+    public static final String PATH_SEPARATOR = File.pathSeparator;
     public static final File WORKING_DIRECTORY = new File(System.getProperty("user.dir"));
     public static final File USER_HOME = new File(System.getProperty("user.home"));
     public static final String USER_NAME = System.getProperty("user.name");
     public static final String HOST_NAME = System.getProperty("host.name");
-    public static final String SYSTEM_LINE_SEPARATOR = System.getProperty("line.separator");
+    public static final String SYSTEM_LINE_SEPARATOR = System.lineSeparator();
     public static final String JAVA_VERSION = System.getProperty("java.version");
     public static final String JAVA_VENDOR_URL = System.getProperty("java.vendor.url");
     public static final String JAVA_VENDOR = System.getProperty("java.vendor");
     public static final File JAVA_HOME = new File(System.getProperty("java.home"));
     public static final String JAVA_HOME_ENV = System.getenv("JAVA_HOME");
     public static final File CLASS_PATH = new File(System.getProperty("java.class.path"));
-    public static final char SYSTEM_PATH_SEPARATOR = System.getProperty("file.separator").toCharArray()[0];
+    public static final String SYSTEM_PATH_SEPARATOR = FileSystems.getDefault().getSeparator();
 
     public static int countRuntimeModifications() {
         List<String> modifications = ManagementFactory.getRuntimeMXBean().getInputArguments();
