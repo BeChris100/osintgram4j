@@ -2,6 +2,7 @@ package net.bc100dev.osintgram4j;
 
 import net.bc100dev.commons.ApplicationRuntimeException;
 import net.bc100dev.commons.utils.RuntimeEnvironment;
+import osintgram4j.commons.PackagedApplication;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,6 +30,9 @@ public class Settings {
     // The String must be initialized by the `value` parameter first
     // within the `case` statement.
     private static boolean valueToBoolean(String value, boolean defValue) {
+        if (value == null || value.trim().isEmpty())
+            return defValue;
+
         return switch (value) {
             case String s
                 when s.equalsIgnoreCase("true") -> true;
@@ -51,25 +55,98 @@ public class Settings {
     }
 
     public static void loadSettings() {
+        File appDir = PackagedApplication.getApplicationDirectory();
+        if (appDir == null)
+            throw new ApplicationRuntimeException("APPDIR (\"og4j.location.app_dir\") is not set up");
+
+        File reqConfFile = new File(appDir.getAbsolutePath() + "/AppSettings.cfg");
+        if (!reqConfFile.exists() || !reqConfFile.isFile() || !reqConfFile.canRead())
+            throw new ApplicationRuntimeException("Default Application Settings file could not be initialized");
+
         try {
-            FileInputStream fis = new FileInputStream("AppSettings.cfg");
+            FileInputStream fis = new FileInputStream(reqConfFile);
             props.load(fis);
             fis.close();
         } catch (IOException ex) {
             throw new ApplicationRuntimeException(ex);
+        } catch (IllegalArgumentException ex) {
+            throw new ApplicationRuntimeException("Property Load error", ex);
+        }
+
+        File userConfig;
+        switch (getOperatingSystem()) {
+            case WINDOWS -> userConfig = new File(USER_HOME.getAbsolutePath() + "\\AppData\\Local\\net.bc100dev\\osintgram4j\\AppSettings.cfg");
+            case LINUX -> userConfig = new File(USER_HOME.getAbsolutePath() + "/.config/net.bc100dev/osintgram4j/AppSettings.cfg");
+            case MAC_OS -> userConfig = new File(USER_HOME.getAbsolutePath() + "/Library/net.bc100dev/osintgram4j/AppSettings.cfg");
+            default -> throw new ApplicationRuntimeException("Unsupported Operating System");
+        }
+
+        if (userConfig.exists()) {
+            if (userConfig.canRead() && userConfig.isFile()) {
+                try {
+                    FileInputStream fis = new FileInputStream(userConfig);
+                    props.load(fis);
+                    fis.close();
+                } catch (IOException ignore) {
+                    // Ignore the exception (do not load, if an error occurs)
+                } catch (IllegalArgumentException ex) {
+                    throw new ApplicationRuntimeException("Property Load error", ex);
+                }
+            }
+        }
+
+        String envValue = System.getenv("OG4J_APPCONF");
+        if (envValue != null) {
+            String[] envPaths = envValue.split(File.pathSeparator);
+
+            for (String envPath : envPaths) {
+                File file = new File(envPath);
+                if (!file.exists()) {
+                    System.err.println("Could not find \"" + envPath + "\"");
+                    continue;
+                }
+
+                if (!file.isFile()) {
+                    System.err.println("\"" + envPath + "\" is not a file");
+                    continue;
+                }
+
+                if (!file.canRead()) {
+                    System.err.println("Current user cannot access \"" + envPath + "\"");
+                    continue;
+                }
+
+                try {
+                    FileInputStream fis = new FileInputStream(envPath);
+                    props.load(fis);
+                    fis.close();
+                } catch (IOException ex) {
+                    throw new ApplicationRuntimeException("Could not load " + envPath, ex);
+                } catch (IllegalArgumentException ex) {
+                    throw new ApplicationRuntimeException("Property Load error", ex);
+                }
+            }
+        }
+
+        File cwdFile = new File("OG4J_AppSettings.cfg");
+        if (cwdFile.exists()) {
+            if (cwdFile.isFile() && cwdFile.canRead()) {
+                try {
+                    FileInputStream fis = new FileInputStream(cwdFile);
+                    props.load(fis);
+                    fis.close();
+                } catch (IOException ignore) {
+                    // ignore the errors
+                } catch (IllegalArgumentException ex) {
+                    throw new ApplicationRuntimeException("Property Load error", ex);
+                }
+            }
         }
     }
 
     public static void reloadSettings() {
-        try {
-            props.clear();
-
-            FileInputStream fis = new FileInputStream("AppSettings.cfg");
-            props.load(fis);
-            fis.close();
-        } catch (IOException ex) {
-            throw new ApplicationRuntimeException(ex);
-        }
+        props.clear();
+        loadSettings();
     }
 
     public static boolean app_adminSecurityWarningEnabled() {
@@ -90,7 +167,7 @@ public class Settings {
         if (isEmpty())
             throw new ApplicationRuntimeException("Settings are not loaded");
 
-        String v = null;
+        String v;
         switch (getOperatingSystem()) {
             case WINDOWS ->
                     v = props.getProperty("System.Windows.DefaultFileLocation", "[home]\\AppData\\Local\\BC100Dev\\osintgram4j");

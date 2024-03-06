@@ -3,9 +3,7 @@ package net.bc100dev.osintgram4j;
 import net.bc100dev.commons.ApplicationException;
 import net.bc100dev.commons.Terminal;
 import net.bc100dev.commons.utils.HelpPage;
-import net.bc100dev.commons.utils.OperatingSystem;
 import net.bc100dev.commons.utils.StringGenerator;
-import net.bc100dev.commons.utils.Utility;
 import net.bc100dev.commons.utils.io.UserIO;
 import net.bc100dev.osintgram4j.sh.Shell;
 import net.bc100dev.osintgram4j.sh.ShellException;
@@ -115,6 +113,14 @@ public class MainClass {
             if (!isMac())
                 throw new RuntimeException("native library unable to load");
         }
+
+        String appDir = System.getProperty(".app.locations.app_dir"),
+                binDir = System.getProperty(".app.locations.bin_dir"),
+                rootDir = System.getProperty(".app.locations.root_dir");
+
+        System.out.println(appDir);
+        System.out.println(binDir);
+        System.out.println(rootDir);
 
         List<ShellConfig> configList = new ArrayList<>();
         ShellFile shellFile = null;

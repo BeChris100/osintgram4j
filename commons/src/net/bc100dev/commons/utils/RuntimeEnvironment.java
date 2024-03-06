@@ -90,6 +90,7 @@ public class RuntimeEnvironment {
         return OS_NAME.toLowerCase().contains("mac");
     }
 
+    @Deprecated(forRemoval = true)
     public static boolean isSunOs() {
         return OS_NAME.toLowerCase().contains("sunos");
     }

@@ -86,6 +86,20 @@ else
     make
     cp libosintgram4j-cxx.so "$CURRENT_WORKDIR/out/project/input"
 
+    MINGW_C="$(command -v x86_64-w64-mingw32-gcc)"
+    MINGW_CPP="$(command -v x86_64-w64-mingw32-g++)"
+
+    if [ -n "$MINGW_C" ] && [ -n "$MINGW_CPP" ]; then
+        echo "* Compiling CXX code for Windows"
+
+        cd "$CURRENT_WORKDIR/cxx"
+        mkdir win
+        cd win
+        cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER="$MINGW_C" -DCMAKE_CXX_COMPILER="$MINGW_CPP" ..
+        make
+        cp osintgram4j-cxx.dll "$CURRENT_WORKDIR/out/project/input"
+    fi
+
     cd "$CURRENT_WORKDIR"
 fi
 
@@ -116,31 +130,20 @@ echo '## Making "modapi.jar"'
 echo '## Making "core.jar"'
 "$JAR_CMD" -cfm out/project/input/core.jar META-INF/MANIFEST.MF -C out/project/core .
 
-echo '## Obtaining the Application Java Modules'
-JAVA_MODS="$($JDEPS_CMD --multi-release 21 --print-module-deps out/project/input/core.jar out/project/input/instagram-api.jar out/project/input/commons.jar out/project/input/modapi.jar out/libs/json.jar)"
-
-# This adds the Certificates for the HTTPS Requests
-JAVA_MODS="jdk.crypto.cryptoki,jdk.crypto.ec,$JAVA_MODS"
-echo "Modules: $JAVA_MODS"
-
-echo '## Building the Java Runtime'
-if [ -d "out/runtime" ]; then
-    echo "Cleaning up previous Runtime Image"
-    rm -rf out/runtime
-fi
-
-"$JLINK_CMD" --module-path "$JAVA_DEFAULT_HOME/jmods" --output out/runtime --add-modules "$JAVA_MODS" --verbose
+## Minimal Java Runtime Removal: Modding will be limited, if not removed
 
 echo '## Building the Application Package'
 cp out/libs/json.jar out/project/input/json.jar
+cp AppSettings.cfg out/project/input/AppSettings.cfg
 
 if [ -d "out/pkg/osintgram4j" ]; then
     rm -rf out/pkg/osintgram4j
 fi
 
-"$JPACKAGE_CMD" -t app-image -n "$BUILD_NAME" --app-version "$BUILD_VERSION-$BUILD_VERSION_CODE" --runtime-image out/runtime \
+"$JPACKAGE_CMD" -t app-image -n "$BUILD_NAME" --app-version "$BUILD_VERSION-$BUILD_VERSION_CODE" \
  -i out/project/input --main-jar core.jar --main-class net.bc100dev.osintgram4j.MainClass -d out/pkg --icon "extres/icon.png" \
- --java-options "-Xmx256m" --java-options "-Xms256m" --verbose
+ --java-options "-Xmx256m" --java-options "-Xms256m" --java-options '-Dog4j.location.app_dir=$APPDIR' \
+ --java-options '-Dog4j.location.bin_dir=$BINDIR' --java-options '-Dog4j.location.root_dir=$ROOTDIR' --verbose
 
 read -p "Do you want to install Osintgram (requires sudo privileges)? (Y/N): " INSTALL_CHOICE
 if [[ "$INSTALL_CHOICE" =~ ^[Yy]$ ]]; then
