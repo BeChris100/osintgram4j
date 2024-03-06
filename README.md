@@ -11,9 +11,6 @@ being analyzed, so that I can convert them into the functional Java code. It is
 not expected to be fully functional as of now, as I recently started working on
 Osintgram for Java.
 
-Oh, and also... can you find all the Easter eggs in this project? They might be
-nasty, but it might be worth the shot.
-
 ---
 
 ## Disclaimer (Rules)
