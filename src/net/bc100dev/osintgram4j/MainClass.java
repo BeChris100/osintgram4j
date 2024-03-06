@@ -114,14 +114,6 @@ public class MainClass {
                 throw new RuntimeException("native library unable to load");
         }
 
-        String appDir = System.getProperty(".app.locations.app_dir"),
-                binDir = System.getProperty(".app.locations.bin_dir"),
-                rootDir = System.getProperty(".app.locations.root_dir");
-
-        System.out.println(appDir);
-        System.out.println(binDir);
-        System.out.println(rootDir);
-
         List<ShellConfig> configList = new ArrayList<>();
         ShellFile shellFile = null;
 
