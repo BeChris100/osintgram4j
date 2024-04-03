@@ -1,7 +1,6 @@
 {
     "version": 1,
     "package": "net.bc100dev.osintgram4j",
-    "identifier": "_____RESTRICTED____OSINTGRAM4J_____",
     "label": "Osintgram Default Commands",
     "command_list": [
         {

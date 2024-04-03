@@ -53,6 +53,19 @@ a positive response. The reason is that I do not want to dive myself into a laws
 due to copyrights. Even though that the Software Licensing exists, I am willing to
 contact to ensure the legitimacy between me and the developer.
 
+28-03-2024 Update: I am not getting any response from the original developer, which
+means, I am getting involved with Russian roulette (taking risks), and I'll be
+trying to not get any Takedown notice, like for example, DMCA Takedown notice,
+since that will be bad. However, this does not mean that I am not following the
+Licensing guidelines because if I don't, then I will most likely face legal issues.
+So, in that case, I will be following the Licensing guidelines. I'll try to get in
+touch with the developer one last time, and if that won't work, then Licensing
+guidelines it is.
+
+Now, don't get me wrong. I like this project, and I clearly don't want to close this
+project whatsoever. But, if I do get forced to close this project down, then you
+know the cause.
+
 ---
 
 ## Reasoning on Development
@@ -64,32 +77,31 @@ method, which the project can no longer start. This is due to a single line, whi
 I debugged, and will work with it, commented out. See
 [the Restoration Process](OrigRestore.md).
 
-Also, even though that Python is easy, I decided to switch to a different language.
-It is none other than Java itself. Yes, I use Java and C++, by the way. However,
-since I can be stubborn at some times, I decided to reject the offer that Gradle and
-Maven suggests, and go with the more controllable form, writing my own Build Process
-for the project. The reason that I don't use Maven or Gradle is because I have
-problems with IntelliJ, when I need to handle multiple modules, or when I want to
-separate packages into modules. It will always bug the IDE out, giving me headache
-on where the problem is. And also, I use IntelliJ Ultimate and CLion, by the way.
+Also, even that Python is easy, I decided to switch to a different language. It is
+none other than Java itself. Yes, I use Java and C++, by the way. However,
+due to some issues with IntelliJ having multiple modules and working with Gradle /
+Maven, I decided to reject their offer, and go with the more controllable form,
+writing a custom Build Process for the project. I hate that issue, and I simply
+don't want to go that route. I use IntelliJ Ultimate and CLion, by the way.
 
-To fill up the conception about me not using Gradle or Maven, I will be considering
-on working an alternative way on building any type of project that will support
-multiple languages that will like you using multiple modules instead of just one.
-This will be a time-saver, especially that I might choose to dump the Shell scripts
-for the Build Process, and use the new-style Building. I hear you, you don't like
-bloat on your system, but we live in 2024, as of now.
+To fill up the conception about me not using Gradle or Maven, I will be making
+an alternative way of building projects that will support multiple languages, making
+the time process of building a project faster, especially that you don't have to
+run `make`, Gradle or Maven, or even other processes. That build system might
+also be one of the reasons, why I might also ditch the Shell scripts to build this
+project, and use the new-style Building. I hear you, you don't like bloat on your
+system, but we live in 2024, as of now.
 
-Also, it might look like I bloated this project to the max, but I will try to keep
-it lightweight as possible. Please do note that Java Development can receive more
-and more bloat from time to time, since it can be time-consuming, or the fact that
-Java is very much verbose and that it forces you into OOP (Object oriented
-programming). The bloat should be more than an expectation.
+Also, this project might look like it is bloated to the max, but I am still trying
+to keep it lightweight as possible. Please do note that Java development can
+receive more and more bloat from time to time, since it can be time-consuming, or
+the fact that Java is very much verbose and that it forces you into OOP
+(Object-oriented programming). The bloat should be more than an expectation.
 
-Another point to mention is that I won't provide the direct builds for Windows via
-the Batch / Powershell files, but I'll still provide the releases for the Windows
-platform. It is meant to be run on Linux instead of on Windows, since I'm an Arch
-Linux user, by the way.
+Another point to mention is that I won't provide the building scripts for Windows
+via the Batch / Powershell files, but I'll still provide the releases for the
+Windows platform via the "Releases" tab. It is meant to be run on Linux instead of
+Windows, since I'm an Arch Linux user, by the way.
 
 ---
 
@@ -98,38 +110,52 @@ To set up your workspace for the Osintgram project, you can select this project,
 or [the original project](https://github.com/Datalux/Osintgram). However, this is
 Osintgram4j project, which is a part of the OSINT and the Osintgram Family.
 
-This project is mainly targeted for the Linux platform, meaning that on Windows or
-macOS, you'll need a VM or a Cloud Shell Instance. A VM (Virtual Machine) is the
-recommended option, if you don't want to waste your money on a Cloud Shell / Web
-Server. On Windows, the recommended option is to use the WSL (Windows Subsystem
-for Linux), since it is an optional feature on the latest Windows versions (10 &
-11).
+This project is mainly targeted for the Linux platform. However, this does not
+mean that you have to install Linux on your system. Here are a few workarounds:
+
+- Virtual Machine (VM): Creates a virtual environment that operates like a
+  separate computer, allowing you to run Linux on Windows, macOS, or Android.
+  It's a cost-free and straightforward way to experiment with different operating
+  systems.
+- Cloud Shell / Web Server: Offers remote Linux access via `ssh`. Costs vary by
+  provider. Linode can be a way, if you follow NetworkChuck.
+- Windows Subsystem for Linux (WSL): Provides Linux capabilities inside Windows.
+  Can be enabled through `optionalfeatures` in Windows 10 & 11.
+- Linux Containers (e.g., Docker): Runs Linux apps in lightweight, isolated
+  containers on your system, allowing to run any Container within the Docker 
+  Runtime. Efficient for development and specific app usage. Comes with a Docker
+  setup for easy project initialization.
+
+Personally, I wouldn't choose WSL, if you wish to fully learn Linux. If you want
+to go that route by fully learning Linux (which is what I would recommend), I would
+recommend using a VM, or installing Ubuntu, Linux Mint or Zorin OS on your system.
+Also, why can't I build the C/C++ code for macOS? Because I don't have a MacBook,
+and to build it for M1 / M2 / M3 chips, you need a MacBook, not a VM.
 
 After having a Linux shell instance, you can run these following commands:
 ```shell
 git clone https://github.com/BeChris100/osintgram4j && cd osintgram4j
 chmod +x setup.sh build.sh
-./setup.sh
+./setup.sh --force-download
 ./build.sh
 ```
 
 Step-by-step explanation:
-1. Via the `git` command, the project gets downloaded, and will automatically
-   change the working directory into the `osintgram4j` folder.
+1. Via the `git` command, the project gets downloaded, and by doing
+   `cd osintgram4j`, the working directory gets changed.
 2. The `chmod` command will set the Shell files executable. By default, `git`
-   will automatically mark the Shell files executable, but might fail. Running
-   them will make sure that the files are executable.
+   will automatically mark the Shell files executable, but in some cases, it might
+   fail. Running them will make sure that the files are executable.
 3. First Shell script (`setup.sh`) will create a working Build Environment. It
-   will create a `build` folder, putting every necessary files, including external
+   will create a `out` folder, putting every necessary files, including external
    libraries (`org.json` is only currently involved) and prepare the necessary
-   files.
-4. Running `build.sh` script will invoke the necessary CXX (C/C++ Commands) and
-   run the Java Compiler. Along the Java Compiler, the necessary resource files
-   are also being copied. After that, the `jdeps`, `jlink` and `jpackage` are being
-   executed, so that it generates an Application Package, making a native executable
-   of this project. When that is complete, a prompt will be displayed, if the
-   Application will be installed in `/usr/share/osintgram4j`, linking the binary
-   to `/usr/bin/osintgram4j`, making a persistent binary execution from anywhere.
+   files. The `--force-download` can be removed, as it will rely on the already
+   installed JDK. 
+4. Running the `build.sh` script will build this project, compiling the C++ code
+   into a shared library, along with the Java Compiler. After the compilation,
+   `jpackage` gets invoked to create a native executable package without having
+   the need of running `java` or other pesky scripts. Installation is optional,
+   which will place the native executable into `/usr/bin`.
 
 However, if you wish to not install directly, the Application Package will be stored
 at the current working directory under `build/pkg/osintgram4j`, with the executable

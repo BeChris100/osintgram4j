@@ -1,7 +1,6 @@
 package net.bc100dev.osintgram4j;
 
 import net.bc100dev.commons.ApplicationRuntimeException;
-import net.bc100dev.commons.utils.RuntimeEnvironment;
 import osintgram4j.commons.PackagedApplication;
 
 import java.io.File;
@@ -11,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.Properties;
 
 import static net.bc100dev.commons.utils.RuntimeEnvironment.*;
+import static osintgram4j.commons.AppConstants.log;
 
 public class Settings {
 
@@ -149,6 +149,14 @@ public class Settings {
         loadSettings();
     }
 
+    public static File storeLocation() {
+        return switch (getOperatingSystem()) {
+            case LINUX -> new File(USER_HOME.getAbsolutePath() + "/.config/net.bc100dev/osintgram4j");
+            case WINDOWS -> new File(USER_HOME.getAbsolutePath() + "\\AppData\\Local\\BC100Dev\\Osintgram4j");
+            case MAC_OS -> new File(USER_HOME.getAbsolutePath() + "/Library/net.bc100dev/osintgram4j");
+        };
+    }
+
     public static boolean app_adminSecurityWarningEnabled() {
         if (isEmpty())
             throw new ApplicationRuntimeException("Settings are not loaded");
@@ -161,33 +169,6 @@ public class Settings {
             throw new ApplicationRuntimeException("Settings are not loaded");
 
         return props.getProperty("App.Cache.RefreshInterval", "2d");
-    }
-
-    public static File system_storeLocation() {
-        if (isEmpty())
-            throw new ApplicationRuntimeException("Settings are not loaded");
-
-        String v;
-        switch (getOperatingSystem()) {
-            case WINDOWS ->
-                    v = props.getProperty("System.Windows.DefaultFileLocation", "[home]\\AppData\\Local\\BC100Dev\\osintgram4j");
-            case LINUX ->
-                    v = props.getProperty("System.Linux.DefaultFileLocation", "[home]/.config/BC100Dev/osintgram4j");
-            case MAC_OS ->
-                    v = props.getProperty("System.Mac.DefaultFileLocation", "[home]/Library/net.bc100dev/osintgram4j");
-            default -> throw new ApplicationRuntimeException("Unsupported operating system");
-        }
-
-        if (v.contains("[home]"))
-            v = v.replaceAll("\\[home]", USER_HOME.getAbsolutePath());
-
-        if (v.contains("[name]"))
-            v = v.replaceAll("\\[name]", USER_NAME);
-
-        if (v.contains("[host]"))
-            v = v.replaceAll("\\[host]", getHostName());
-
-        return new File(v);
     }
 
     public static SystemTime time_getSystemTime() {

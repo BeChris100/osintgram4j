@@ -10,6 +10,10 @@ public class UserIO {
 
     public static native int getUid() throws ApplicationException;
 
+    public static native void setUid(int id) throws ApplicationException;
+
+    public static native void setGid(int id) throws ApplicationException;
+
     public static native boolean nIsAdmin() throws ApplicationException;
 
     public static boolean isAdmin() throws ApplicationException {

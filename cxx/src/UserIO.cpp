@@ -36,6 +36,24 @@ JNIEXPORT jint JNICALL Java_net_bc100dev_commons_utils_io_UserIO_getUid(JNIEnv* 
     return static_cast<int>(uid);
 }
 
+JNIEXPORT void JNICALL Java_net_bc100dev_commons_utils_io_UserIO_setUid(JNIEnv *env, jclass, jint value) {
+#ifndef __linux__
+    throwJavaAppException(env, "SetUID method outside of Linux environments not allowed");
+#endif
+
+    if (setgid(value))
+        throwJavaAppException(env, &"SetUID failed for id " [ value]);
+}
+
+JNIEXPORT void JNICALL Java_net_bc100dev_commons_utils_io_UserIO_setGid(JNIEnv *env, jclass, jint value) {
+#ifndef __linux__
+    throwJavaAppException(env, "SetGID method outside of Linux environments not allowed");
+#endif
+
+    if (setgid(value))
+        throwJavaAppException(env, &"SetGID failed for id " [ value]);
+}
+
 JNIEXPORT jboolean JNICALL Java_net_bc100dev_commons_utils_io_UserIO_nIsAdmin(JNIEnv *, jclass) {
     bool admin;
 

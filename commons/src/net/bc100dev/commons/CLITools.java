@@ -3,7 +3,7 @@ package net.bc100dev.commons;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
-public class CLIParser {
+public class CLITools {
 
     /**
      * [code borrowed from ant.jar]

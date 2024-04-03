@@ -1,5 +1,6 @@
 package net.bc100dev.osintgram4j.cmd;
 
+import net.bc100dev.commons.Terminal;
 import net.bc100dev.commons.utils.HelpPage;
 import osintgram4j.api.Command;
 import osintgram4j.commons.ShellConfig;
@@ -10,6 +11,7 @@ public class UserCmd extends Command {
 
     @Override
     public int launchCmd(String[] args, List<ShellConfig> shellConfigs) {
+        Terminal.errPrintln(Terminal.TermColor.RED, "user command line: not implemented yet", true);
         return 0;
     }
 

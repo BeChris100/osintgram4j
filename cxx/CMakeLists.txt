@@ -14,9 +14,9 @@ endif ()
 add_library(osintgram4j-cxx SHARED
         src/ConsoleSize.cpp src/ConsoleSize.h
         src/UserIO.cpp src/UserIO.h
-        src/ExceptionHandle.cpp
-        src/ExceptionHandle.h
-        src/MemoryInfo.cpp
+        src/ExceptionHandle.cpp src/ExceptionHandle.h
+        src/MemoryInfo.cpp src/MemoryInfo.h
+        src/shell/Terminal.cpp
 )
 
 # Windows on Linux compilation

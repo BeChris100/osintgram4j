@@ -51,9 +51,6 @@ public class ShellCommandEntry {
         if (!obj.has("version"))
             throw new ShellException("\"version\" key not found");
 
-        if (!obj.has("identifier"))
-            throw new ShellException("\"identifier\" key not found");
-
         if (!obj.has("command_list"))
             throw new ShellException("\"command_list\" key not found");
 

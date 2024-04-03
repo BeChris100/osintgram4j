@@ -1,13 +1,12 @@
 {
     "version": 1,
     "package": "net.bc100dev.osintgram4j",
-    "identifier": "_____RESTRICTED____OSINTGRAM4J_____",
     "label": "Osintgram4j Commands",
     "command_list": [
         {
             "command": "sh",
             "description": "Runs a system interactive shell",
-            "class": ".cmd.ShellInstance",
+            "class": ".cmd.SysShellInstance",
             "alternates": [
                 "Run-Shell",
                 "Shell",
@@ -37,6 +36,19 @@
                 "SessionManager",
                 "SessionMgr",
                 "SessionControl"
+            ]
+        },
+        {
+            "command": "user-manager",
+            "description": "Instagram Account Management (used to log in)",
+            "class": ".cmd.UserCmd",
+            "alternates": [
+                "Manage-Users",
+                "Handle-Users",
+                "UserManager",
+                "UsersManager",
+                "AccountManager",
+                "AccountsManager"
             ]
         },
         {
@@ -95,6 +107,20 @@
                 "Get-AppInfo",
                 "AppInfo",
                 "ApplicationInfo"
+            ]
+        },
+        {
+            "command": "appman",
+            "description": "Application Client Management",
+            "class": ".cmd.AppManager",
+            "alternates": [
+                "appmgr",
+                "ApplicationManager",
+                "Application-Manager",
+                "AppManager",
+                "App-Manager",
+                "ManageApplication",
+                "Manage-Application"
             ]
         },
         {

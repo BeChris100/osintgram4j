@@ -16,7 +16,7 @@ import java.util.List;
 
 import static net.bc100dev.commons.utils.RuntimeEnvironment.*;
 
-public class ShellInstance extends Command {
+public class SysShellInstance extends Command {
 
     private static int startShell(File shellExec, String... args) throws IOException, InterruptedException {
         if (shellExec == null) {

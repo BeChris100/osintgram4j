@@ -9,11 +9,15 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.jar.Attributes;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 
-import static net.bc100dev.commons.Terminal.TermColor.*;
-import static net.bc100dev.commons.utils.RuntimeEnvironment.USER_NAME;
-import static net.bc100dev.commons.utils.RuntimeEnvironment.getHostName;
+import static net.bc100dev.commons.Terminal.TermColor.CYAN;
+import static net.bc100dev.commons.utils.RuntimeEnvironment.*;
 import static net.bc100dev.osintgram4j.TitleBlock.TITLE_BLOCK;
+import static osintgram4j.commons.AppConstants.log;
 
 /**
  * The Shell class is an interactive shell (as the name says), used for
@@ -35,7 +39,7 @@ public class Shell {
 
     public Scanner kbi; // kbi, as short, is named after "KeyBoard Input"
 
-    private final List<ShellConfig> shellConfigList = new ArrayList<>();
+    public final List<ShellConfig> shellConfigList = new ArrayList<>();
     private final List<ShellCaller> shellCallers = new ArrayList<>();
 
     private String PS1;
@@ -57,7 +61,7 @@ public class Shell {
         this.suppress = suppress;
 
         try {
-            PS1 = String.format("[%s/%s: osintgram4j]%s ", USER_NAME, getHostName(), UserIO.nIsAdmin() ? "#" : "$");
+            PS1 = String.format("[%s/%s: %s]%s ", USER_NAME, getHostName(), WORKING_DIRECTORY.getName(), UserIO.nIsAdmin() ? "#" : "$");
         } catch (ApplicationException ex) {
             throw new ApplicationRuntimeException(ex);
         }
@@ -68,7 +72,7 @@ public class Shell {
             byte[] buff = is.readAllBytes();
             is.close();
 
-            addCallersFromData(new String(buff));
+            addCommands(new String(buff));
         } catch (IOException | ShellException ex) {
             throw new ApplicationRuntimeException(ex);
         }
@@ -83,6 +87,7 @@ public class Shell {
 
     public void appendConfig(List<ShellConfig> configList) {
         shellConfigList.addAll(configList);
+        log.info("added " + configList.size() + " variables");
     }
 
     /**
@@ -92,9 +97,11 @@ public class Shell {
      * @throws IOException    Will throw on Input Readers
      * @throws ShellException Will throw on classes/methods that are not found
      */
-    public void addCallersFromFile(File jsonFile) throws IOException, ShellException {
+    public void addCommands(File jsonFile) throws IOException, ShellException {
         ShellCommandEntry entry = ShellCommandEntry.initialize(jsonFile);
         shellCallers.addAll(entry.getCommands());
+
+        log.info("added " + entry.getCommands().size() + " commands");
     }
 
     /**
@@ -105,10 +112,10 @@ public class Shell {
      * @throws IOException    Will throw on Input Readers
      * @throws ShellException Will throw on classes/methods that are not found
      * @deprecated Cannot be used due to potential Class Path errors.
-     * Use {@link Shell#addCallersFromData(String)} instead
+     * Use {@link Shell#addCommands(String)} instead
      */
-    @Deprecated
-    public void addCallersFromResource(Class<?> correspondingClass, String resourceFile) throws IOException, ShellException {
+    @Deprecated(forRemoval = true)
+    public void addCommands(Class<?> correspondingClass, String resourceFile) throws IOException, ShellException {
         ResourceManager mgr = new ResourceManager(correspondingClass, false);
         if (!mgr.resourceExists(resourceFile)) // bro, what (skull emoji)
             throw new ShellException("Resource File at \"" + resourceFile + "\" does not exist");
@@ -127,9 +134,84 @@ public class Shell {
      * @param jsonData The JSON Data that is being used for the appending method
      * @throws ShellException Will throw on classes/methods that are not found
      */
-    public void addCallersFromData(String jsonData) throws ShellException {
+    public void addCommands(String jsonData) throws ShellException {
         ShellCommandEntry e = ShellCommandEntry.initialize(jsonData);
         shellCallers.addAll(e.getCommands());
+
+        log.info("added " + e.getCommands().size() + " commands");
+    }
+
+    /**
+     * Reads a Manifest JAR file and uses the "Osintgram4j-API-Commands" attribute to
+     *
+     * @param file The JAR file itself
+     * @throws IOException    Input Reading error
+     * @throws ShellException May throw, if Manifest does not exist, did not include the attribute, or went with parsing errors
+     */
+    public void addCommandsFromJar(File file) throws IOException, ShellException {
+        if (file == null)
+            throw new NullPointerException("The File instance for the method is pointed as null");
+
+        JarFile jarFile = new JarFile(file);
+
+        Manifest manifest = jarFile.getManifest();
+        if (manifest == null) {
+            log.warning("Manifest file for file \"" + file.getPath() + "\" was not found");
+            return;
+        }
+
+        Attributes attributes = manifest.getMainAttributes();
+        String outJarValue = attributes.getValue("Osintgram4j-API-ExposedCommands");
+        if (outJarValue != null) {
+            String[] paths = CLITools.translateCmdLine(outJarValue);
+
+            for (String path : paths) {
+                File f = new File(path);
+                if (!f.exists()) {
+                    log.warning("API-ExposedCommands(\"" + f.getAbsolutePath() + "\"): not found");
+                    continue;
+                }
+
+                if (!f.canRead()) {
+                    log.warning("API-ExposedCommands(\"" + f.getAbsolutePath() + "\"): access denied");
+                    continue;
+                }
+
+                addCommands(f);
+            }
+        }
+
+        String value = attributes.getValue("Osintgram4j-API-Commands");
+        if (value == null) {
+            log.warning("JarFile(" + file.getPath() + "): No \"Osintgram4j-API-Commands\" attribute found; skipping JAR file");
+            return;
+        }
+
+        String[] paths = CLITools.translateCmdLine(value);
+        if (paths.length == 0) {
+            log.warning("JarFile(" + file.getPath() + "): Manifest Attribute \"Osintgram4j-API-Commands\" has no paths, returned " + paths.length);
+            return;
+        }
+
+        for (String path : paths) {
+            JarEntry entry = jarFile.getJarEntry(path);
+            if (entry == null) {
+                log.warning("JarFile(" + file.getPath() + "): Entry \"" + path + "\" in the JAR file does not exist");
+                throw new IOException("Entry at \"" + path + "\" in the JAR file does not exist");
+            }
+
+            InputStream is = jarFile.getInputStream(entry);
+            byte[] buff = new byte[1024];
+            int len;
+            StringBuilder str = new StringBuilder();
+
+            while ((len = is.read(buff, 0, 1024)) != -1)
+                str.append(new String(buff, 0, len));
+
+            is.close();
+
+            addCommands(str.toString());
+        }
     }
 
     /**
@@ -140,6 +222,8 @@ public class Shell {
      * @param line The line to get a configuration parsed
      */
     private void assignCfg(String line) {
+        log.info("adding \"" + line + "\"");
+
         if (line.contains("=")) {
             String[] opt = line.split("=", 2);
             opt[0] = opt[0].trim().replaceFirst("&", "");
@@ -195,7 +279,7 @@ public class Shell {
     }
 
     private ShellExecution getExecutionLine(String line) {
-        String[] lnSplits = CLIParser.translateCmdLine(line);
+        String[] lnSplits = CLITools.translateCmdLine(line);
 
         if (lnSplits.length == 0)
             return null;
@@ -255,6 +339,7 @@ public class Shell {
 
                                         helps.put(tokVal, caller.retrieveLongHelp(new String[0]));
                                     } catch (ShellException ignore) {
+                                        log.warning("Command not found: " + tokVal);
                                         Terminal.println(Terminal.TermColor.RED,
                                                 String.format("Unknown command \"%s\"", tokVal), true);
                                     }
@@ -267,6 +352,7 @@ public class Shell {
 
                                                 helps.put(caller.getCommand(), caller.retrieveLongHelp(new String[0]));
                                             } catch (ShellException ignore) {
+                                                log.warning("Command not found: " + tokVal);
                                                 Terminal.println(Terminal.TermColor.RED,
                                                         String.format("Unknown command \"%s\"", tokVal), true);
                                             }
@@ -313,18 +399,6 @@ public class Shell {
                             }
                         }
                     }
-                    case "echo", "print" -> {
-                        if (!suppress.contains("scripts")) {
-                            if (!scriptWarning) {
-                                Terminal.errPrintln(YELLOW, "Some commands are meant for Script-use only.", false);
-                                Terminal.errPrintln(YELLOW, "See https://github.com/BeChris100/osintgram4j/wiki/Scripting-Guide", false);
-                                Terminal.errPrintln(YELLOW, "To disable this warning for one Application Session, pass '-Sscript-uses'.", true);
-                                scriptWarning = true;
-                            }
-                        }
-
-                        print_ln(givenArgs);
-                    }
                     case "exit", "quit", "close" -> stopShell();
                     default -> execCommand(shellConfigList, exec, givenArgs);
                 }
@@ -339,76 +413,6 @@ public class Shell {
         System.exit(0);
     }
 
-    private void print_ln(String[] args) {
-        for (int i = 0; i < args.length; i++) {
-            String arg = args[i];
-            boolean lastArg = i != args.length - 1;
-
-            if (!arg.contains("%"))
-                Terminal.print(termColor, arg + (lastArg ? " " : ""), false);
-
-            int colorIndex;
-
-            if (arg.contains("%c_")) {
-                colorIndex = arg.indexOf("%c_") + "%c_".length();
-                int lastPos = arg.indexOf('%', colorIndex);
-
-                String sb = arg.substring(colorIndex, lastPos).toLowerCase();
-
-                switch (sb) {
-                    case "reset" -> {
-                        Terminal.print(RESET, null, false);
-                        termColor = RESET;
-                    }
-                    case "black" -> {
-                        Terminal.print(BLACK, null, false);
-                        termColor = BLACK;
-                    }
-                    case "red" -> {
-                        Terminal.print(RED, null, false);
-                        termColor = RED;
-                    }
-                    case "green" -> {
-                        Terminal.print(GREEN, null, false);
-                        termColor = GREEN;
-                    }
-                    case "yellow" -> {
-                        Terminal.print(YELLOW, null, false);
-                        termColor = YELLOW;
-                    }
-                    case "blue" -> {
-                        Terminal.print(BLUE, null, false);
-                        termColor = BLUE;
-                    }
-                    case "purple" -> {
-                        Terminal.print(PURPLE, null, false);
-                        termColor = PURPLE;
-                    }
-                    case "cyan" -> {
-                        Terminal.print(CYAN, null, false);
-                        termColor = CYAN;
-                    }
-                    case "white" -> {
-                        Terminal.print(WHITE, null, false);
-                        termColor = WHITE;
-                    }
-                    default -> {
-                        Terminal.print(null, null, false);
-                        termColor = null;
-                    }
-                }
-
-                String text = arg.substring(lastPos + 1);
-                if (text.isEmpty())
-                    continue;
-
-                Terminal.print(termColor, text + (lastArg ? " " : ""), false);
-            }
-        }
-
-        Terminal.println(termColor, "", true);
-    }
-
     /**
      * Executes a command from the parsed line.
      *
@@ -417,13 +421,20 @@ public class Shell {
      * @param args Given Shell command parameters
      */
     private void execCommand(List<ShellConfig> env, String exec, String[] args) {
+        log.info(String.format("CreateCommandExec(Command=\"%s\", Args=\"%s\")", exec, Arrays.toString(args)));
+
         boolean cmdFound = false;
         for (ShellCaller caller : shellCallers) {
             if (caller.getCommand().equalsIgnoreCase(exec)) {
                 cmdFound = true;
 
                 try {
+                    log.info("CommandRun(" + exec + ", " + Arrays.toString(args) + ")");
+
                     int code = caller.execute(args, env);
+
+                    log.info("CommandExecution(Code=" + code + ", Cmd=" + exec + ")");
+
                     if (code != 0) {
                         Terminal.println(Terminal.TermColor.RED,
                                 caller.getCommand() + ": exit code " + code, true);
@@ -439,7 +450,10 @@ public class Shell {
                         cmdFound = true;
 
                         try {
+                            log.info("CommandRun(" + exec + ", " + Arrays.toString(args) + ")");
                             int code = caller.execute(args, env);
+                            log.info("CommandExecution(Code=" + code + ", Cmd=" + exec + ")");
+
                             if (code != 0) {
                                 Terminal.println(Terminal.TermColor.RED,
                                         alternate + ": exit code " + code, true);
@@ -460,6 +474,8 @@ public class Shell {
      * Launches the interactive Shell
      */
     public void launch() {
+        log.info("Starting Shell");
+
         running = true;
         cmd();
     }
@@ -468,43 +484,10 @@ public class Shell {
      * Stops the Application Shell
      */
     public void stopShell() {
+        log.info("Closing app");
+
         running = false;
         Shell.instance = null;
-    }
-
-    public void runScript(ShellFile shellFile) throws IOException, ShellException {
-        boolean shownHelpWarning = false;
-
-        InputStream is = new ResourceManager(Shell.class, false)
-                .getResourceInputStream("/net/bc100dev/osintgram4j/res/cmd_list_d/defaults.json");
-        byte[] buff = is.readAllBytes();
-        is.close();
-
-        addCallersFromData(new String(buff));
-
-        for (String inst : shellFile.getInstructions()) {
-            ShellExecution execution = getExecutionLine(inst);
-            if (execution == null)
-                continue;
-
-            String exec = execution.exec();
-            String[] args = execution.args();
-
-            switch (exec) {
-                case "help", "app-help", "?" -> {
-                    if (!shownHelpWarning) {
-                        Terminal.errPrintln(Terminal.TermColor.YELLOW, "The use of the `help` command during scripts are not shown.", true);
-                        shownHelpWarning = true;
-                    }
-                }
-                case "exit", "quit", "close" -> {
-                    stopShell();
-                    System.exit(0);
-                }
-                case "echo", "print" -> print_ln(args);
-                default -> execCommand(shellFile.getEnvironment(), exec, args);
-            }
-        }
     }
 
     private record ShellExecution(String exec, String[] args) {

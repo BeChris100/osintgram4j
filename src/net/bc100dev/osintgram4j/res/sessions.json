@@ -1,0 +1,18 @@
+{
+    "version": 1,
+    "sessions": [
+        {
+            "self.username": "",
+            "self.user_id": "",
+            "self.password": "[cached, encrypted password, in b64]",
+            "self.targets": [
+                {
+                    "username": "",
+                    "user_id": "",
+                    "cache_dir": "",
+                    "last_access_date": 1721590000
+                }
+            ]
+        }
+    ]
+}

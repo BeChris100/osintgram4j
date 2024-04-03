@@ -13,7 +13,7 @@ extern "C" {
  * Signature: ()I
  */
 JNIEXPORT jint JNICALL Java_net_bc100dev_commons_utils_io_UserIO_getGid
-  (JNIEnv *, jclass);
+        (JNIEnv *, jclass);
 
 /*
  * Class:     net_bc100dev_commons_utils_io_UserIO
@@ -21,7 +21,23 @@ JNIEXPORT jint JNICALL Java_net_bc100dev_commons_utils_io_UserIO_getGid
  * Signature: ()I
  */
 JNIEXPORT jint JNICALL Java_net_bc100dev_commons_utils_io_UserIO_getUid
-  (JNIEnv *, jclass);
+        (JNIEnv *, jclass);
+
+/*
+ * Class:     net_bc100dev_commons_utils_io_UserIO
+ * Method:    setUid
+ * Signature: (I)V
+ */
+JNIEXPORT void JNICALL Java_net_bc100dev_commons_utils_io_UserIO_setUid
+        (JNIEnv *, jclass, jint);
+
+/*
+ * Class:     net_bc100dev_commons_utils_io_UserIO
+ * Method:    setGid
+ * Signature: (I)V
+ */
+JNIEXPORT void JNICALL Java_net_bc100dev_commons_utils_io_UserIO_setGid
+        (JNIEnv *, jclass, jint);
 
 /*
  * Class:     net_bc100dev_commons_utils_io_UserIO
@@ -29,7 +45,7 @@ JNIEXPORT jint JNICALL Java_net_bc100dev_commons_utils_io_UserIO_getUid
  * Signature: ()Z
  */
 JNIEXPORT jboolean JNICALL Java_net_bc100dev_commons_utils_io_UserIO_nIsAdmin
-  (JNIEnv *, jclass);
+        (JNIEnv *, jclass);
 
 #ifdef __cplusplus
 }

@@ -4,6 +4,7 @@ import net.bc100dev.commons.ApplicationException;
 import net.bc100dev.commons.Terminal;
 import com.instagram.api.ConnectionStateException;
 import net.bc100dev.commons.utils.io.FileUtil;
+import net.bc100dev.osintgram4j.Settings;
 import osintgram4j.api.Command;
 import osintgram4j.commons.ShellConfig;
 import org.json.JSONArray;
@@ -11,17 +12,14 @@ import org.json.JSONArray;
 import java.io.*;
 import java.nio.file.AccessDeniedException;
 import java.util.List;
+import java.util.Set;
 
 import static net.bc100dev.commons.utils.RuntimeEnvironment.*;
 
 public class SessionCmd extends Command {
 
     private static File getSessionLocationFile() {
-        return switch (getOperatingSystem()) {
-            case WINDOWS -> new File(USER_HOME.getAbsolutePath() + "\\AppData\\Local\\bc100dev\\osintgram4j\\data\\sessions.json");
-            case LINUX -> new File(USER_HOME.getAbsolutePath() + "/.config/bc100dev/osintgram4j/data/sessions.json");
-            case MAC_OS -> new File(USER_HOME.getAbsolutePath() + "/Library/bc100dev/osintgram4j/data/sessions.json");
-        };
+        return new File(Settings.storeLocation().getAbsolutePath() + "/data/sessions.json");
     }
 
     private static void mkSessionFile() throws IOException {
