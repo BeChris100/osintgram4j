@@ -1,9 +1,0 @@
-OS_TYPE=linux
-CMAKE_CMD=/usr/bin/cmake
-JAVA_CMD=/usr/lib/jvm/jdk-21/bin/java
-JAR_CMD=/usr/lib/jvm/jdk-21/bin/jar
-JAVAC_CMD=/usr/lib/jvm/jdk-21/bin/javac
-JLINK_CMD=/usr/lib/jvm/jdk-21/bin/jlink
-JDEPS_CMD=/usr/lib/jvm/jdk-21/bin/jdeps
-JPACKAGE_CMD=/usr/lib/jvm/jdk-21/bin/jpackage
-JAVA_DEFAULT_HOME=/usr/lib/jvm/jdk-21
