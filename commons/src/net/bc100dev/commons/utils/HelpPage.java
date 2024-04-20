@@ -6,7 +6,7 @@ import java.util.List;
 
 public class HelpPage {
 
-    private int spaceWidth;
+    private int spaceWidth, startSpaceWidth = 0;
 
     private final List<Item> argItemList = new ArrayList<>();
 
@@ -20,6 +20,14 @@ public class HelpPage {
 
     public int getSpaceWidth() {
         return spaceWidth;
+    }
+
+    public void setStartSpaceWidth(int startSpaceWidth) {
+        this.startSpaceWidth = startSpaceWidth;
+    }
+
+    public int getStartSpaceWidth() {
+        return startSpaceWidth;
     }
 
     public void addArg(String arg, String assignableDesc, String description) {
@@ -45,6 +53,9 @@ public class HelpPage {
 
             if (item.equalDesc() != null)
                 argLine += "=" + item.equalDesc;
+
+            if (startSpaceWidth != 0)
+                str.append(" ".repeat(startSpaceWidth));
 
             str.append(argLine)
                     .append(" ".repeat((maxItemLength - argLine.length()) + spaceWidth))

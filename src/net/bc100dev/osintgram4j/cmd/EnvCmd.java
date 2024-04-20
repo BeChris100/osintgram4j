@@ -1,6 +1,6 @@
 package net.bc100dev.osintgram4j.cmd;
 
-import net.bc100dev.osintgram4j.sh.Shell;
+import osintgram4j.api.Shell;
 import osintgram4j.api.Command;
 import osintgram4j.commons.ShellConfig;
 

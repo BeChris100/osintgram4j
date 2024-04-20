@@ -3,27 +3,26 @@ package net.bc100dev.commons;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
-public class CLITools {
+public class Tools {
 
     /**
      * [code borrowed from ant.jar]
      * Crack a command line.
-     * @param toProcess the command line to process.
+     * @param cmdLine the command line to process.
      * @return the command line broken into strings.
      * An empty or null toProcess parameter results in a zero sized array.
      */
-    public static String[] translateCmdLine(String toProcess) {
-        if (toProcess == null || toProcess.isEmpty()) {
+    public static String[] translateCmdLine(String cmdLine) {
+        if (cmdLine == null || cmdLine.isEmpty()) {
             //no command? no string
             return new String[0];
         }
-        // parse with a simple finite state machine
 
         final int normal = 0;
         final int inQuote = 1;
         final int inDoubleQuote = 2;
         int state = normal;
-        final StringTokenizer tok = new StringTokenizer(toProcess, "\"' ", true);
+        final StringTokenizer tok = new StringTokenizer(cmdLine, "\"' ", true);
         final ArrayList<String> result = new ArrayList<String>();
         final StringBuilder current = new StringBuilder();
         boolean lastTokenHasBeenQuoted = false;
@@ -68,7 +67,7 @@ public class CLITools {
             result.add(current.toString());
         }
         if (state == inQuote || state == inDoubleQuote) {
-            throw new RuntimeException("unbalanced quotes in " + toProcess);
+            throw new RuntimeException("unbalanced quotes in " + cmdLine);
         }
         return result.toArray(new String[result.size()]);
     }

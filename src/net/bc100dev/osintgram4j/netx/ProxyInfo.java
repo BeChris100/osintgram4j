@@ -1,7 +1,7 @@
 package net.bc100dev.osintgram4j.netx;
 
 import net.bc100dev.commons.ApplicationException;
-import net.bc100dev.commons.CLITools;
+import net.bc100dev.commons.Tools;
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -48,7 +48,7 @@ public class ProxyInfo {
                 String lineData = arr.getString(i);
                 // expects: HTTP/SOCKS Host Port
 
-                String[] pr = CLITools.translateCmdLine(lineData);
+                String[] pr = Tools.translateCmdLine(lineData);
                 if (pr.length == 0)
                     throw new ApplicationException("No arguments given to the JSON Data on Index " + i);
 

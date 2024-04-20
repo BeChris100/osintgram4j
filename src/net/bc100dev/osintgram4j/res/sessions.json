@@ -10,9 +10,11 @@
                     "username": "",
                     "user_id": "",
                     "cache_dir": "",
-                    "last_access_date": 1721590000
+                    "last_access_date": 1
                 }
-            ]
+            ],
+            "self.accessHeaderData": {
+            }
         }
     ]
 }

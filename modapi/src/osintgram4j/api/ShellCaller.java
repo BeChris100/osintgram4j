@@ -1,4 +1,4 @@
-package net.bc100dev.osintgram4j.sh;
+package osintgram4j.api;
 
 import osintgram4j.commons.ShellConfig;
 
@@ -13,16 +13,16 @@ public class ShellCaller {
     private Method callableMethod, callableHelpMethod;
     private final String[] alternateCommands;
 
-    private Object classInstance;
+    private final Object classInstance;
 
-    public ShellCaller(String command, String helpDesc, String callableClassName, String... alternateCommands)
-            throws ShellException {
+    public ShellCaller(String command, String helpDesc, String callableClassName, String... alternateCommands) throws ShellException {
         this.command = command;
         this.helpDesc = helpDesc;
         this.alternateCommands = alternateCommands;
 
         this.callableClass = null;
         this.callableMethod = null;
+        this.callableHelpMethod = null;
 
         try {
             this.callableClass = Class.forName(callableClassName);

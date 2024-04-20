@@ -5,24 +5,23 @@ import net.bc100dev.commons.Terminal;
 import net.bc100dev.commons.utils.HelpPage;
 import net.bc100dev.commons.utils.io.FileUtil;
 import net.bc100dev.commons.utils.io.UserIO;
-import net.bc100dev.osintgram4j.sh.Shell;
-import net.bc100dev.osintgram4j.sh.ShellException;
+import osintgram4j.api.Shell;
+import osintgram4j.api.ShellException;
 import osintgram4j.commons.ShellConfig;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.jar.JarFile;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 
-import static net.bc100dev.commons.utils.RuntimeEnvironment.isMac;
-import static net.bc100dev.commons.utils.RuntimeEnvironment.isWindows;
+import static net.bc100dev.commons.utils.RuntimeEnvironment.*;
+import static net.bc100dev.commons.utils.RuntimeEnvironment.USER_HOME;
 import static net.bc100dev.osintgram4j.Settings.app_adminSecurityWarningEnabled;
 import static net.bc100dev.osintgram4j.Settings.loadSettings;
-import static net.bc100dev.osintgram4j.TitleBlock.DISPLAY;
-import static net.bc100dev.osintgram4j.TitleBlock.TITLE_BLOCK;
+import static osintgram4j.commons.TitleBlock.DISPLAY;
+import static osintgram4j.commons.TitleBlock.TITLE_BLOCK;
 import static osintgram4j.commons.AppConstants.log;
 
 public class MainClass {
@@ -54,7 +53,13 @@ public class MainClass {
         });
 
         try {
-            File logFile = new File(Settings.storeLocation().getAbsolutePath() + "/log.txt");
+            // duplicate code from `Settings#storeLocation()` (reasoning: Settings not loaded yet)
+            File logFile = switch (getOperatingSystem()) {
+                case LINUX -> new File(USER_HOME.getAbsolutePath() + "/.config/net.bc100dev/osintgram4j/log.txt");
+                case WINDOWS -> new File(USER_HOME.getAbsolutePath() + "\\AppData\\Local\\BC100Dev\\Osintgram4j\\log.txt");
+                case MAC_OS -> new File(USER_HOME.getAbsolutePath() + "/Library/net.bc100dev/osintgram4j/log.txt");
+            };
+
             if (!logFile.exists())
                 FileUtil.createFile(logFile.getAbsolutePath(), true);
 
@@ -65,7 +70,7 @@ public class MainClass {
             log.addHandler(handler);
             log.info("Initialized");
         } catch (IOException ex) {
-            ex.printStackTrace();
+            ex.printStackTrace(System.err);
         }
     }
 
@@ -89,19 +94,30 @@ public class MainClass {
 
         HelpPage helpPage = new HelpPage();
         helpPage.setSpaceWidth(3);
+        helpPage.setStartSpaceWidth(4);
         helpPage.addArg("-h, --help", null, "Display this message and exit");
         helpPage.addArg("--append-env", "[env]", "Appends environment to the Application Shell from either CLI or File");
         helpPage.addArg("-S[suppress]", null, "Suppresses warning messages, temporarily disabling them");
-        helpPage.display(System.out);
+
+        String str = helpPage.display();
+        str = str.substring(0, str.length() - 1);
+        System.out.println(str);
+
+        System.out.println();
+        System.out.println("where:");
+        System.out.println("   > [options]       ");
+        System.out.println("   > (target)        primary target; optional, can be set within the Shell");
+        System.out.println("   > (target2 ...)   additional targets by the use of Sessions; optional, can be set within the Shell");
 
         System.out.println();
         System.out.println("Refer to the README.md and USAGE.md files on GitHub, along with the Wikis at");
         System.out.println("https://github.com/BeChris100/osintgram4j to have a better overview on using the Application Shell.");
+        System.out.println("Might consider checking the \"docs.d\" folder within the repository root.");
     }
 
     public static void main(String[] args) throws IOException {
-        loadSettings();
         init();
+        loadSettings();
 
         log.info("Application initialized");
 

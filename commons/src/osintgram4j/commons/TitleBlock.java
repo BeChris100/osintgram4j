@@ -1,4 +1,4 @@
-package net.bc100dev.osintgram4j;
+package osintgram4j.commons;
 
 import net.bc100dev.commons.ResourceManager;
 
@@ -10,11 +10,11 @@ public class TitleBlock {
 
     public static String TITLE_BLOCK() {
         try {
-            ResourceManager mgr = new ResourceManager(TitleBlock.class, true);
-            if (!mgr.resourceExists("res/titleblock.txt"))
+            ResourceManager mgr = new ResourceManager(TitleBlock.class, false);
+            if (!mgr.resourceExists("/net/bc100dev/osintgram4j/res/titleblock.txt"))
                 return "OSINTgram v0.1";
 
-            InputStream is = mgr.getResourceInputStream("res/titleblock.txt");
+            InputStream is = mgr.getResourceInputStream("/net/bc100dev/osintgram4j/res/titleblock.txt");
             StringBuilder str = new StringBuilder();
             int d;
             byte[] b = new byte[1024];
@@ -32,17 +32,17 @@ public class TitleBlock {
 
     public static String DISPLAY() {
         try {
-            ResourceManager mgr = new ResourceManager(TitleBlock.class, true);
-            if (!mgr.resourceExists("app_ver.cfg"))
+            ResourceManager mgr = new ResourceManager(TitleBlock.class, false);
+            if (!mgr.resourceExists("/net/bc100dev/osintgram4j/res/app_ver.cfg"))
                 return "OSINTgram v0.1";
 
             Properties props = new Properties();
-            InputStream is = mgr.getResourceInputStream("app_ver.cfg");
+            InputStream is = mgr.getResourceInputStream("/net/bc100dev/osintgram4j/res/app_ver.cfg");
 
             props.load(is);
             is.close();
 
-            return props.getProperty("BUILD_DISPLAY") + " v" + props.getProperty("BUILD_VERSION") + "-" + props.getProperty("BUILD_VERSION_CODE");
+            return props.getProperty("BUILD_DISPLAY") + " v" + props.getProperty("BUILD_VERSION") + "-" + props.getProperty("BUILD_VERSION_CODE") + " (" + props.getProperty("BUILD_DISPLAY_FLAVOR") + ")";
         } catch (IOException ignore) {
             return "OSINTgram v0.1";
         }

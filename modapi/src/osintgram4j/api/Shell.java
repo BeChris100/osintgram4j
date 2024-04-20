@@ -1,4 +1,4 @@
-package net.bc100dev.osintgram4j.sh;
+package osintgram4j.api;
 
 import net.bc100dev.commons.*;
 import net.bc100dev.commons.utils.Utility;
@@ -16,8 +16,8 @@ import java.util.jar.Manifest;
 
 import static net.bc100dev.commons.Terminal.TermColor.CYAN;
 import static net.bc100dev.commons.utils.RuntimeEnvironment.*;
-import static net.bc100dev.osintgram4j.TitleBlock.TITLE_BLOCK;
 import static osintgram4j.commons.AppConstants.log;
+import static osintgram4j.commons.TitleBlock.TITLE_BLOCK;
 
 /**
  * The Shell class is an interactive shell (as the name says), used for
@@ -63,7 +63,8 @@ public class Shell {
         try {
             PS1 = String.format("[%s/%s: %s]%s ", USER_NAME, getHostName(), WORKING_DIRECTORY.getName(), UserIO.nIsAdmin() ? "#" : "$");
         } catch (ApplicationException ex) {
-            throw new ApplicationRuntimeException(ex);
+            ex.printStackTrace(System.err);
+            PS1 = String.format("[%s/%s: %s] >> ", USER_NAME, getHostName(), WORKING_DIRECTORY.getName());
         }
 
         // In favor of `addCallersFromResource` deprecation:
@@ -107,30 +108,6 @@ public class Shell {
     /**
      * Reads a JSON File and parses into the necessary commands and other relevant information for the Shell
      *
-     * @param correspondingClass A corresponding class to its Class Path
-     * @param resourceFile       The resource file within its Class Path
-     * @throws IOException    Will throw on Input Readers
-     * @throws ShellException Will throw on classes/methods that are not found
-     * @deprecated Cannot be used due to potential Class Path errors.
-     * Use {@link Shell#addCommands(String)} instead
-     */
-    @Deprecated(forRemoval = true)
-    public void addCommands(Class<?> correspondingClass, String resourceFile) throws IOException, ShellException {
-        ResourceManager mgr = new ResourceManager(correspondingClass, false);
-        if (!mgr.resourceExists(resourceFile)) // bro, what (skull emoji)
-            throw new ShellException("Resource File at \"" + resourceFile + "\" does not exist");
-
-        InputStream is = mgr.getResourceInputStream(resourceFile);
-        byte[] buff = is.readAllBytes();
-        is.close();
-
-        ShellCommandEntry e = ShellCommandEntry.initialize(new String(buff));
-        shellCallers.addAll(e.getCommands());
-    }
-
-    /**
-     * Reads a JSON File and parses into the necessary commands and other relevant information for the Shell
-     *
      * @param jsonData The JSON Data that is being used for the appending method
      * @throws ShellException Will throw on classes/methods that are not found
      */
@@ -163,7 +140,7 @@ public class Shell {
         Attributes attributes = manifest.getMainAttributes();
         String outJarValue = attributes.getValue("Osintgram4j-API-ExposedCommands");
         if (outJarValue != null) {
-            String[] paths = CLITools.translateCmdLine(outJarValue);
+            String[] paths = Tools.translateCmdLine(outJarValue);
 
             for (String path : paths) {
                 File f = new File(path);
@@ -187,7 +164,7 @@ public class Shell {
             return;
         }
 
-        String[] paths = CLITools.translateCmdLine(value);
+        String[] paths = Tools.translateCmdLine(value);
         if (paths.length == 0) {
             log.warning("JarFile(" + file.getPath() + "): Manifest Attribute \"Osintgram4j-API-Commands\" has no paths, returned " + paths.length);
             return;
@@ -279,7 +256,7 @@ public class Shell {
     }
 
     private ShellExecution getExecutionLine(String line) {
-        String[] lnSplits = CLITools.translateCmdLine(line);
+        String[] lnSplits = Tools.translateCmdLine(line);
 
         if (lnSplits.length == 0)
             return null;

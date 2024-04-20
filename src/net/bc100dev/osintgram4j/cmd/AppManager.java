@@ -16,6 +16,22 @@ public class AppManager extends Command {
             return 1;
         }
 
+        switch (args[0]) {
+            case String s
+                    when s.equalsIgnoreCase("mods") -> {
+                System.out.println("Not implemented yet");
+            }
+            case String s
+                    when s.equalsIgnoreCase("help") -> {
+                System.out.println(helpCmd(args));
+            }
+            case String s
+                    when s.equalsIgnoreCase("settings") || s.equalsIgnoreCase("stg") -> {
+                System.out.println("Not implemented yet");
+            }
+            default -> System.err.println("Unknown tool: " + args[0]);
+        }
+
         return 0;
     }
 
@@ -25,10 +41,8 @@ public class AppManager extends Command {
         tools.setSpaceWidth(5);
         tools.addArg("mods", null, "Manages App Modifications");
 
-        return """
-                Application Management Tool
-                
-                Available Tools:
-                mods     Manages Modi""";
+        return "Application Management Tool for Osintgram4j\n\nAvailable Tools:\n" + tools.display() +
+                "\n\nWe, the developers, are not responsible for any damages caused by inserting malicious software.\n" +
+                "Proceed with caution.";
     }
 }
