@@ -1,3 +1,4 @@
+#ifdef __linux__
 #include <ncurses.h>
 #include <cstring>
 #include <vector>
@@ -66,8 +67,11 @@ char* inputShell(char* ps1, std::vector<std::string> history) {
         mvprintw(1, 0, "%s", inputStr);
         move(1, cursorX);
     }
+
+    return inputStr;
 }
 
 void closeShell() {
     endwin();
 }
+#endif
