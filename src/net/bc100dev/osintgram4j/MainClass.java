@@ -17,12 +17,11 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 
 import static net.bc100dev.commons.utils.RuntimeEnvironment.*;
-import static net.bc100dev.commons.utils.RuntimeEnvironment.USER_HOME;
 import static net.bc100dev.osintgram4j.Settings.app_adminSecurityWarningEnabled;
 import static net.bc100dev.osintgram4j.Settings.loadSettings;
+import static osintgram4j.commons.AppConstants.log;
 import static osintgram4j.commons.TitleBlock.DISPLAY;
 import static osintgram4j.commons.TitleBlock.TITLE_BLOCK;
-import static osintgram4j.commons.AppConstants.log;
 
 public class MainClass {
 

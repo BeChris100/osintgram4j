@@ -152,7 +152,6 @@ function get_jdk() {
         fi
     fi
 
-    # Script Update: migrate to v21.0.2 from v21.0.1
     if [ "$RUN_DOWNLOAD" == "true" ]; then
         if [[ "$IS_LINUX" == "true" ]]; then
             wget "https://download.java.net/java/GA/jdk21.0.2/f2283984656d49d69e91c558476027ac/13/GPL/openjdk-21.0.2_linux-x64_bin.tar.gz" \
@@ -196,15 +195,10 @@ function get_libs() {
     fi
 
     if [ "$RUN_DOWNLOAD" == "true" ]; then
-        ## Update: 20231013 -> 20240205
-        wget "https://repo1.maven.org/maven2/org/json/json/20240205/json-20240205.jar" -O out/libs/json.jar
+        # update version to 20240303
+        wget "https://repo1.maven.org/maven2/org/json/json/20240303/json-20240303.jar" -O out/libs/json.jar
     fi
 }
-
-if [ -f "extres/ee.enc" ]; then
-    # fuck you lookin at? git don't give me no hook availability (I assume)
-    rm extres/ee.enc
-fi
 
 if [ "$#" -ge 1 ]; then
     if [ "$1" == "--force-download" ]; then

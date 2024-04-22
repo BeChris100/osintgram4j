@@ -17,7 +17,7 @@ public class NativeLoader {
 
         String[] paths = System.getProperty("java.library.path").split(File.pathSeparator);
         for (String path : paths) {
-            File libFile = new File(path, System.mapLibraryName("osintgram4j-cxx"));
+            File libFile = new File(path, System.mapLibraryName("osintgram4j"));
 
             if (libFile.exists())
                 return true;
@@ -44,7 +44,7 @@ public class NativeLoader {
             }
         }
 
-        System.loadLibrary("osintgram4j-cxx");
+        System.loadLibrary("osintgram4j");
         loaded = true;
     }
 

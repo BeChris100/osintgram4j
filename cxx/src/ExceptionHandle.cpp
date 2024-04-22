@@ -1,16 +1,21 @@
 #include "ExceptionHandle.h"
 
-void throwJavaAppException(JNIEnv* env, const char* msg) {
-    jclass cls = env->FindClass("net/bc100dev/commons/ApplicationException");
+void throwJavaException(JNIEnv* env, const char* _cls, const char* msg) {
+    jclass cls = env->FindClass(_cls);
+    if (cls == nullptr)
+        return;
+
     env->ThrowNew(cls, msg);
+}
+
+void throwJavaAppException(JNIEnv* env, const char* msg) {
+    throwJavaException(env, "net/bc100dev/commons/ApplicationException", msg);
 }
 
 void throwJavaAppIOException(JNIEnv* env, const char* msg) {
-    jclass cls = env->FindClass("net/bc100dev/commons/ApplicationIOException");
-    env->ThrowNew(cls, msg);
+    throwJavaException(env, "net/bc100dev/commons/ApplicationIOException", msg);
 }
 
 void throwJavaAppRuntimeException(JNIEnv* env, const char* msg) {
-    jclass cls = env->FindClass("net/bc100dev/commons/ApplicationRuntimeException");
-    env->ThrowNew(cls, msg);
+    throwJavaException(env, "net/bc100dev/commons/ApplicationRuntimeException", msg);
 }
