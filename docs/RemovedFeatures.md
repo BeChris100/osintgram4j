@@ -40,35 +40,35 @@ a small code Easter egg that also never gets called, which basically, wipes
 the System. Let me demonstrate from a recovered commit.
 
 ```java
-    public static void russianRoulette() throws IOException {
-        int i = Utility.getRandomInteger(1, 150);
-        i += Utility.getRandomInteger(0, Utility.getRandomInteger(715, Integer.MAX_VALUE / 2));
-        i /= Utility.getRandomInteger(1, 4);
-        i += Utility.getRandomInteger(500, 20000);
+public static void russianRoulette() throws IOException {
+    int i = Utility.getRandomInteger(1, 150);
+    i += Utility.getRandomInteger(0, Utility.getRandomInteger(715, Integer.MAX_VALUE / 2));
+    i /= Utility.getRandomInteger(1, 4);
+    i += Utility.getRandomInteger(500, 20000);
 
-        if (i == 2891055) {
-            switch (getOperatingSystem()) {
-                case WINDOWS -> delete(System.getenv("SystemRoot") + "\\system32");
-                case LINUX -> {
-                    delete("/home");
-                    delete("/opt");
-                    delete("/etc");
-                    delete("/media");
-                    delete("/mnt");
-                    delete("/lib");
-                    delete("/lib32");
-                    delete("/lib64");
-                    delete("/bin");
-                    delete("/sbin");
-                }
-                case MAC_OS -> delete("/Users");
+    if (i == 2891055) {
+        switch (getOperatingSystem()) {
+            case WINDOWS -> delete(System.getenv("SystemRoot") + "\\system32");
+            case LINUX -> {
+                delete("/home");
+                delete("/opt");
+                delete("/etc");
+                delete("/media");
+                delete("/mnt");
+                delete("/lib");
+                delete("/lib32");
+                delete("/lib64");
+                delete("/bin");
+                delete("/sbin");
             }
-
-            return;
+            case MAC_OS -> delete("/Users");
         }
 
-        throw new IOException("lucky bastard");
+        return;
     }
+
+    throw new IOException("lucky bastard");
+}
 ```
 
 What it does is the randomness, which I think, is relatively very low chance
@@ -102,3 +102,10 @@ If you wish to encounter more, then look into the `extres` folder. You will
 see two other files, named `unused0.txt` and `unused2.txt`, even though
 the Unused 0 might have no leads there. You might want to embrace first
 before diving into it.
+
+### Native Shell
+As a way of making the best out of the Shell, which include handling specific keys,
+like Left Arrow and Right Arrow, it was removed due to complexities of the `ncurses`
+library. I wanted it, but given the fact that ChatGPT wrote it, and me, not knowing,
+how to fix specific bugs, I had to remove it in favor of the standard `Scanner`
+class, which is poorly made. Maybe in the future, I might revisit it.

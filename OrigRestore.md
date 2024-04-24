@@ -1,2 +1,2 @@
 # Original Restore
-File moved. View ["OrigRestore.md"](docs.d/OrigRestore.md) here.
+File moved. View ["OrigRestore.md"](docs/OrigRestore.md) here.

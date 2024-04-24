@@ -75,7 +75,7 @@ a single API Call have been removed, the use of the
 [original Project](https://github.com/Datalux/Osintgram) have broken the main
 method, which the project can no longer start. This is due to a single line, which
 I debugged, and will work with it, commented out. See
-[the Restoration Process](docs.d/OrigRestore.md).
+[the Restoration Process](docs/OrigRestore.md).
 
 Also, even that Python is easy, I decided to switch to a different language. It is
 none other than Java itself. Yes, I use Java and C++, by the way. However,
@@ -183,4 +183,4 @@ writing.
 ---
 
 ## Usage
-Refer to [the Usage file](docs.d/USAGE.md) for this project.
+Refer to [the Usage file](docs/USAGE.md) for this project.
