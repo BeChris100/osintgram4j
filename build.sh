@@ -84,7 +84,7 @@ else
     cd "out"
     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=/usr/bin/x86_64-linux-gnu-gcc -DCMAKE_CXX_COMPILER=/usr/bin/x86_64-linux-gnu-g++ ..
     make
-    cp libosintgram4j-cxx.so "$CURRENT_WORKDIR/out/project/input"
+    cp libosintgram4j.so "$CURRENT_WORKDIR/out/project/input"
 
     MINGW_C="$(command -v x86_64-w64-mingw32-gcc)"
     MINGW_CPP="$(command -v x86_64-w64-mingw32-g++)"
@@ -97,7 +97,7 @@ else
         cd win
         cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER="$MINGW_C" -DCMAKE_CXX_COMPILER="$MINGW_CPP" ..
         make
-        cp osintgram4j-cxx.dll "$CURRENT_WORKDIR/out/project/input"
+        cp osintgram4j.dll "$CURRENT_WORKDIR/out/project/input"
     fi
 
     cd "$CURRENT_WORKDIR"
