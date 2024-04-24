@@ -178,5 +178,7 @@ if [[ "$INSTALL_CHOICE" =~ ^[Yy]$ ]]; then
     echo "Otherwise, you can also re-run this building script with the argument '--uninstall' to have"
     echo "Osintgram4j automatically uninstalled."
 else
-    echo "You can run Osintgram from this directory and forwards by going to $PWD and run './out/pkg/osintgram4j/bin/osintgram4j'"
+    mkdir -p bin
+    ln -s out/pkg/osintgram4j/bin/osintgram4j bin/osintgram4j
+    echo "You can run Osintgram from this directory and forwards by going to $PWD and run './bin/osintgram4j'"
 fi
