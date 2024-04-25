@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 import java.util.Properties;
 
 import static net.bc100dev.commons.utils.RuntimeEnvironment.*;
-import static osintgram4j.commons.AppConstants.log;
 
 public class Settings {
 
@@ -19,10 +18,6 @@ public class Settings {
     public static String dateFormat = "[day]-[month]-[year]";
     public static String timeFormat = "[hour]:[minute]:[second]";
     public static boolean t12Format = false;
-
-    private static boolean isEmpty() {
-        return props.isEmpty();
-    }
 
     // Now, this is the part, where I truly love Java.
     // Let's use the new keyword added in JDK 21: "when"
@@ -157,71 +152,137 @@ public class Settings {
         };
     }
 
-    public static boolean app_adminSecurityWarningEnabled() {
-        if (isEmpty())
+    public static boolean securityWarnings() {
+        throwIfEmpty();
+
+        return valueToBoolean(props.getProperty("SecurityWarnings"), true);
+    }
+
+    public static String cacheMaxInterval() {
+        throwIfEmpty();
+
+        return props.getProperty("CacheMaxInterval", "2d");
+    }
+
+    public static boolean alwaysUpdateDevices() {
+        throwIfEmpty();
+
+        return valueToBoolean(props.getProperty("DeviceRefresh.AlwaysUpdate", "true"), true);
+    }
+
+    public static long deviceUpdateInterval() {
+        throwIfEmpty();
+
+        return parseDuration(props.getProperty("DeviceRefresh.UpdateInterval", "3d"));
+    }
+
+    public static long connectionTimeout() {
+        throwIfEmpty();
+
+        return parseDuration(props.getProperty("Network.ConnectionTimeout"));
+    }
+
+    public static long readTimeout() {
+        throwIfEmpty();
+
+        return parseDuration(props.getProperty("Network.ReadTimeout"));
+    }
+
+    public static int maxNetworkTries() {
+        throwIfEmpty();
+
+        try {
+            return Integer.parseInt(props.getProperty("Network.MaximumTries"));
+        } catch (NumberFormatException ignore) {
+            return 5;
+        }
+    }
+
+    public static int maxNetworkConnections() {
+        throwIfEmpty();
+
+        try {
+            return Integer.parseInt(props.getProperty("Network.MaximumConnections"));
+        } catch (NumberFormatException ignore) {
+            return 3;
+        }
+    }
+
+    public static int igMaxConnections() {
+        throwIfEmpty();
+
+        try {
+            return Integer.parseInt(props.getProperty("Instagram.Accounts.MaximumConnection"));
+        } catch (NumberFormatException ignore) {
+            return 1;
+        }
+    }
+
+    public static int igMaxSessions() {
+        throwIfEmpty();
+
+        try {
+            return Integer.parseInt(props.getProperty("Instagram.Accounts.MaximumSessions"));
+        } catch (NumberFormatException ignore) {
+            return 1;
+        }
+    }
+
+    public static boolean alwaysWriteToFile() {
+        throwIfEmpty();
+
+        return valueToBoolean(props.getProperty("Osintgram4j.AlwaysWriteToFile", "true"), true);
+    }
+
+    public static String writeFileType() {
+        throwIfEmpty();
+
+        return switch (props.getProperty("Osintgram4j.FileType", "txt").toLowerCase()) {
+            case "json" -> "json_file";
+            case "xml" -> "xml_file";
+            default -> "text_file";
+        };
+    }
+
+    public static File writeFileLocation() {
+        throwIfEmpty();
+
+        String v = props.getProperty("Osintgram4j.WriteLocation", "standard");
+        return switch (v) {
+            case "cwd", "pwd" -> WORKING_DIRECTORY;
+            case "standard" -> storeLocation();
+            default -> new File(v);
+        };
+    }
+
+    private static void throwIfEmpty() {
+        if (props.isEmpty())
             throw new ApplicationRuntimeException("Settings are not loaded");
-
-        return valueToBoolean(props.getProperty("App.AdminSecurityWarning"), true);
     }
 
-    public static String app_cacheRefreshInterval() {
-        if (isEmpty())
-            throw new ApplicationRuntimeException("Settings are not loaded");
+    private static long parseDuration(String value) {
+        String[] parts = value.split(" ");
+        long totalDuration = 0;
 
-        return props.getProperty("App.Cache.RefreshInterval", "2d");
-    }
+        for (String part : parts) {
+            long dv = Long.parseLong(part.substring(0, part.length() - (part.endsWith("mt") ? 2 : 1)));
 
-    public static SystemTime time_getSystemTime() {
-        LocalDateTime now = LocalDateTime.now();
+            if (part.endsWith("s")) { // Seconds
+                totalDuration += dv * 1000;
+            } else if (part.endsWith("mt")) { // Minutes
+                totalDuration += dv * 60 * 1000;
+            } else if (part.endsWith("h")) { // Hours
+                totalDuration += dv * 3600 * 1000;
+            } else if (part.endsWith("d")) { // Days
+                totalDuration += dv * 86400 * 1000;
+            } else if (part.endsWith("m")) { // Months
+                totalDuration += dv * 2629746 * 1000;
+            } else if (part.endsWith("y")) { // Years
+                totalDuration += dv * 31556952 * 1000;
+            }
+        }
 
-        int hour24 = now.getHour();
-        int hour12 = hour24 % 12;
-        int minutes = now.getMinute();
-        int seconds = now.getSecond();
-
-        int year = now.getYear();
-        int month = now.getMonthValue();
-        int day = now.getDayOfMonth();
-
-        if (hour12 == 0)
-            hour12 = 12;
-
-        return new SystemTime(hour24, hour12, minutes, seconds, day, month, year);
-    }
-
-    public static String time_getDate() {
-        SystemTime systemTime = time_getSystemTime();
-        String out = dateFormat;
-
-        if (out.contains("[day]"))
-            out = out.replaceAll("\\[day]", String.format("%02d", systemTime.day));
-
-        if (out.contains("[month]"))
-            out = out.replaceAll("\\[month]", String.format("%02d", systemTime.month));
-
-        if (out.contains("[year]"))
-            out = out.replaceAll("\\[year]", String.format("%02d", systemTime.year));
-
-        return out;
-    }
-
-    public static String time_getTime() {
-        SystemTime systemTime = time_getSystemTime();
-        String out = timeFormat;
-
-        if (out.contains("[hour]"))
-            out = out.replaceAll("\\[hour]", String.format("%02d", t12Format ? systemTime.hour12 : systemTime.hour24));
-
-        if (out.contains("[minute]"))
-            out = out.replaceAll("\\[minute]", String.format("%02d", systemTime.minute));
-
-        if (out.contains("[second]"))
-            out = out.replaceAll("\\[second]", String.format("%02d", systemTime.second));
-
-        return out;
-    }
-
-    public record SystemTime(int hour24, int hour12, int minute, int second, int day, int month, int year) {
+        return totalDuration;
     }
 
 }

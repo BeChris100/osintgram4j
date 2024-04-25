@@ -17,7 +17,7 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 
 import static net.bc100dev.commons.utils.RuntimeEnvironment.*;
-import static net.bc100dev.osintgram4j.Settings.app_adminSecurityWarningEnabled;
+import static net.bc100dev.osintgram4j.Settings.securityWarnings;
 import static net.bc100dev.osintgram4j.Settings.loadSettings;
 import static osintgram4j.commons.AppConstants.log;
 import static osintgram4j.commons.TitleBlock.DISPLAY;
@@ -193,7 +193,7 @@ public class MainClass {
             }
         }
 
-        if (!suppressStr.toString().contains("admin_checks") || app_adminSecurityWarningEnabled()) {
+        if (!suppressStr.toString().contains("admin_checks") || securityWarnings()) {
             try {
                 if (NativeLoader.isLoaded()) {
                     if (UserIO.isAdmin()) {
