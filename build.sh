@@ -179,6 +179,6 @@ if [[ "$INSTALL_CHOICE" =~ ^[Yy]$ ]]; then
     echo "Osintgram4j automatically uninstalled."
 else
     mkdir -p bin
-    ln -s out/pkg/osintgram4j/bin/osintgram4j bin/osintgram4j
+    ln -s "$(PWD)"/out/pkg/osintgram4j/bin/osintgram4j "$(PWD)"bin/osintgram4j
     echo "You can run Osintgram from this directory and forwards by going to $PWD and run './bin/osintgram4j'"
 fi
