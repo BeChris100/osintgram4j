@@ -83,7 +83,7 @@ else
     mkdir -p out
     cd "out"
     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=/usr/bin/x86_64-linux-gnu-gcc -DCMAKE_CXX_COMPILER=/usr/bin/x86_64-linux-gnu-g++ ..
-    make
+    make -j$(nproc)
     cp libosintgram4j.so "$CURRENT_WORKDIR/out/project/input"
 
     MINGW_C="$(command -v x86_64-w64-mingw32-gcc)"
@@ -96,7 +96,7 @@ else
         mkdir win
         cd win
         cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER="$MINGW_C" -DCMAKE_CXX_COMPILER="$MINGW_CPP" ..
-        make
+        make -j$(nproc)
         cp osintgram4j.dll "$CURRENT_WORKDIR/out/project/input"
     fi
 
@@ -145,6 +145,9 @@ fi
  --java-options "-Xmx256m" --java-options "-Xms256m" --java-options '-Dog4j.location.app_dir=$APPDIR' \
  --java-options '-Dog4j.location.bin_dir=$BINDIR' --java-options '-Dog4j.location.root_dir=$ROOTDIR' --verbose
 
+echo ""
+echo "## Build Complete"
+
 read -p "Do you want to install Osintgram (requires sudo privileges)? (Y/N): " INSTALL_CHOICE
 if [[ "$INSTALL_CHOICE" =~ ^[Yy]$ ]]; then
     if [ -f "/usr/bin/osintgram4j" ]; then
@@ -179,6 +182,6 @@ if [[ "$INSTALL_CHOICE" =~ ^[Yy]$ ]]; then
     echo "Osintgram4j automatically uninstalled."
 else
     mkdir -p bin
-    ln -s "$(PWD)"/out/pkg/osintgram4j/bin/osintgram4j "$(PWD)"bin/osintgram4j
+    ln -s "${PWD}"/out/pkg/osintgram4j/bin/osintgram4j "${PWD}"/bin/osintgram4j
     echo "You can run Osintgram from this directory and forwards by going to $PWD and run './bin/osintgram4j'"
 fi
