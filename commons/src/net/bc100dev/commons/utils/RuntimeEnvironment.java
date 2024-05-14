@@ -27,6 +27,8 @@ public class RuntimeEnvironment {
     public static final File CLASS_PATH = new File(System.getProperty("java.class.path"));
     public static final String SYSTEM_PATH_SEPARATOR = FileSystems.getDefault().getSeparator();
 
+    public static final String PATH_ENV = System.getenv("PATH");
+
     public static int countRuntimeModifications() {
         List<String> modifications = ManagementFactory.getRuntimeMXBean().getInputArguments();
 
@@ -102,7 +104,7 @@ public class RuntimeEnvironment {
             if (isLinux() || isMac()) {
                 try {
                     if (FileUtil.exists("/etc/hostname"))
-                        return FileUtil.readString("/etc/hostname").trim();
+                        return FileUtil.readFileString("/etc/hostname").trim();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

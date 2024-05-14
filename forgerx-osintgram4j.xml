@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<BuildFile>
+    <!--
+    This file is a placeholder for an upcoming project.
+    However, the ForgerX product family will be considered closed-source.
+    This means that it will be proprietary project.
+    -->
+    <IncludeLanguage lang="cxx"/>
+    <IncludeLanguage lang="java"/>
+    <Project>
+        <Information displayName="Osintgram4j (Instagram OSINT)" name="osintgram4j" version="0.1-pre1"
+                     maintainer="BC100Dev (BeChris100; contact@bc100dev.net)"/>
+        <OnlineSources type="git" url="https://github.com/BeChris100/osintgram4j" updateCode="true"/>
+        <Java version="21"/>
+        <Cxx version="17" />
+    </Project>
+    <Modules>
+        <ResourceModule shared="true" path="extres"/>
+        <Module id="0" name="core" src=".">
+            <Dependency id="0"/>
+            <ModLink id="1"/>
+            <ModLink id="2"/>
+            <MainClass name="net.bc100dev.osintgram4j.MainClass"/>
+            <!-- excluded via '.gitignore' -->
+            <TestClass name="net.bc100dev.osintgram4j.test.TestMain" />
+            <Settings isMain="true"/>
+        </Module>
+        <Module id="1" name="online_api" src="instagram_api">
+            <Dependency id="0"/>
+            <ModLink id="2"/>
+        </Module>
+        <Module id="2" name="commons" src="commons"/>
+        <Module id="3" name="modapi" src="modapi/src">
+            <Dependency id="0"/>
+            <ModLink id="1"/>
+            <ModLink id="2"/>
+        </Module>
+        <Module id="4" name="updater" src="updater">
+            <Dependency id="1"/>
+        </Module>
+        <Module id="5" name="osintgram4j-cxx" src="cxx">
+            <CxxModule>
+                <Dependency id="1"/>
+            </CxxModule>
+        </Module>
+    </Modules>
+    <Dependencies checkLatest="true">
+        <Dependency id="0">
+            <MavenLib artifact="org.json" name="json" version="20240303"/>
+        </Dependency>
+        <Dependency id="1">
+            <CxxPackage name="Curses" required="os.platform == linux"/>
+        </Dependency>
+    </Dependencies>
+    <Settings>
+        <Cxx>
+            <Include>{{ java.include.dir }}</Include>
+            <Toolchains>
+                <Toolchain name="Linux x86_64" required="os.type == Linux, os.arch == x86_64 | true">
+                    <Compiler_C binName="x86_64-linux-gnu-gcc"/>
+                    <Compiler_CPP binName="x86_64-linux-gnu-g++"/>
+                </Toolchain>
+                <Toolchain name="Linux aarch64" required="os.type == Linux, os.arch == aarch64 | true">
+                    <Compiler_C binName="aarch64-linux-gnu-gcc"/>
+                    <Compiler_CPP binName="aarch64-linux-gnu-g++"/>
+                </Toolchain>
+                <Toolchain name="Windows x64 (Linux)" required="false" depends="mingw-gcc">
+                    <Compiler_C binName="x86_64-w64-mingw32-gcc"/>
+                    <Compiler_CPP binName="x86_64-w64-mingw32-g++"/>
+                </Toolchain>
+                <Toolchain name="Windows x64 (Visual Studio)" required="false" depends="VS::BuildTools">
+                    <Compiler universal="true" binName="cl" loads="VS::BuildTools"/>
+                </Toolchain>
+                <Toolchain name="Windows x64 (GCC)" required="false" depends="WindowsGCC">
+                    <Compiler_C binName="gcc"/>
+                    <Compiler_CPP binName="g++"/>
+                </Toolchain>
+                <FallbackToolchain enabled="true">
+                    <Compiler_C>
+                        <include>gcc</include>
+                        <include>clang</include>
+                    </Compiler_C>
+                    <Compiler_CPP>
+                        <include>g++</include>
+                        <include>clang++</include>
+                    </Compiler_CPP>
+                </FallbackToolchain>
+                <Flags>
+                    <add>-Wextra</add>
+                </Flags>
+            </Toolchains>
+        </Cxx>
+        <CliOptions> </CliOptions>
+    </Settings>
+    <Build output="out" temp=".out" parallel="true">
+        <Java>
+            <JarFiles>
+                <Jar file="modapi.jar">
+                    <include module="3"/>
+                </Jar>
+                <Jar file="modapi_complete.jar">
+                    <include module="3"/>
+                    <options>--assemble-deps</options>
+                </Jar>
+                <Jar file="core.jar">
+                    <include module="0"/>
+                    <options>--executable</options>
+                </Jar>
+                <Jar file="instagram_api.jar">
+                    <include module="1"/>
+                    <options>--display-name="Instagram Private API"</options>
+                </Jar>
+                <Jar file="commons.jar">
+                    <include module="2"/>
+                </Jar>
+            </JarFiles>
+        </Java>
+        <Cxx>
+            <jpackage attachLib="true" />
+        </Cxx>
+        <JarProcess>
+        </JarProcess>
+        <JavaPackager minifyJre="false">
+            <BuildProcess>
+                <Format appImage="true" deb="true" rpm="false"/>
+                <JavaOptions>
+                    <option>-Xmx512m</option>
+                    <option>-Xms128m</option>
+                </JavaOptions>
+                <IncludeFile>{{ cxx. }}</IncludeFile>
+            </BuildProcess>
+            <Information>
+                <AppVersion>v0.1-pre1</AppVersion>
+                <Copyright>BC100Dev Solutions, 2024</Copyright>
+                <Vendor>BC100Dev</Vendor>
+            </Information>
+            <Icon platform="windows" path="extres/app_icon.ico"/>
+            <Icon platform="linux" path="extres/app_icon.png"/>
+        </JavaPackager>
+    </Build>
+</BuildFile>

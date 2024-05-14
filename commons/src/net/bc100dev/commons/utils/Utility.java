@@ -9,11 +9,6 @@ import java.util.Random;
 
 public class Utility {
 
-    public static String btrEnumString(Enum<?> e) {
-        String s = e.toString();
-        return s.charAt(0) + s.substring(1).toLowerCase();
-    }
-
     public static byte[] base64EncodeStr(byte[] data, int times) {
         byte[] b64 = data;
 
@@ -47,7 +42,7 @@ public class Utility {
     public static File getRuntimeDir() {
         try {
             File image = new File(Utility.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-            return new File(image.getAbsolutePath().substring(0, Utility.getLastPathSeparator(image.getAbsolutePath(), false)));
+            return new File(image.getParent());
         } catch (URISyntaxException ignore) {
             return null;
         }

@@ -4,6 +4,22 @@
     "label": "Osintgram4j Commands",
     "command_list": [
         {
+            "command": "help",
+            "description": "Displays all commands, along with its simple information",
+            "class": ".cmd.HelpCmd",
+            "alternates": [
+                "List",
+                "list",
+                "ListCommands",
+                "List-Commands",
+                "All-Commands",
+                "All",
+                "Help",
+                "HelpPage",
+                "Help-Page"
+            ]
+        },
+        {
             "command": "sh",
             "description": "Runs a system interactive shell",
             "class": ".cmd.SysShellInstance",
@@ -12,6 +28,36 @@
                 "Shell",
                 "ShellExec",
                 "shell"
+            ],
+            "aliases": [
+                {
+                    "cmd": "bash",
+                    "args": "-b",
+                    "platforms": "linux,osx",
+                    "depends": "bash"
+                },
+                {
+                    "cmd": "zsh",
+                    "args": "-z",
+                    "platforms": "linux,osx",
+                    "depends": "zsh"
+                },
+                {
+                    "cmd": "fish",
+                    "args": "-f",
+                    "platforms": "linux",
+                    "depends": "fish"
+                },
+                {
+                    "cmd": "cmd",
+                    "args": "-c",
+                    "platforms": "win64"
+                },
+                {
+                    "cmd": "powershell",
+                    "args": "-p",
+                    "platforms": "win64"
+                }
             ]
         },
         {
@@ -49,15 +95,29 @@
                 "UsersManager",
                 "AccountManager",
                 "AccountsManager"
+            ],
+            "aliases": [
+                {
+                    "cmd": "login",
+                    "args": "--manage-users login"
+                },
+                {
+                    "cmd": "logout",
+                    "args": "--manage-users logout"
+                }
             ]
         },
         {
-            "command": "setctl",
+            "command": "control",
             "description": "Settings Control",
             "class": ".cmd.SettingsControl",
             "alternates": [
                 "SettingsControl",
-                "Control-Settings"
+                "Control-Settings",
+                "Application-Settings",
+                "AppSettings",
+                "Manage-Settings",
+                "settings"
             ]
         },
         {
@@ -110,7 +170,7 @@
             ]
         },
         {
-            "command": "appman",
+            "command": "clientmgr",
             "description": "Application Client Management",
             "class": ".cmd.AppManager",
             "alternates": [
@@ -119,8 +179,16 @@
                 "Application-Manager",
                 "AppManager",
                 "App-Manager",
+                "ApplicationManage",
+                "Application-Manage",
                 "ManageApplication",
                 "Manage-Application"
+            ],
+            "aliases": [
+                {
+                    "cmd": "settings",
+                    "args": "settings"
+                }
             ]
         },
         {

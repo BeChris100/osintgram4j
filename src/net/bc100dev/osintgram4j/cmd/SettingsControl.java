@@ -1,5 +1,6 @@
 package net.bc100dev.osintgram4j.cmd;
 
+import net.bc100dev.commons.Terminal;
 import osintgram4j.api.Command;
 import osintgram4j.commons.ShellConfig;
 
@@ -7,9 +8,13 @@ import java.util.List;
 
 public class SettingsControl extends Command {
 
+    // TODO: put Settings control into AppManager
+
     @Override
     public int launchCmd(String[] args, List<ShellConfig> shellConfigs) {
-        return 0;
+        Terminal.errPrintln(Terminal.TermColor.RED, "settings control: not implemented yet", true);
+        Terminal.errPrintln(Terminal.TermColor.RED, "settings control: deprecated (use 'clientmgr --settings' instead)", true);
+        return 1;
     }
 
     @Override

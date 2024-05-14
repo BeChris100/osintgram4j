@@ -1,5 +1,7 @@
 package osintgram4j.api;
 
+import net.bc100dev.commons.Tools;
+import net.bc100dev.commons.utils.OperatingSystem;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -9,21 +11,29 @@ import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static net.bc100dev.commons.utils.RuntimeEnvironment.getOperatingSystem;
+
 public class ShellCommandEntry {
 
     private final int version;
     private final String label, pkgName;
     private final List<ShellCaller> callers;
+    private final List<ShellAlias> aliases;
 
-    private ShellCommandEntry(int version, String label, String pkgName, List<ShellCaller> callers) {
+    private ShellCommandEntry(int version, String label, String pkgName, List<ShellCaller> callers, List<ShellAlias> aliases) {
         this.version = version;
         this.label = label;
         this.pkgName = pkgName;
         this.callers = callers;
+        this.aliases = aliases;
     }
 
     public int getPackageVersion() {
         return version;
+    }
+
+    public List<ShellAlias> getAliases() {
+        return aliases;
     }
 
     public List<ShellCaller> getCommands() {
@@ -60,6 +70,8 @@ public class ShellCommandEntry {
 
         JSONArray arr = obj.getJSONArray("command_list");
         List<ShellCaller> callerList = new ArrayList<>();
+        List<ShellAlias> aliases = new ArrayList<>();
+
         if (!arr.isEmpty()) {
             for (int i = 0; i < arr.length(); i++) {
                 JSONObject cmdObj = arr.getJSONObject(i);
@@ -99,11 +111,61 @@ public class ShellCommandEntry {
                 if (_class.startsWith("."))
                     _class = pkgName + _class;
 
-                callerList.add(new ShellCaller(cmd, description, _class, alternates));
+                ShellCaller caller = new ShellCaller(cmd, description, _class, alternates);
+                callerList.add(caller);
+
+                if (cmdObj.has("aliases")) {
+                    JSONArray aliasesArr = cmdObj.getJSONArray("aliases");
+                    for (int j = 0; j < aliasesArr.length(); j++) {
+                        JSONObject aliasObj = aliasesArr.getJSONObject(j);
+                        if (!aliasObj.has("cmd"))
+                            throw new ShellException(String.format("\"%s\" key at entry %d not found (required to execute)", "cmd", i + 1));
+
+                        if (!aliasObj.has("args"))
+                            throw new ShellException(String.format("\"%s\" key at entry %d not found (required to append to command)", "args", i + 1));
+
+                        String aliasCmd = aliasObj.getString("cmd");
+                        String[] aliasArgs = Tools.translateCmdLine(aliasObj.getString("args"));
+
+                        ShellAlias alias = new ShellAlias(aliasCmd, caller, aliasArgs);
+
+                        if (aliasObj.has("depends")) {
+                            String depsArr = aliasObj.getString("depends");
+                            String[] deps = Tools.translateCmdLine(depsArr);
+
+                            alias.dependsOn(deps);
+                        }
+
+                        if (aliasObj.has("platforms")) {
+                            String val = aliasObj.getString("platforms");
+                            if (!val.contains("*")) {
+                                String[] platformsArr = val.split(",");
+
+                                for (String platform : platformsArr) {
+                                    switch (platform.toLowerCase()) {
+                                        case "linux", "lin", "nux" ->
+                                                alias.allowPlatformSupport(OperatingSystem.LINUX, true);
+                                        case "win", "win32", "win64", "windows", "windows64", "windows32",
+                                             "windows_x32",
+                                             "windows_x64", "windows_32", "windows_64" ->
+                                                alias.allowPlatformSupport(OperatingSystem.WINDOWS, true);
+                                        case "mac_os", "osx", "mac" ->
+                                                alias.allowPlatformSupport(OperatingSystem.MAC_OS, true);
+                                    }
+                                }
+                            } else
+                                alias.allowAllPlatforms(true);
+                        } else
+                            alias.allowAllPlatforms(true);
+
+                        if (alias.isPlatformSupported(getOperatingSystem()))
+                            aliases.add(alias);
+                    }
+                }
             }
         }
 
-        return new ShellCommandEntry(version, label, pkgName, callerList);
+        return new ShellCommandEntry(version, label, pkgName, callerList, aliases);
     }
 
     @Deprecated

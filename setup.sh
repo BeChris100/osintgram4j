@@ -3,6 +3,8 @@
 # shellcheck disable=SC2129
 # shellcheck disable=SC2162
 
+set -e
+
 IS_LINUX="false"
 IS_OSX="false"
 

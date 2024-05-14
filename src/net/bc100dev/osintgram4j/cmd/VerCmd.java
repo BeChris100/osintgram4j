@@ -17,7 +17,7 @@ import static net.bc100dev.commons.utils.RuntimeEnvironment.getOperatingSystem;
 public class VerCmd extends Command {
 
     private static String version(Properties props) {
-        return "v" + props.getProperty("BUILD_VERSION");
+        return props.getProperty("BUILD_VERSION");
     }
 
     private static int versionCode(Properties props) {
@@ -110,6 +110,10 @@ public class VerCmd extends Command {
                     case "-h", "--help", "help" -> {
                         System.out.println(helpCmd(args));
                         return 0;
+                    }
+                    default -> {
+                        Terminal.errPrintln(Terminal.TermColor.RED, String.format("flag \"%s\" is unknown", arg), true);
+                        return 1;
                     }
                 }
             }

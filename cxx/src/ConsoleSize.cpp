@@ -7,7 +7,7 @@
 #include <unistd.h>
 #endif
 
-#include "ConsoleSize.h"
+#include <app/ConsoleSize.h>
 
 
 JNIEXPORT jint JNICALL Java_net_bc100dev_commons_Terminal_windowLines(JNIEnv *env, jclass javaClass) {

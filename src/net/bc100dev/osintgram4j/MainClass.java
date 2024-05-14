@@ -20,8 +20,8 @@ import static net.bc100dev.commons.utils.RuntimeEnvironment.*;
 import static net.bc100dev.osintgram4j.Settings.securityWarnings;
 import static net.bc100dev.osintgram4j.Settings.loadSettings;
 import static osintgram4j.commons.AppConstants.log;
-import static osintgram4j.commons.TitleBlock.DISPLAY;
-import static osintgram4j.commons.TitleBlock.TITLE_BLOCK;
+import static osintgram4j.commons.Titles.DISPLAY;
+import static osintgram4j.commons.Titles.TITLE_BLOCK;
 
 public class MainClass {
 

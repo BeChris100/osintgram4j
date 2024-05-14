@@ -9,7 +9,7 @@
 
 #endif
 
-#include "MemoryInfo.h"
+#include <app/MemoryInfo.h>
 
 std::vector<long> SYS_MEM_INFO() {
     std::vector<long> info(3, 0);

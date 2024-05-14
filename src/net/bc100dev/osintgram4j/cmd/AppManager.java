@@ -13,17 +13,26 @@ public class AppManager extends Command {
     public int launchCmd(String[] args, List<ShellConfig> env) {
         if (args == null || args.length == 0) {
             Terminal.errPrintln(Terminal.TermColor.YELLOW, helpCmd(args), true);
+            System.err.println();
+
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException ignore) {
+            }
+
+            Terminal.errPrintln(Terminal.TermColor.RED, "clientmgr: no tool provided", true);
             return 1;
         }
 
         switch (args[0]) {
             case String s
-                    when s.equalsIgnoreCase("mods") -> {
-                System.out.println("Not implemented yet");
-            }
+                    when s.equalsIgnoreCase("help") ||
+                    s.equalsIgnoreCase("--help") ||
+                    s.equalsIgnoreCase("-help") ||
+                    s.equals("?") -> System.out.println(helpCmd(args));
             case String s
-                    when s.equalsIgnoreCase("help") -> {
-                System.out.println(helpCmd(args));
+                    when s.equalsIgnoreCase("mods") || s.equalsIgnoreCase("md") -> {
+                System.out.println("Not implemented yet");
             }
             case String s
                     when s.equalsIgnoreCase("settings") || s.equalsIgnoreCase("stg") -> {
@@ -40,9 +49,10 @@ public class AppManager extends Command {
         HelpPage tools = new HelpPage();
         tools.setSpaceWidth(5);
         tools.addArg("mods", null, "Manages App Modifications");
+        tools.addArg("settings", null, "Manages the Application Settings");
 
         return "Application Management Tool for Osintgram4j\n\nAvailable Tools:\n" + tools.display() +
-                "\n\nWe, the developers, are not responsible for any damages caused by inserting malicious software.\n" +
+                "\nWe, the developers, are not responsible for any damages caused by inserting malicious software.\n" +
                 "Proceed with caution.";
     }
 }

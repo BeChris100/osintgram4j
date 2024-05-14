@@ -6,11 +6,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-public class TitleBlock {
+public class Titles {
 
     public static String TITLE_BLOCK() {
         try {
-            ResourceManager mgr = new ResourceManager(TitleBlock.class, false);
+            ResourceManager mgr = new ResourceManager(Titles.class, false);
             if (!mgr.resourceExists("/net/bc100dev/osintgram4j/res/titleblock.txt"))
                 return "OSINTgram v0.1";
 
@@ -32,7 +32,7 @@ public class TitleBlock {
 
     public static String DISPLAY() {
         try {
-            ResourceManager mgr = new ResourceManager(TitleBlock.class, false);
+            ResourceManager mgr = new ResourceManager(Titles.class, false);
             if (!mgr.resourceExists("/net/bc100dev/osintgram4j/res/app_ver.cfg"))
                 return "OSINTgram v0.1";
 
@@ -42,7 +42,7 @@ public class TitleBlock {
             props.load(is);
             is.close();
 
-            return props.getProperty("BUILD_DISPLAY") + " v" + props.getProperty("BUILD_VERSION") + "-" + props.getProperty("BUILD_VERSION_CODE") + " (" + props.getProperty("BUILD_DISPLAY_FLAVOR") + ")";
+            return props.getProperty("BUILD_DISPLAY") + " " + props.getProperty("BUILD_VERSION") + "-" + props.getProperty("BUILD_VERSION_CODE") + " (" + props.getProperty("BUILD_DISPLAY_FLAVOR") + ")";
         } catch (IOException ignore) {
             return "OSINTgram v0.1";
         }

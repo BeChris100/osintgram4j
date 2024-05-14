@@ -9,7 +9,7 @@ public class ProcessData {
 
     public static final long RUNNING_PID = ProcessHandle.current().pid();
 
-    public static ProcessInfo getInfoForCurrentPid() {
+    public static ProcessInfo getCurrentProcessInfo() {
         ProcessHandle handle = ProcessHandle.current();
 
         return new ProcessInfo(handle.pid(),
@@ -19,10 +19,10 @@ public class ProcessData {
                 handle.info().arguments().orElse(new String[0]));
     }
 
-    public static ProcessInfo getInfoFromPid(long pid) throws ProcessExploreException {
+    public static ProcessInfo getProcessInfo(long pid) throws ProcessExploreException {
         Optional<ProcessHandle> process = ProcessHandle.of(pid);
         if (process.isEmpty())
-            throw new ProcessExploreException(String.format("Tried to find process id %d, but there was no such pid currently running.", pid));
+            throw new ProcessExploreException(String.format("Tried to find process id %d, but there was no such pid currently running, or could not be received", pid));
 
         ProcessHandle handle = process.get();
 

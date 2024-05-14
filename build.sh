@@ -5,6 +5,9 @@
 # shellcheck disable=SC2016
 # shellcheck disable=SC2164
 
+
+set -e
+
 source app_ver
 
 if [ -f ".build-info" ]; then

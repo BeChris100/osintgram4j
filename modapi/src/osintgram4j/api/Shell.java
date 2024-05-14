@@ -15,9 +15,10 @@ import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
 import static net.bc100dev.commons.Terminal.TermColor.CYAN;
+import static net.bc100dev.commons.Terminal.TermColor.RED;
 import static net.bc100dev.commons.utils.RuntimeEnvironment.*;
 import static osintgram4j.commons.AppConstants.log;
-import static osintgram4j.commons.TitleBlock.TITLE_BLOCK;
+import static osintgram4j.commons.Titles.TITLE_BLOCK;
 
 /**
  * The Shell class is an interactive shell (as the name says), used for
@@ -32,7 +33,7 @@ public class Shell {
 
     private static Shell instance;
 
-    private boolean running = false, scriptWarning = false;
+    private boolean running = false;
 
     private final boolean terminal = System.console() != null;
     private final String suppress;
@@ -40,12 +41,10 @@ public class Shell {
     public Scanner kbi; // kbi, as short, is named after "KeyBoard Input"
 
     public final List<ShellConfig> shellConfigList = new ArrayList<>();
-    private final List<ShellCaller> shellCallers = new ArrayList<>();
+    public final List<ShellCaller> shellCallers = new ArrayList<>();
+    public final List<ShellAlias> shellAliases = new ArrayList<>();
 
     private String PS1;
-
-    // Since I already hate you all, you guys have to reset the color manually via the Script itself. No automatic resets here!
-    private Terminal.TermColor termColor = null;
 
     /**
      * Initializes the Shell with the necessary Input and the necessary commands.
@@ -101,6 +100,7 @@ public class Shell {
     public void addCommands(File jsonFile) throws IOException, ShellException {
         ShellCommandEntry entry = ShellCommandEntry.initialize(jsonFile);
         shellCallers.addAll(entry.getCommands());
+        shellAliases.addAll(entry.getAliases());
 
         log.info("added " + entry.getCommands().size() + " commands");
     }
@@ -114,6 +114,7 @@ public class Shell {
     public void addCommands(String jsonData) throws ShellException {
         ShellCommandEntry e = ShellCommandEntry.initialize(jsonData);
         shellCallers.addAll(e.getCommands());
+        shellAliases.addAll(e.getAliases());
 
         log.info("added " + e.getCommands().size() + " commands");
     }
@@ -130,7 +131,6 @@ public class Shell {
             throw new NullPointerException("The File instance for the method is pointed as null");
 
         JarFile jarFile = new JarFile(file);
-
         Manifest manifest = jarFile.getManifest();
         if (manifest == null) {
             log.warning("Manifest file for file \"" + file.getPath() + "\" was not found");
@@ -297,85 +297,6 @@ public class Shell {
                 String[] givenArgs = execution.args();
 
                 switch (exec) {
-                    case "help", "app-help", "?" -> {
-                        StringTokenizer tok = new StringTokenizer(ln, " ");
-                        Map<String, String> helps = new HashMap<>();
-
-                        while (tok.hasMoreTokens()) {
-                            String tokVal = tok.nextToken();
-
-                            if (tokVal.equalsIgnoreCase("help"))
-                                // We do not need any help from the "help" command
-                                continue;
-
-                            for (ShellCaller caller : shellCallers) {
-                                if (caller.getCommand().equals(tokVal)) {
-                                    try {
-                                        if (helps.containsKey(tokVal))
-                                            continue;
-
-                                        helps.put(tokVal, caller.retrieveLongHelp(new String[0]));
-                                    } catch (ShellException ignore) {
-                                        log.warning("Command not found: " + tokVal);
-                                        Terminal.println(Terminal.TermColor.RED,
-                                                String.format("Unknown command \"%s\"", tokVal), true);
-                                    }
-                                } else {
-                                    for (String altCommand : caller.getAlternateCommands()) {
-                                        if (altCommand.equals(tokVal)) {
-                                            try {
-                                                if (helps.containsKey(caller.getCommand()))
-                                                    continue;
-
-                                                helps.put(caller.getCommand(), caller.retrieveLongHelp(new String[0]));
-                                            } catch (ShellException ignore) {
-                                                log.warning("Command not found: " + tokVal);
-                                                Terminal.println(Terminal.TermColor.RED,
-                                                        String.format("Unknown command \"%s\"", tokVal), true);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        if (!helps.keySet().isEmpty()) {
-                            List<String> cmd = new ArrayList<>(helps.keySet());
-
-                            if (cmd.size() == 1)
-                                Terminal.println(Terminal.TermColor.BLUE, helps.get(cmd.getFirst()), true);
-                            else {
-                                for (int i = 0; i < cmd.size(); i++) {
-                                    Terminal.println(CYAN, cmd.get(i), true);
-                                    Terminal.println(Terminal.TermColor.BLUE, helps.get(cmd.get(i)), true);
-
-                                    if (i != cmd.size() - 1)
-                                        System.out.println();
-                                }
-                            }
-                        } else {
-                            Terminal.println(Terminal.TermColor.GREEN, TITLE_BLOCK(), true);
-                            System.out.println();
-
-                            int maxCmdLength = 0;
-
-                            for (ShellCaller caller : shellCallers) {
-                                String cmd = caller.getCommand();
-                                if (cmd.length() > maxCmdLength)
-                                    maxCmdLength = cmd.length();
-                            }
-
-                            maxCmdLength += 5;
-
-                            for (ShellCaller caller : shellCallers) {
-                                String cmd = caller.getCommand();
-                                int spaces = maxCmdLength - cmd.length();
-
-                                Terminal.print(CYAN, cmd + " ".repeat(spaces), true);
-                                Terminal.println(Terminal.TermColor.YELLOW, caller.retrieveShortHelp(), true);
-                            }
-                        }
-                    }
                     case "exit", "quit", "close" -> stopShell();
                     default -> execCommand(shellConfigList, exec, givenArgs);
                 }
@@ -400,6 +321,18 @@ public class Shell {
     private void execCommand(List<ShellConfig> env, String exec, String[] args) {
         log.info(String.format("CreateCommandExec(Command=\"%s\", Args=\"%s\")", exec, Arrays.toString(args)));
 
+        int rnd = Utility.getRandomInteger(0, 100000);
+        if (rnd == 1983) {
+            rnd = Utility.getRandomInteger(1, 5);
+            switch (rnd) {
+                case 1 -> log.info("They have already infested the machine");
+                case 2 -> log.info("Problems have arrived. Time to wipe them.");
+                case 3 -> log.info("Why did they have to add them in?");
+                case 4 -> log.info("Bro had all the time to design the core, yet couldn't make the API already.");
+                case 5 -> log.info("Nothing else than the alternates being within the core itself.");
+            }
+        }
+
         boolean cmdFound = false;
         for (ShellCaller caller : shellCallers) {
             if (caller.getCommand().equalsIgnoreCase(exec)) {
@@ -423,13 +356,13 @@ public class Shell {
                 }
             } else {
                 for (String alternate : caller.getAlternateCommands()) {
-                    if (alternate.equals(exec)) {
+                    if (alternate.equalsIgnoreCase(exec)) {
                         cmdFound = true;
 
                         try {
-                            log.info("CommandRun(" + exec + ", " + Arrays.toString(args) + ")");
+                            log.info("CommandRun(MC_Alternate; " + exec + ", " + Arrays.toString(args) + ")");
                             int code = caller.execute(args, env);
-                            log.info("CommandExecution(Code=" + code + ", Cmd=" + exec + ")");
+                            log.info("CommandExecution(MC_Alternate; Code=" + code + ", Cmd=" + exec + ")");
 
                             if (code != 0) {
                                 Terminal.println(Terminal.TermColor.RED,
@@ -440,11 +373,36 @@ public class Shell {
                         }
                     }
                 }
+
+                if (!cmdFound) {
+                    for (ShellAlias alias : shellAliases) {
+                        if (alias.getAliasCmd().equals(exec)) {
+                            cmdFound = true;
+
+                            if (!alias.isPlatformSupported(getOperatingSystem())) {
+                                Terminal.errPrintln(RED, String.format("%s: command not allowed (unsupported platform)", alias.getAliasCmd()), true);
+                                cmdFound = false;
+                            }
+
+                            if (cmdFound) {
+                                try {
+                                    log.info("AliasExecute(Command=" + alias.getCaller().getCommand() + "; DefArgs=" + Arrays.toString(alias.getExecutionArgs()) + "; AdditionalArgs=" + Arrays.toString(args) + ")");
+                                    int code = alias.execute(args, env);
+                                    log.info("AliasExecution(Code=" + code + ")");
+                                } catch (ShellException ex) {
+                                    Terminal.println(Terminal.TermColor.RED, Utility.throwableToString(ex), true);
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 
-        if (!cmdFound)
+        if (!cmdFound) {
+            log.info(String.format("CommandExecution(Command = \"%s\"; Found = false)", exec));
             Terminal.println(Terminal.TermColor.RED, String.format("%s: command not found", exec), true);
+        }
     }
 
     /**

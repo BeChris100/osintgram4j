@@ -33,7 +33,7 @@ public class PackagedApplication {
         if (v != null)
             return new File(v);
 
-        k = oldPrefix + ".root_dir";
+        k = newPrefix + ".root_dir";
         v = withValue(k);
         return v != null ? new File(v) : null;
     }
@@ -44,7 +44,7 @@ public class PackagedApplication {
         if (v != null)
             return new File(v);
 
-        k = oldPrefix + ".bin_dir";
+        k = newPrefix + ".bin_dir";
         v = withValue(k);
         return v != null ? new File(v) : null;
     }

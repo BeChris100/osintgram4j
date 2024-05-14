@@ -23,7 +23,7 @@ public class FileUtil {
 
     public static void createFile(String filePath, boolean createDirs) throws IOException {
         File file = new File(filePath);
-        File dirs = new File(filePath.substring(0, Utility.getLastPathSeparator(filePath, false)));
+        File dirs = new File(file.getParent());
 
         if (!dirs.exists()) {
             if (!createDirs)
@@ -46,7 +46,7 @@ public class FileUtil {
             throw new IOException(String.format("Could not create new directories at \"%s\"", path));
     }
 
-    public static char[] readChars(String filePath) throws IOException {
+    public static char[] readFileChars(String filePath) throws IOException {
         File file = new File(filePath);
 
         if (!file.exists())
@@ -71,7 +71,7 @@ public class FileUtil {
         }
     }
 
-    public static byte[] readBytes(String filePath) throws IOException {
+    public static byte[] readFileBytes(String filePath) throws IOException {
         File file = new File(filePath);
 
         if (!file.exists())
@@ -96,7 +96,7 @@ public class FileUtil {
         }
     }
 
-    public static String readString(String filePath) throws IOException {
+    public static String readFileString(String filePath) throws IOException {
         File file = new File(filePath);
 
         if (!file.exists())
@@ -121,17 +121,7 @@ public class FileUtil {
         }
     }
 
-    public static void makeDirs(String dirPath) throws Exception {
-        File dir = new File(dirPath);
-
-        if (dir.exists())
-            return;
-
-        if (!dir.mkdirs())
-            throw new AccessDeniedException(String.format("Could not create new directories at \"%s\"", dirPath));
-    }
-
-    public static void write(String filePath, char[] contents) throws IOException {
+    public static void writeFileChars(String filePath, char[] contents) throws IOException {
         File file = new File(filePath);
 
         if (!file.exists())
@@ -152,7 +142,7 @@ public class FileUtil {
         }
     }
 
-    public static void write(String filePath, byte[] contents) throws IOException {
+    public static void writeFileBytes(String filePath, byte[] contents) throws IOException {
         File file = new File(filePath);
 
         if (!file.exists())
@@ -173,7 +163,7 @@ public class FileUtil {
         }
     }
 
-    public static void write(String filePath, String contents) throws IOException {
+    public static void writeFileString(String filePath, String contents) throws IOException {
         File file = new File(filePath);
 
         if (!file.exists())
@@ -207,7 +197,7 @@ public class FileUtil {
             data.add(dirPath);
 
             if (removePaths)
-                data.set(0, new File(data.get(0)).getName());
+                data.set(0, new File(data.getFirst()).getName());
 
             return data;
         }
@@ -439,7 +429,7 @@ public class FileUtil {
             throw new FileNotFoundException(String.format("File or directory at \"%s\" not found", sourceDirPath));
 
         if (!srcDir.canRead())
-            throw new AccessDeniedException(String.format("Cannot make read operations on \"%s\" (Permission denied)", sourceDirPath));
+            throw new AccessDeniedException(String.format("Cannot handle read operations on \"%s\" (Permission denied)", sourceDirPath));
 
         if (srcDir.isFile()) {
             copyFile(sourceDirPath, destDirPath + File.separator + srcDir.getName());
@@ -450,7 +440,7 @@ public class FileUtil {
             createDirectory(destDirPath);
 
         if (!destDir.canWrite())
-            throw new AccessDeniedException(String.format("Cannot make copy operations from \"%s\" to \"%s\" (Permission denied)", sourceDirPath, destDirPath));
+            throw new AccessDeniedException(String.format("Cannot handle write operations from \"%s\" to \"%s\" (Permission denied)", sourceDirPath, destDirPath));
 
         List<String> srcList = listDirectory(srcDir.getAbsolutePath(), true, false);
         for (String srcItem : srcList) {
@@ -464,6 +454,11 @@ public class FileUtil {
                 copyDir(srcData.getAbsolutePath(), destDir.getAbsolutePath() + File.separator + srcData.getName());
             }
         }
+    }
+
+    public static void moveDir(String sourceDirPath, String destDirPath) throws IOException {
+        copyDir(sourceDirPath, destDirPath);
+        delete(sourceDirPath);
     }
 
 }

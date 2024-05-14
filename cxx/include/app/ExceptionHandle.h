@@ -1,7 +1,7 @@
 #ifndef OSINTGRAM4J_NATIVES_EXCEPTIONHANDLE_H
 #define OSINTGRAM4J_NATIVES_EXCEPTIONHANDLE_H
 
-#include <jni.h>
+#include "jni.h"
 
 void throwJavaAppException(JNIEnv* env, const char* msg);
 

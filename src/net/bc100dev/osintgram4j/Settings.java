@@ -21,7 +21,7 @@ public class Settings {
 
     // Now, this is the part, where I truly love Java.
     // Let's use the new keyword added in JDK 21: "when"
-    // It takes in a boolean value, when you use a String value.
+    // It takes in a boolean value, when you use an object value.
     // The String must be initialized by the `value` parameter first
     // within the `case` statement.
     private static boolean valueToBoolean(String value, boolean defValue) {
@@ -30,21 +30,15 @@ public class Settings {
 
         return switch (value) {
             case String s
-                when s.equalsIgnoreCase("true") -> true;
+                    when s.equalsIgnoreCase("true") ||
+                    s.equalsIgnoreCase("1") ||
+                    s.equalsIgnoreCase("yes") ||
+                    s.equalsIgnoreCase("enabled") -> true;
             case String s
-                when s.equalsIgnoreCase("false") -> false;
-            case String s
-                when s.equalsIgnoreCase("1") -> true;
-            case String s
-                when s.equalsIgnoreCase("0") -> false;
-            case String s
-                when s.equalsIgnoreCase("yes") -> true;
-            case String s
-                when s.equalsIgnoreCase("no") -> false;
-            case String s
-                when s.equalsIgnoreCase("enabled") -> true;
-            case String s
-                when s.equalsIgnoreCase("disabled") -> false;
+                    when s.equalsIgnoreCase("false") ||
+                    s.equalsIgnoreCase("0") ||
+                    s.equalsIgnoreCase("no") ||
+                    s.equalsIgnoreCase("disabled") -> false;
             default -> defValue;
         };
     }
@@ -70,9 +64,12 @@ public class Settings {
 
         File userConfig;
         switch (getOperatingSystem()) {
-            case WINDOWS -> userConfig = new File(USER_HOME.getAbsolutePath() + "\\AppData\\Local\\net.bc100dev\\osintgram4j\\AppSettings.cfg");
-            case LINUX -> userConfig = new File(USER_HOME.getAbsolutePath() + "/.config/net.bc100dev/osintgram4j/AppSettings.cfg");
-            case MAC_OS -> userConfig = new File(USER_HOME.getAbsolutePath() + "/Library/net.bc100dev/osintgram4j/AppSettings.cfg");
+            case WINDOWS ->
+                    userConfig = new File(USER_HOME.getAbsolutePath() + "\\AppData\\Local\\net.bc100dev\\osintgram4j\\AppSettings.cfg");
+            case LINUX ->
+                    userConfig = new File(USER_HOME.getAbsolutePath() + "/.config/net.bc100dev/osintgram4j/AppSettings.cfg");
+            case MAC_OS ->
+                    userConfig = new File(USER_HOME.getAbsolutePath() + "/Library/net.bc100dev/osintgram4j/AppSettings.cfg");
             default -> throw new ApplicationRuntimeException("Unsupported Operating System");
         }
 
@@ -146,16 +143,34 @@ public class Settings {
 
     public static File storeLocation() {
         return switch (getOperatingSystem()) {
+            case MAC_OS -> new File(USER_HOME.getAbsolutePath() + "/Library/net.bc100dev/osintgram4j/config");
             case LINUX -> new File(USER_HOME.getAbsolutePath() + "/.config/net.bc100dev/osintgram4j");
             case WINDOWS -> new File(USER_HOME.getAbsolutePath() + "\\AppData\\Local\\BC100Dev\\Osintgram4j");
-            case MAC_OS -> new File(USER_HOME.getAbsolutePath() + "/Library/net.bc100dev/osintgram4j");
         };
     }
 
     public static boolean securityWarnings() {
         throwIfEmpty();
 
-        return valueToBoolean(props.getProperty("SecurityWarnings"), true);
+        return valueToBoolean(props.getProperty("SecurityWarnings", "true"), true);
+    }
+
+    public static boolean honestyEdition() {
+        throwIfEmpty();
+
+        return valueToBoolean(props.getProperty("HonestyEdition", "false"), false);
+    }
+
+    public static boolean moddingEnabled() {
+        throwIfEmpty();
+
+        return valueToBoolean(props.getProperty("ModdingEnabled", "false"), false);
+    }
+
+    public static boolean disableModsOnElevation() {
+        throwIfEmpty();
+
+        return valueToBoolean(props.getProperty("DisableModsOnAdministration", "true"), true);
     }
 
     public static String cacheMaxInterval() {
@@ -261,6 +276,12 @@ public class Settings {
     }
 
     private static long parseDuration(String value) {
+        if (value.contains(", "))
+            value = value.replaceAll(", ", " ");
+
+        if (value.contains(","))
+            value = value.replaceAll(",", " ");
+
         String[] parts = value.split(" ");
         long totalDuration = 0;
 

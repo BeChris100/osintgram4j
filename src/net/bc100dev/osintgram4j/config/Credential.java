@@ -83,7 +83,7 @@ public class Credential {
         if (!jsonFile.canRead())
             throw new AccessDeniedException("The current user cannot access the file at \"" + jsonFile.getAbsolutePath() + "\"");
 
-        String jsonData = FileUtil.readString(jsonFile.getAbsolutePath()).trim();
+        String jsonData = FileUtil.readFileString(jsonFile.getAbsolutePath()).trim();
         List<Credential> credentialList = new ArrayList<>();
 
         if (jsonData.startsWith("{") && jsonData.endsWith("}")) {

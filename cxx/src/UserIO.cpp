@@ -6,8 +6,8 @@
 #include <windows.h>
 #endif
 
-#include "UserIO.h"
-#include "ExceptionHandle.h"
+#include <app/UserIO.h>
+#include <app/ExceptionHandle.h>
 
 
 JNIEXPORT jint JNICALL Java_net_bc100dev_commons_utils_io_UserIO_getGid(JNIEnv* env, jclass javaClass) {
