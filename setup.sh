@@ -50,6 +50,8 @@ fi
 REQ_PKG="tar wget cmake make gcc"
 
 function verify_tools() {
+    set +e
+
     # GCC/clang Verification
     GCC_CMD=$(command -v "x86_64-linux-gnu-gcc")
     GPP_CMD=$(command -v "x86_64-linux-gnu-g++")
@@ -101,9 +103,13 @@ function verify_tools() {
         echo "$REQ_PKG"
         exit 1
     fi
+
+    set -e
 }
 
 function presence_java_tools() {
+    set +e
+
     local java_cmd
     local javac_cmd
     local jlink_cmd
@@ -113,8 +119,6 @@ function presence_java_tools() {
     java_cmd=$(command -v "java")
     jar_cmd=$(command -v "jar")
     javac_cmd=$(command -v "javac")
-    jlink_cmd=$(command -v "jlink")
-    jdeps_cmd=$(command -v "jdeps")
     jpackage_cmd=$(command -v "jpackage")
 
     if [ -n "$java_cmd" ] && [ -n "$jar_cmd" ] && [ -n "$javac_cmd" ] && [ -n "$jlink_cmd" ] && [ -n "$jdeps_cmd" ] && [ -n "$jpackage_cmd" ]; then
@@ -140,6 +144,8 @@ function presence_java_tools() {
     else
         return 1
     fi
+
+    set -e
 }
 
 function get_jdk() {
