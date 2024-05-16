@@ -86,22 +86,26 @@ else
     mkdir -p out
     cd "out"
     cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=/usr/bin/x86_64-linux-gnu-gcc -DCMAKE_CXX_COMPILER=/usr/bin/x86_64-linux-gnu-g++ ..
-    make -j$(nproc)
+    make "-j$(nproc)"
     cp libosintgram4j.so "$CURRENT_WORKDIR/out/project/input"
+
+    set +e
 
     MINGW_C="$(command -v x86_64-w64-mingw32-gcc)"
     MINGW_CPP="$(command -v x86_64-w64-mingw32-g++)"
 
     if [ -n "$MINGW_C" ] && [ -n "$MINGW_CPP" ]; then
-        echo "* Compiling CXX code for Windows"
+        echo "* Compiling CXX code for Windows x86_64"
 
         cd "$CURRENT_WORKDIR/cxx"
         mkdir win
         cd win
         cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER="$MINGW_C" -DCMAKE_CXX_COMPILER="$MINGW_CPP" ..
-        make -j$(nproc)
+        make "-j$(nproc)"
         cp osintgram4j.dll "$CURRENT_WORKDIR/out/project/input"
     fi
+
+    set -e
 
     cd "$CURRENT_WORKDIR"
 fi
@@ -132,8 +136,6 @@ echo '## Making "modapi.jar"'
 
 echo '## Making "core.jar"'
 "$JAR_CMD" -cfm out/project/input/core.jar META-INF/MANIFEST.MF -C out/project/core .
-
-## Minimal Java Runtime Removal: Modding will be limited, if not removed
 
 echo '## Building the Application Package'
 cp out/libs/json.jar out/project/input/json.jar
@@ -168,7 +170,7 @@ if [[ "$INSTALL_CHOICE" =~ ^[Yy]$ ]]; then
         fi
     fi
 
-    echo "Copying built files"
+    echo "> Copying built files"
     "$PREFIX" mkdir -p /usr/share/bc100dev/osintgram4j/
     "$PREFIX" cp -r out/pkg/osintgram4j/* /usr/share/bc100dev/osintgram4j
     "$PREFIX" ln -s /usr/share/bc100dev/osintgram4j/bin/osintgram4j /usr/bin/osintgram4j
