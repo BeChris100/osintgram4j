@@ -111,7 +111,7 @@ or [the original project](https://github.com/Datalux/Osintgram). However, this i
 Osintgram4j project, which is a part of the OSINT and the Osintgram Family.
 
 This project is mainly targeted for the Linux platform. However, this does not
-mean that you have to install Linux on your system. Here are a few workarounds:
+mean that you have to install Linux on your host system. Here are a few workarounds:
 
 - Virtual Machine (VM): Creates a virtual environment that operates like a
   separate computer, allowing you to run Linux on Windows, macOS, or Android.
@@ -126,13 +126,21 @@ mean that you have to install Linux on your system. Here are a few workarounds:
   Runtime. Efficient for development and specific app usage. Comes with a Docker
   setup for easy project initialization.
 
-Personally, I wouldn't choose WSL, if you wish to fully learn Linux. If you want
-to go that route by fully learning Linux (which is what I would recommend), I would
-recommend using a VM, or installing Ubuntu, Linux Mint or Zorin OS on your system.
-Also, why can't I build the C/C++ code for macOS? Because I don't have a MacBook,
-and to build it for M1 / M2 / M3 chips, you need a MacBook, not a VM.
+After having a Linux shell instance, you need to prepare the system for compilation
+first. You need these following tools:
 
-After having a Linux shell instance, you can run these following commands:
+***Debian/Ubuntu based Systems (e.g. Zorin OS)***
+```shell
+sudo apt install tar wget cmake build-essential
+```
+
+***Arch Linux/Manjaro based Systems***
+```shell
+sudo pacman -Sy tar wget cmake base-devel
+```
+
+After installing the necessary tools, you can start with building the project. To
+do so, run these following commands:
 ```shell
 git clone https://github.com/BeChris100/osintgram4j && cd osintgram4j
 chmod +x setup.sh build.sh
