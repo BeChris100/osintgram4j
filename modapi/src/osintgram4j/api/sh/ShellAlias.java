@@ -1,4 +1,4 @@
-package osintgram4j.api;
+package osintgram4j.api.sh;
 
 import net.bc100dev.commons.utils.OperatingSystem;
 import net.bc100dev.commons.utils.io.FileUtil;

@@ -23,7 +23,7 @@ of doing something that a Shebang can literally do.
 
 This was later on deleted due to some complexities. However, it's use of file
 targets within the CLI itself was replaced with the use of `addTarget` method,
-where for each target, it would assign 
+where for each target, it would assign each user as its target.
 
 ### Keylogger Easter Egg
 For people that like snooping around in the source files, I wanted to add

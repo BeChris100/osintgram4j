@@ -1,4 +1,4 @@
-package osintgram4j.api;
+package osintgram4j.api.sh;
 
 import net.bc100dev.commons.*;
 import net.bc100dev.commons.utils.Utility;
@@ -14,11 +14,10 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
-import static net.bc100dev.commons.Terminal.TermColor.CYAN;
 import static net.bc100dev.commons.Terminal.TermColor.RED;
+import static net.bc100dev.commons.Terminal.TermColor.YELLOW;
 import static net.bc100dev.commons.utils.RuntimeEnvironment.*;
 import static osintgram4j.commons.AppConstants.log;
-import static osintgram4j.commons.Titles.TITLE_BLOCK;
 
 /**
  * The Shell class is an interactive shell (as the name says), used for
@@ -36,7 +35,6 @@ public class Shell {
     private boolean running = false;
 
     private final boolean terminal = System.console() != null;
-    private final String suppress;
 
     public Scanner kbi; // kbi, as short, is named after "KeyBoard Input"
 
@@ -52,12 +50,11 @@ public class Shell {
      * @throws ShellException May throw an exception during initializing the commands.
      * @throws IOException    Throws an exception, when cannot read any command entries
      */
-    public Shell(String suppress) throws IOException, ShellException {
+    public Shell() throws IOException, ShellException {
         if (instance != null)
             throw new ShellException("A Shell has been already initialized. Close the previously initialized Shell first.");
 
         this.kbi = new Scanner(System.in);
-        this.suppress = suppress;
 
         try {
             PS1 = String.format("[%s/%s: %s]%s ", USER_NAME, getHostName(), WORKING_DIRECTORY.getName(), UserIO.nIsAdmin() ? "#" : "$");
@@ -341,6 +338,11 @@ public class Shell {
                 try {
                     log.info("CommandRun(" + exec + ", " + Arrays.toString(args) + ")");
 
+                    if (caller.isDeprecated()) {
+                        log.warning("CommandDeprecation(" + exec + ")");
+                        Terminal.println(YELLOW, String.format("%s: command deprecated", exec), true);
+                    }
+
                     int code = caller.execute(args, env);
 
                     log.info("CommandExecution(Code=" + code + ", Cmd=" + exec + ")");
@@ -358,6 +360,11 @@ public class Shell {
                 for (String alternate : caller.getAlternateCommands()) {
                     if (alternate.equalsIgnoreCase(exec)) {
                         cmdFound = true;
+
+                        if (caller.isDeprecated()) {
+                            log.warning("CommandDeprecation(" + exec + ")");
+                            Terminal.println(YELLOW, String.format("%s: command deprecated", exec), true);
+                        }
 
                         try {
                             log.info("CommandRun(MC_Alternate; " + exec + ", " + Arrays.toString(args) + ")");

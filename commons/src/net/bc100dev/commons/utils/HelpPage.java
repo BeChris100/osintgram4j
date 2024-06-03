@@ -6,12 +6,13 @@ import java.util.List;
 
 public class HelpPage {
 
-    private int spaceWidth, startSpaceWidth = 0;
+    private int spaceWidth, startSpaceWidth;
 
     private final List<Item> argItemList = new ArrayList<>();
 
     public HelpPage() {
-        this.spaceWidth = 2;
+        this.spaceWidth = 5;
+        this.startSpaceWidth = 0;
     }
 
     public void setSpaceWidth(int spaceWidth) {

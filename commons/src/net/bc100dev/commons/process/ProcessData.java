@@ -11,6 +11,7 @@ public class ProcessData {
 
     public static ProcessInfo getCurrentProcessInfo() {
         ProcessHandle handle = ProcessHandle.current();
+        // ... .... . / -- .- -.. . / -- . / - .... .. ... / .-- .- -.--
 
         return new ProcessInfo(handle.pid(),
                 handle.info().user().orElse("-"),

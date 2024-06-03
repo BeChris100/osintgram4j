@@ -1,4 +1,4 @@
-package osintgram4j.api;
+package osintgram4j.api.rel;
 
 import java.util.List;
 

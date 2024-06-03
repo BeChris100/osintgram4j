@@ -1,4 +1,4 @@
-package osintgram4j.api;
+package osintgram4j.api.sh;
 
 import net.bc100dev.commons.ApplicationException;
 import net.bc100dev.commons.Terminal;
@@ -72,17 +72,22 @@ public class OptionSelect {
         if (buttons.isEmpty())
             return;
 
-        System.out.println(title);
-        System.out.println("-".repeat(title.length()));
-        System.out.println();
-        System.out.println(message);
-        System.out.println();
+        if (title != null && !title.trim().isEmpty()) {
+            System.out.println(title);
+            System.out.println("-".repeat(title.length()));
+            System.out.println();
+        }
+
+        if (message != null && !message.trim().isEmpty()) {
+            System.out.println(message);
+            System.out.println();
+        }
 
         for (int i = 0; i < buttons.size(); i++) {
             ButtonAction btnAction = buttons.get(i);
             Button btn = btnAction.btn;
 
-            System.out.println("( " + (i + 1) + (btnAction.defButton ? "; Default" : "") + " ) " + btn.text);
+            System.out.println("( " + (i + 1) + " ) " + btn.text);
         }
 
         Scanner in = new Scanner(System.in);

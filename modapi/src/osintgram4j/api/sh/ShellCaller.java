@@ -1,4 +1,4 @@
-package osintgram4j.api;
+package osintgram4j.api.sh;
 
 import osintgram4j.commons.ShellConfig;
 
@@ -13,9 +13,12 @@ public class ShellCaller {
     private Method callableMethod, callableHelpMethod;
     private final String[] alternateCommands;
 
+    private final boolean deprecated;
+
     private final Object classInstance;
 
-    public ShellCaller(String command, String helpDesc, String callableClassName, String... alternateCommands) throws ShellException {
+    public ShellCaller(boolean deprecated, String command, String helpDesc, String callableClassName, String... alternateCommands) throws ShellException {
+        this.deprecated = deprecated;
         this.command = command;
         this.helpDesc = helpDesc;
         this.alternateCommands = alternateCommands;
@@ -50,6 +53,10 @@ public class ShellCaller {
         } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public boolean isDeprecated() {
+        return deprecated;
     }
 
     public String[] getAlternateCommands() {

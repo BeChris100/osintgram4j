@@ -29,25 +29,20 @@ With Privacy Policy in mind, you acknowledge:
 See the [full Privacy Policy](PrivacyPolicy.md) to review. Don't forget, use
 Osintgram4j responsibly, respect privacy of others, and always act ethically.
 
-## Potential Takedown
-The original developer has every right to request the project to be taken down. Since
-I originally was contacting the developer, I am proceeding cautiously to avoid
-Takedown notices, while strictly following licensing guidelines.
-
-Understandably, I don't want to see this project being shut down. If forced, you'll
-know the reason, why.
-
-## Reasoning on Development
-The motivation for starting this project is to bring back stability back to the
-Osintgram project. The updates of the Instagram API was constantly breaking the
-project apart, and me, as a community-based person, I wasn't letting it slide,
-without someone stepping in, and finally fixing it. I've also switched to Java for
-the advantages that it also has, which one of them include Performance. Compiled
-Java code is faster than interpreted Python code.
-
 ## Build Process
+Prepare a Linux environment, with either one of these options:
+- Host (main OS / Dual Boot)
+- VM (Virtual Machine)
+- Cloud Shell / Servers (Google Cloud, Linode)
+- Containers (Docker)
+- WSL (Windows-only)
+
 This project is mainly focused and optimized for **the Linux platform**. Simple
 setup with the Shell scripts:
+
+1. **_Download dependencies_**:
+- Debian/Ubuntu based: `sudo apt install build-essential cmake tar wget`
+- Arch/Manjaro based: `sudo pacman -Sy base-devel cmake tar wget`
 
 1. **_Clone the repo_**: `git clone https://github.com/BeChris100/osintgram4j`
 2. **_Set permissions_**: `chmod +x setup.sh build.sh`
@@ -57,12 +52,6 @@ setup with the Shell scripts:
 The `--force-download` is an optional parameter. If given, it will always download
 the JDK and the libraries, no matter its state. Otherwise, it will try to detect
 JDK 21, and get the latest `org.json` library.
-
-Workaround for other platforms (Android, Windows, macOS, …):
-- Virtual Machines
-- Cloud Shell/Servers
-- Windows Subsystem for Linux (WSL)
-- Linux Containers (e.g. Docker)
 
 ## Client Mods
 Osintgram4j introduces a Modding API, which is something that I like. Having the

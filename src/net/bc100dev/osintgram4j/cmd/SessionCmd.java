@@ -5,16 +5,13 @@ import net.bc100dev.commons.Terminal;
 import com.instagram.api.ConnectionStateException;
 import net.bc100dev.commons.utils.io.FileUtil;
 import net.bc100dev.osintgram4j.Settings;
-import osintgram4j.api.Command;
+import osintgram4j.api.sh.Command;
 import osintgram4j.commons.ShellConfig;
 import org.json.JSONArray;
 
 import java.io.*;
 import java.nio.file.AccessDeniedException;
 import java.util.List;
-import java.util.Set;
-
-import static net.bc100dev.commons.utils.RuntimeEnvironment.*;
 
 public class SessionCmd extends Command {
 

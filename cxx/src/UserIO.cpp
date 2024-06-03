@@ -11,29 +11,29 @@
 
 
 JNIEXPORT jint JNICALL Java_net_bc100dev_commons_utils_io_UserIO_getGid(JNIEnv* env, jclass javaClass) {
-    unsigned int gid = -1;
+    int gid = -1;
 
 #ifdef __linux__
-    gid = getgid();
+    gid = static_cast<int>(getgid());
 #endif
 
     if (gid == -1)
         throwJavaAppException(env, "GetGID method outside of Linux environments not allowed");
 
-    return static_cast<int>(gid);
+    return gid;
 }
 
 JNIEXPORT jint JNICALL Java_net_bc100dev_commons_utils_io_UserIO_getUid(JNIEnv* env, jclass javaClass) {
-    unsigned int uid = -1;
+    int uid = -1;
 
 #ifdef __linux__
-    uid = getuid();
+    uid = static_cast<int>(getuid());
 #endif
 
     if (uid == -1)
         throwJavaAppException(env, "GetUID method outside of Linux environments not allowed");
 
-    return static_cast<int>(uid);
+    return uid;
 }
 
 JNIEXPORT void JNICALL Java_net_bc100dev_commons_utils_io_UserIO_setUid(JNIEnv *env, jclass, jint value) {

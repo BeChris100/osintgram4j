@@ -2,7 +2,7 @@ package net.bc100dev.osintgram4j.cmd;
 
 import net.bc100dev.commons.Terminal;
 import net.bc100dev.commons.utils.HelpPage;
-import osintgram4j.api.*;
+import osintgram4j.api.sh.*;
 import osintgram4j.commons.ShellConfig;
 
 import java.util.*;
@@ -79,6 +79,8 @@ public class HelpCmd extends Command {
                 if (cmd.length() > maxCmdLength)
                     maxCmdLength = cmd.length();
             }
+
+            // .--. .-. --- -... .-.. . -- ... / .... .- ...- . / .- .-.. .-. . .- -.. -.-- / .- .-. .. ... . -.
 
             maxCmdLength += 5;
 

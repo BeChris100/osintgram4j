@@ -10,41 +10,59 @@ set -e
 
 source app_ver
 
-if [ -f ".build-info" ]; then
-    source .build-info
-
-    if [ -z "$JAR_CMD" ] || [ -z "$JAVA_CMD" ] || [ -z "$JAVAC_CMD" ] || [ -z "$JLINK_CMD" ] || [ -z "$JDEPS_CMD" ] || [ -z "$JPACKAGE_CMD" ]; then
-        echo "Error: Some JDK tools are missing. Please re-run the setup.sh to set up the required tools."
-        exit 1
-    fi
-
-    if [ -f "$JAVA_CMD" ] && [ -x "$JAVA_CMD" ] &&
-        [ -f "$JAVAC_CMD" ] && [ -x "$JAVAC_CMD" ] &&
-        [ -f "$JLINK_CMD" ] && [ -x "$JLINK_CMD" ] &&
-        [ -f "$JDEPS_CMD" ] && [ -x "$JDEPS_CMD" ] &&
-        [ -f "$JPACKAGE_CMD" ] && [ -x "$JPACKAGE_CMD" ]; then
-        JAVA_VERSION=$($JAVA_CMD --version 2>&1 | grep -oP 'openjdk \K\d+' | cut -d. -f1)
-
-        if [ "$JAVA_VERSION" -ge 21 ]; then
-            echo "Found JDK with version $JAVA_VERSION"
-        elif [ "$JAVA_VERSION" -le 20 ]; then
-            echo "You need at least the JDK version of 21. Reported Java Version is $JAVA_VERSION"
-            echo "To obtain the newest JDK Version, run the setup.sh with the '--force-download' argument."
-            exit 1
-        else
-            echo "The JDK Version could not be identified, and has returned a value of $JAVA_VERSION."
-            exit 1
-        fi
-    else
-        echo "Error: Some of more JDK Tools are missing from the JDK Installation."
-        echo "Please verify the JDK instance at \"$JAVA_DEFAULT_HOME\" and reinstall, if necessary."
-        echo "Alternatively, run the setup.sh with '--force-download' to obtain the latest JDK version compatible with the project."
-        exit 1
-    fi
-else
+if [ ! -f ".build-info" ]; then
     echo "No JDK has been initialized."
     echo "To set up and initialize a JDK instance, run the setup.sh script."
     exit 1
+fi
+
+source .build-info
+
+if [ -z "$JAR_CMD" ] || [ -z "$JAVA_CMD" ] ||
+  [ -z "$JAVAC_CMD" ] || [ -z "$JLINK_CMD" ] || [ -z "$JDEPS_CMD" ] || [ -z "$JPACKAGE_CMD" ]; then
+    echo "Error: Some JDK tools are missing. Please re-run the setup.sh to set up the required tools."
+    exit 1
+fi
+
+if ! [[ -f "$JAVA_CMD" && -x "$JAVA_CMD" ]]; then
+    echo "The Java command was not prepared properly."
+    exit 1
+fi
+
+if ! [[ -f "$JAVAC_CMD" && -x "$JAVAC_CMD" ]]; then
+    echo "The Java Compiler command was not prepared properly."
+    exit 1
+fi
+
+if ! [[ -f "$JAR_CMD" && -x "$JAR_CMD" ]]; then
+    echo "The JAR packaging command was not prepared properly."
+    exit 1
+fi
+
+if ! [[ -f "$JAR_CMD" && -x "$JAR_CMD" ]]; then
+    echo "The JAR packaging command was not prepared properly."
+    exit 1
+fi
+
+if ! [[ -f "$JPACKAGE_CMD" && -x "$JPACKAGE_CMD" ]]; then
+    echo "The Java Native Application Packaging command was not prepared properly."
+    exit 1
+fi
+
+JAVA_VERSION=$($JAVA_CMD --version 2>&1 | grep -oP 'openjdk \K\d+' | cut -d. -f1)
+if [ "$JAVA_VERSION" -le 20 ]; then
+    echo "You need at least JDK 21 to build this project. Reported Java Version is $JAVA_VERSION."
+    echo "To obtain the latest JDK, run the Setup Script with '--force-download'."
+    exit 1
+else
+    echo "The JDK version could not be identified. Returned a value of '$JAVA_VERSION'."
+    exit 1
+fi
+
+if [ "$JAVA_VERSION" -gt 21 ]; then
+    echo "Found newer Java version, received $JAVA_VERSION"
+else
+    echo "Identified JDK 21"
 fi
 
 PREFIX=""
@@ -64,7 +82,6 @@ if [ "$#" -ne 0 ]; then
     if [ "$1" == "--uninstall" ]; then
         echo "Uninstalling osintgram4j"
         "$PREFIX" rm -rf /usr/bin/osintgram4j
-        "$PREFIX" rm -rf /usr/bin/og4j-editor
 
         if [ -d "/usr/share/osintgram4j" ]; then
             "$PREFIX" rm -rf /usr/share/osintgram4j
@@ -90,23 +107,19 @@ else
     make "-j$(nproc)"
     cp libosintgram4j.so "$CURRENT_WORKDIR/out/project/input"
 
-    set +e
-
     MINGW_C="$(command -v x86_64-w64-mingw32-gcc)"
     MINGW_CPP="$(command -v x86_64-w64-mingw32-g++)"
 
     if [ -n "$MINGW_C" ] && [ -n "$MINGW_CPP" ]; then
-        echo "* Compiling CXX code for Windows x86_64"
+        echo "* Compiling CXX code for Windows"
 
         cd "$CURRENT_WORKDIR/cxx"
-        mkdir -p win
+        mkdir win
         cd win
         cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER="$MINGW_C" -DCMAKE_CXX_COMPILER="$MINGW_CPP" ..
         make "-j$(nproc)"
         cp osintgram4j.dll "$CURRENT_WORKDIR/out/project/input"
     fi
-
-    set -e
 
     cd "$CURRENT_WORKDIR"
 fi
@@ -148,15 +161,14 @@ fi
 
 "$JPACKAGE_CMD" -t app-image -n "$BUILD_NAME" --app-version "$BUILD_VERSION-$BUILD_VERSION_CODE" \
  -i out/project/input --main-jar core.jar --main-class net.bc100dev.osintgram4j.MainClass -d out/pkg --icon "extres/icon.png" \
- --java-options "-Xmx256m" --java-options "-Xms128m" --java-options '-Dog4j.location.app_dir=$APPDIR' \
+ --java-options "-Xmx256m" --java-options "-Xms256m" --java-options '-Dog4j.location.app_dir=$APPDIR' \
  --java-options '-Dog4j.location.bin_dir=$BINDIR' --java-options '-Dog4j.location.root_dir=$ROOTDIR' --verbose
-
-cp cxx/out/og4j-editor out/pkg/osintgram4j/bin/og4j-editor
 
 echo ""
 echo "## Build Complete"
 
-ln -s "${PWD}"/out/pkg/osintgram4j/bin "${PWD}"/
+mkdir -p bin
+ln -s "${PWD}"/out/pkg/osintgram4j/bin/osintgram4j "${PWD}"/bin/osintgram4j
 
 read -p "Do you want to install Osintgram (requires sudo privileges)? (Y/N): " INSTALL_CHOICE
 if [[ "$INSTALL_CHOICE" =~ ^[Yy]$ ]]; then
@@ -172,11 +184,10 @@ if [[ "$INSTALL_CHOICE" =~ ^[Yy]$ ]]; then
         fi
     fi
 
-    echo "> Copying built files"
+    echo "Copying built files"
     "$PREFIX" mkdir -p /usr/share/bc100dev/osintgram4j/
     "$PREFIX" cp -r out/pkg/osintgram4j/* /usr/share/bc100dev/osintgram4j
     "$PREFIX" ln -s /usr/share/bc100dev/osintgram4j/bin/osintgram4j /usr/bin/osintgram4j
-    "$PREFIX" ln -s /usr/share/bc100dev/osintgram4j/bin/og4j-editor /usr/bin/og4j-editor
 
     read -p "Do you wish to create an Application Launcher (start from the Start Menu)? (Y/N): " LAUNCHER_CHOICE
     if [[ "$LAUNCHER_CHOICE" =~ ^[Yy]$ ]]; then

@@ -9,12 +9,10 @@
             "class": ".cmd.HelpCmd",
             "alternates": [
                 "List",
-                "list",
                 "ListCommands",
                 "List-Commands",
                 "All-Commands",
                 "All",
-                "Help",
                 "HelpPage",
                 "Help-Page"
             ]
@@ -26,8 +24,7 @@
             "alternates": [
                 "Run-Shell",
                 "Shell",
-                "ShellExec",
-                "shell"
+                "ShellExec"
             ],
             "aliases": [
                 {
@@ -69,8 +66,7 @@
                 "Cls",
                 "ClearTerminal",
                 "ClearScreen",
-                "Clear",
-                "cls"
+                "Clear"
             ]
         },
         {
@@ -116,9 +112,9 @@
                 "Control-Settings",
                 "Application-Settings",
                 "AppSettings",
-                "Manage-Settings",
-                "settings"
-            ]
+                "Manage-Settings"
+            ],
+            "deprecated": true
         },
         {
             "command": "cachectl",
@@ -187,7 +183,11 @@
             "aliases": [
                 {
                     "cmd": "settings",
-                    "args": "settings"
+                    "args": "stg"
+                },
+                {
+                    "cmd": "mods",
+                    "args": "md"
                 }
             ]
         },

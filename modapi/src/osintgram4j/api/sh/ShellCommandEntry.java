@@ -1,5 +1,6 @@
-package osintgram4j.api;
+package osintgram4j.api.sh;
 
+import net.bc100dev.commons.Terminal;
 import net.bc100dev.commons.Tools;
 import net.bc100dev.commons.utils.OperatingSystem;
 import org.json.JSONArray;
@@ -68,6 +69,11 @@ public class ShellCommandEntry {
                 label = obj.getString("label");
         int version = obj.getInt("version");
 
+        if (version != 1) {
+            Terminal.errPrintln(Terminal.TermColor.RED, String.format("%s: unknown version %d", label, version), true);
+            return null;
+        }
+
         JSONArray arr = obj.getJSONArray("command_list");
         List<ShellCaller> callerList = new ArrayList<>();
         List<ShellAlias> aliases = new ArrayList<>();
@@ -75,6 +81,7 @@ public class ShellCommandEntry {
         if (!arr.isEmpty()) {
             for (int i = 0; i < arr.length(); i++) {
                 JSONObject cmdObj = arr.getJSONObject(i);
+                boolean deprecated = false;
 
                 if (!cmdObj.has("command"))
                     throw new ShellException(String.format("\"%s\" key at entry %d not found", "command", i + 1));
@@ -87,6 +94,11 @@ public class ShellCommandEntry {
 
                 if (!cmdObj.has("alternates"))
                     throw new ShellException(String.format("\"%s\" key at entry %d not found", "command", i + 1));
+
+                if (cmdObj.has("deprecated")) {
+                    if (cmdObj.get("deprecated") instanceof Boolean b)
+                        deprecated = b;
+                }
 
                 List<String> alternatesList = new ArrayList<>();
                 JSONArray altArr = cmdObj.getJSONArray("alternates");
@@ -111,7 +123,7 @@ public class ShellCommandEntry {
                 if (_class.startsWith("."))
                     _class = pkgName + _class;
 
-                ShellCaller caller = new ShellCaller(cmd, description, _class, alternates);
+                ShellCaller caller = new ShellCaller(deprecated, cmd, description, _class, alternates);
                 callerList.add(caller);
 
                 if (cmdObj.has("aliases")) {

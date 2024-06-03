@@ -20,6 +20,9 @@ add_library(osintgram4j SHARED
         src/ExceptionHandle.cpp
         src/MemoryInfo.cpp)
 
+add_executable(og4j-editor
+        src/ProjectFileEditor.cpp)
+
 # Windows on Linux compilation
 if (${CMAKE_CXX_COMPILER} MATCHES "mingw" OR ${CMAKE_SYSTEM_NAME} MATCHES "win")
     set_target_properties(osintgram4j PROPERTIES PREFIX "")

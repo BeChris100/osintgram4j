@@ -1,9 +1,8 @@
-package osintgram4j.api;
+package osintgram4j.api.rel;
 
 import net.bc100dev.commons.ResourceManager;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import osintgram4j.commons.Titles;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.DataInputStream;
@@ -66,8 +65,8 @@ public class ReleaseManager {
         return files;
     }
 
-    public static List<Release> getReleases() throws IOException {
-        byte[] releasesData = readDataFromUrl("https://api.github.com/repos/BeChris100/osintgram4j/releases");
+    public static List<Release> getReleases(String user, String repo) throws IOException {
+        byte[] releasesData = readDataFromUrl(String.format("https://api.github.com/repos/%s/%s/releases", user, repo));
 
         List<Release> releases = new ArrayList<>();
         JSONArray arr = new JSONArray(new String(releasesData));
@@ -138,10 +137,6 @@ public class ReleaseManager {
         }
 
         return false;
-    }
-
-    public static boolean hasNewerRelease() throws IOException {
-        return hasNewerRelease(getReleases());
     }
 
 }

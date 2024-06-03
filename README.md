@@ -191,4 +191,4 @@ writing.
 ---
 
 ## Usage
-Refer to [the Usage file](docs/USAGE.md) for this project.
+Refer to [the Usage file](docs/Usage) for this project.

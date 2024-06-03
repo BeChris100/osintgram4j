@@ -5,8 +5,8 @@ import net.bc100dev.commons.Terminal;
 import net.bc100dev.commons.utils.HelpPage;
 import net.bc100dev.commons.utils.io.FileUtil;
 import net.bc100dev.commons.utils.io.UserIO;
-import osintgram4j.api.Shell;
-import osintgram4j.api.ShellException;
+import osintgram4j.api.sh.Shell;
+import osintgram4j.api.sh.ShellException;
 import osintgram4j.commons.ShellConfig;
 
 import java.io.*;
@@ -109,7 +109,7 @@ public class MainClass {
         System.out.println("   > (target2 ...)   additional targets by the use of Sessions; optional, can be set within the Shell");
 
         System.out.println();
-        System.out.println("Refer to the README.md and USAGE.md files on GitHub, along with the Wikis at");
+        System.out.println("Refer to the README.md and Usage.md files on GitHub, along with the Wikis at");
         System.out.println("https://github.com/BeChris100/osintgram4j to have a better overview on using the Application Shell.");
         System.out.println("Might consider checking the \"docs.d\" folder within the repository root.");
     }
@@ -222,11 +222,7 @@ public class MainClass {
         }
 
         try {
-            String suppress = suppressStr.toString();
-            if (!suppress.trim().isEmpty())
-                suppress = suppress.substring(0, suppress.length() - 1);
-
-            Shell appShell = new Shell(suppress);
+            Shell appShell = new Shell();
 
             if (!modFiles.isEmpty()) {
                 for (File modFile : modFiles)

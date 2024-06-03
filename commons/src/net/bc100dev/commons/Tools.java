@@ -6,6 +6,9 @@ import java.util.StringTokenizer;
 public class Tools {
 
     /**
+     * Sorry StackOverflow that I borrowed yer code. Credits still is required, so here ya go.
+     * <a href="https://stackoverflow.com/questions/3259143/split-a-string-containing-command-line-parameters-into-a-string-in-java">damn link</a>
+     * <br/>
      * [code borrowed from ant.jar]
      * Crack a command line.
      * @param cmdLine the command line to process.
@@ -13,7 +16,7 @@ public class Tools {
      * An empty or null toProcess parameter results in a zero sized array.
      */
     public static String[] translateCmdLine(String cmdLine) {
-        if (cmdLine == null || cmdLine.isEmpty()) {
+        if (cmdLine == null || cmdLine.trim().isEmpty()) {
             //no command? no string
             return new String[0];
         }
