@@ -128,7 +128,7 @@ public class ShellCommandEntry {
                     alternates[j] = alternatesList.get(j);
 
                 String cmd, description, _class;
-                if (cmdObj.get("cmd") instanceof String ss0 &&
+                if (cmdObj.get("command") instanceof String ss0 &&
                         cmdObj.get("description") instanceof String ss1 &&
                         cmdObj.get("class") instanceof String ss2) {
                     cmd = ss0;

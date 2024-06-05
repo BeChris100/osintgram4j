@@ -1,9 +1,7 @@
 package osintgram4j.api.sh;
 
-import osintgram4j.api.Launcher;
 import osintgram4j.commons.ShellConfig;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -33,8 +31,8 @@ public class ShellCaller {
             this.callableClass = Class.forName(callableClassName);
             this.classInstance = callableClass.getDeclaredConstructor().newInstance();
 
-            if (!callableClass.isAssignableFrom(Command.class))
-                throw new ShellException("Launch class " + callableClassName + " is not extending \"Launcher.class\"");
+            if (callableClass.getSuperclass() != Command.class)
+                throw new ShellException("Launch class " + callableClassName + " is not extending \"Command.class\"");
 
             Method[] callableMethodArr = this.callableClass.getDeclaredMethods();
             if (callableMethodArr.length == 0)

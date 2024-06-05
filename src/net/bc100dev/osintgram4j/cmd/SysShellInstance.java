@@ -2,10 +2,9 @@ package net.bc100dev.osintgram4j.cmd;
 
 import net.bc100dev.commons.ApplicationIOException;
 import net.bc100dev.commons.Terminal;
-import net.bc100dev.commons.utils.RuntimeEnvironment;
+import net.bc100dev.commons.utils.HelpPage;
 import net.bc100dev.commons.utils.Utility;
 import net.bc100dev.commons.utils.io.FileUtil;
-import net.bc100dev.commons.utils.HelpPage;
 import osintgram4j.api.sh.Command;
 import osintgram4j.commons.ShellConfig;
 
@@ -31,7 +30,7 @@ public class SysShellInstance extends Command {
 
         if (!shellExec.canExecute()) {
             Terminal.println(Terminal.TermColor.RED, String.format("%s cannot be executed by %s",
-                    shellExec.getAbsolutePath(), RuntimeEnvironment.USER_NAME), true);
+                    shellExec.getAbsolutePath(), USER_NAME), true);
             return 1;
         }
 
@@ -51,37 +50,10 @@ public class SysShellInstance extends Command {
         return proc.waitFor();
     }
 
-    private static String findPowershell() throws IOException {
-        boolean foundInPath = false;
-        String location = null;
-        String[] pathEnv = System.getenv("PATH").split(";");
-        List<String> pathContentsCached = new ArrayList<>();
-
-        for (String pathStr : pathEnv) {
-            List<String> pathContents = FileUtil.listDirectory(pathStr, true, false);
-
-            for (String pathContent : pathContents) {
-                if (pathContentsCached.contains(pathContent))
-                    continue;
-
-                File content = new File(pathContent);
-                if (content.getName().equalsIgnoreCase("powershell.exe")) {
-                    foundInPath = true;
-                    location = content.getAbsolutePath();
-                    break;
-                }
-
-                pathContentsCached.add(pathContent);
-            }
-
-            pathContentsCached.clear();
-
-            if (foundInPath)
-                break;
-        }
-
-        if (foundInPath)
-            return location;
+    private static File findPowershell() throws IOException {
+        File binPath = Utility.getBinaryPath("powershell.exe");
+        if (binPath != null)
+            return binPath;
 
         // assume that `powershell.exe` is not found: continue with the original PowerShell installation directory
         List<String> psRootList = FileUtil.listDirectory(System.getenv("SystemRoot") + "\\System32\\WindowsPowerShell", true, false);
@@ -104,70 +76,24 @@ public class SysShellInstance extends Command {
         // assume that we found it now
         File psExecutable = new File(System.getenv("SystemRoot") + "\\System32\\WindowsPowerShell\\" + psLatestVersion + "\\powershell.exe");
         if (psExecutable.exists() && psExecutable.canExecute())
-            return psExecutable.getAbsolutePath();
+            return psExecutable;
 
         throw new ApplicationIOException("powershell.exe not found");
     }
 
-    private static String findShell(String name) throws IOException {
-        String[] pathEnv = System.getenv("PATH").split(isWindows() ? ";" : ":");
-
-        List<String> listCache = new ArrayList<>();
-        boolean found = false;
-        String shellPath = null;
-
-        for (String pathVal : pathEnv) {
-            File pathDir = new File(pathVal);
-
-            if (!pathDir.exists())
-                continue;
-
-            if (!pathDir.canRead())
-                continue;
-
-            List<String> dirContents = FileUtil.listDirectory(pathDir.getAbsolutePath(), true, false);
-            for (String dirContent : dirContents) {
-                if (listCache.contains(dirContent))
-                    continue;
-
-                File file = new File(dirContent);
-                if (file.getName().equalsIgnoreCase(name)) {
-                    if (file.canExecute()) {
-                        found = true;
-                        shellPath = file.getAbsolutePath();
-                        break;
-                    }
-                }
-
-                listCache.add(dirContent);
-            }
-
-            listCache.clear();
-
-            if (found)
-                break;
-        }
-
-        if (!found)
-            throw new IOException("Shell executable by name of \"" + name + "\" not found in the PATH environments");
-
-        return shellPath;
-    }
-
-    // Mainly working under Ubuntu 22.04.3 LTS
     @Override
     public int launchCmd(String[] args, List<ShellConfig> ignore) {
-        String shellEnv;
+        File shellEnv = null;
 
         if (isWindows())
-            shellEnv = System.getenv("SystemRoot") + "\\system32\\cmd.exe";
+            shellEnv = new File(System.getenv("SystemRoot") + "\\system32\\cmd.exe");
         else {
-            shellEnv = System.getenv("SHELL");
-            if (shellEnv == null) {
+            String lShellEnv = System.getenv("SHELL");
+            if (lShellEnv == null) {
                 if (isLinux())
-                    shellEnv = "/bin/bash";
+                    shellEnv = new File("/bin/bash");
                 else if (isMac())
-                    shellEnv = "/bin/zsh";
+                    shellEnv = new File("/bin/zsh");
             }
         }
 
@@ -178,9 +104,9 @@ public class SysShellInstance extends Command {
             switch (arg) {
                 case "--integrated", "-i" -> {
                     if (isWindows())
-                        shellEnv = "C:\\Windows\\system32\\cmd.exe";
+                        shellEnv = new File("C:\\Windows\\system32\\cmd.exe");
                     else
-                        shellEnv = "/bin/sh";
+                        shellEnv = new File("/bin/sh");
                 }
                 case "--bash", "-b" -> {
                     if (isWindows()) {
@@ -188,7 +114,7 @@ public class SysShellInstance extends Command {
                         return 1;
                     }
 
-                    shellEnv = "/bin/bash";
+                    shellEnv = new File("/bin/bash");
                 }
                 case "--zsh", "-z" -> {
                     if (isWindows()) {
@@ -196,7 +122,7 @@ public class SysShellInstance extends Command {
                         return 1;
                     }
 
-                    shellEnv = "/bin/zsh";
+                    shellEnv = new File("/bin/zsh");
                 }
                 case "--fish", "-f" -> {
                     if (isWindows()) {
@@ -204,7 +130,7 @@ public class SysShellInstance extends Command {
                         return 1;
                     }
 
-                    shellEnv = "/usr/bin/fish";
+                    shellEnv = new File("/usr/bin/fish");
                 }
                 case "--cmd", "-c" -> {
                     if (!isWindows()) {
@@ -212,7 +138,7 @@ public class SysShellInstance extends Command {
                         return 1;
                     }
 
-                    shellEnv = "C:\\Windows\\system32\\cmd.exe";
+                    shellEnv = new File("C:\\Windows\\system32\\cmd.exe");
                 }
                 case "--powershell", "-p" -> {
                     if (!isWindows()) {
@@ -249,15 +175,34 @@ public class SysShellInstance extends Command {
                         opts[1] = opts[1].trim();
 
                         if (opts[0].equals("--shell")) {
-                            if (!new File(opts[1]).isAbsolute()) {
+                            File shellOpt = new File(opts[1]);
+
+                            if (!shellOpt.exists()) {
+                                Terminal.errPrintln(Terminal.TermColor.RED, "Shell not found: " + opts[1], true);
+                                return 1;
+                            }
+
+                            if (!shellOpt.isFile()) {
+                                Terminal.errPrintln(Terminal.TermColor.RED, "Shell is not a executable file: " + opts[1], true);
+                                return 1;
+                            }
+
+                            if (!shellOpt.canExecute()) {
+                                Terminal.errPrintln(Terminal.TermColor.RED, "Shell does not have executable permission: " + opts[1], true);
+                                return 1;
+                            }
+
+                            if (shellOpt.isAbsolute())
+                                shellEnv = new File(opts[1]);
+                            else {
                                 try {
-                                    shellEnv = findShell(opts[1]);
+                                    shellEnv = Utility.getBinaryPath(opts[1]);
                                 } catch (IOException ex) {
                                     Terminal.errPrintln(Terminal.TermColor.RED, "an error has occurred:", false);
                                     Terminal.errPrintln(Terminal.TermColor.RED, Utility.throwableToString(ex), true);
+                                    return 1;
                                 }
-                            } else
-                                shellEnv = opts[1];
+                            }
                         }
                     }
 
@@ -279,16 +224,15 @@ public class SysShellInstance extends Command {
         }
 
         // validate the Shell
-        File shellFile = new File(shellEnv);
-        if (!shellFile.exists()) {
+        if (!shellEnv.exists()) {
             Terminal.errPrintln(Terminal.TermColor.RED, String.format("Shell executable (\"%s\": \"%s\") is not found. Make sure to have it properly installed",
-                    shellFile.getName(), shellFile.getAbsolutePath()), true);
+                    shellEnv.getName(), shellEnv.getAbsolutePath()), true);
             return 1;
         }
 
-        if (!shellFile.canExecute()) {
+        if (!shellEnv.canExecute()) {
             Terminal.errPrintln(Terminal.TermColor.RED, String.format("Shell executable (\"%s\": \"%s\") does not seem to have executable permissions.",
-                    shellFile.getName(), shellFile.getAbsolutePath()), true);
+                    shellEnv.getName(), shellEnv.getAbsolutePath()), true);
             return 1;
         }
 
@@ -297,7 +241,7 @@ public class SysShellInstance extends Command {
             _args[i] = cmdArgs.get(i);
 
         try {
-            return startShell(new File(shellEnv), _args);
+            return startShell(shellEnv, _args);
         } catch (IOException | InterruptedException ex) {
             Terminal.errPrintln(Terminal.TermColor.RED, Utility.throwableToString(ex), true);
             return 1;
@@ -309,7 +253,7 @@ public class SysShellInstance extends Command {
         String defStr = """
                 The Shell (sh) command launches an instance of the Shell.
                 This initially launches the default Shell that is given by the "SHELL" environment.
-                                
+
                 Options:
                 """;
 
@@ -322,7 +266,7 @@ public class SysShellInstance extends Command {
                     The Shell (sh) command launches a Shell instance of the Windows command prompt.
                     By running this, you launch an instance of the System Shell, following by either
                     `cmd` or `powershell`.
-                                        
+
                     Options:
                     """;
 

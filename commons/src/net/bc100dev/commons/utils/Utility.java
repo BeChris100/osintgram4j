@@ -1,11 +1,18 @@
 package net.bc100dev.commons.utils;
 
+import net.bc100dev.commons.utils.io.FileUtil;
+
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 import java.util.Random;
+
+import static net.bc100dev.commons.utils.RuntimeEnvironment.getOperatingSystem;
 
 public class Utility {
 
@@ -142,6 +149,52 @@ public class Utility {
 
     public static int getRandomInteger(int min, int max) {
         return new Random().nextInt(max - min + 1) + min;
+    }
+
+    public static File getBinaryPath(String name) throws IOException {
+        String pathEnv = System.getenv("PATH");
+        if (pathEnv == null)
+            throw new NullPointerException("PATH has been received as null");
+
+        List<String> passedPathEntries = new ArrayList<>();
+        List<String> passedPathContents = new ArrayList<>();
+
+        String[] pathArr = pathEnv.split(File.pathSeparator);
+        for (String pathEntry : pathArr) {
+            if (passedPathEntries.contains(pathEntry))
+                continue;
+
+            passedPathEntries.add(pathEntry);
+
+            File fPathEntry = new File(pathEntry);
+            if (!fPathEntry.exists())
+                continue;
+
+            if (!fPathEntry.isDirectory())
+                continue;
+
+            List<String> pathContents = FileUtil.listDirectory(pathEntry, true, false);
+            for (String pathContent : pathContents) {
+                if (passedPathContents.contains(pathContent))
+                    continue;
+
+                passedPathContents.add(pathContent);
+
+                File bin = new File(pathContent);
+                if ((bin.exists() && bin.canExecute()) && (getOperatingSystem() == OperatingSystem.WINDOWS ?
+                        bin.getName().equalsIgnoreCase(name) : bin.getName().equals(name))) {
+                    passedPathContents.clear();
+                    passedPathEntries.clear();
+
+                    return bin;
+                }
+            }
+        }
+
+        passedPathContents.clear();
+        passedPathEntries.clear();
+
+        return null;
     }
 
 }

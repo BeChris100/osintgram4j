@@ -1,6 +1,7 @@
 package osintgram4j.api.sh;
 
 import net.bc100dev.commons.*;
+import net.bc100dev.commons.utils.RuntimeEnvironment;
 import net.bc100dev.commons.utils.Utility;
 import net.bc100dev.commons.utils.io.UserIO;
 import osintgram4j.commons.ShellConfig;
@@ -14,8 +15,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
-import static net.bc100dev.commons.Terminal.TermColor.RED;
-import static net.bc100dev.commons.Terminal.TermColor.YELLOW;
+import static net.bc100dev.commons.Terminal.TermColor.*;
 import static net.bc100dev.commons.utils.RuntimeEnvironment.*;
 import static osintgram4j.commons.AppConstants.log;
 
@@ -177,7 +177,7 @@ public class Shell {
      * @param line The line to get a configuration parsed
      */
     private void assignCfg(String line) {
-        log.info("adding \"" + line + "\"");
+        log.info("AddEnv \"" + line + "\"");
 
         if (line.contains("=")) {
             String[] opt = line.split("=", 2);
@@ -233,6 +233,88 @@ public class Shell {
         }
     }
 
+    private void assignAlias(String line) {
+        line = line.replaceFirst("%", "");
+
+        String[] opts = Tools.translateCmdLine(line);
+        if (opts.length == 0) {
+            log.warning("AliasCreationError(Length == 0)");
+            Terminal.errPrintln(RED, "no alias name given", true);
+            return;
+        }
+
+        String aliasName = opts[0];
+        String cmdName = null;
+        List<String> execArgs = new ArrayList<>();
+
+        if (opts.length > 1) {
+            cmdName = opts[1];
+
+            if (opts.length > 2)
+                execArgs.addAll(Arrays.asList(opts).subList(2, opts.length));
+        }
+
+        if (opts.length == 1) {
+            aliasName = opts[0];
+
+            for (ShellAlias alias : shellAliases) {
+                if (!aliasName.equals(alias.getAliasCmd()))
+                    continue;
+
+                Terminal.print(CYAN, aliasName + ": ", false);
+                Terminal.print(BLUE, "aliased to ", false);
+                Terminal.print(CYAN, alias.getCaller().getCommand(), false);
+                Terminal.print(BLUE, ", with arguments \"", false);
+
+                String[] _args = alias.getExecutionArgs();
+                for (int i = 0; i < _args.length; i++) {
+                    Terminal.print(CYAN, _args[i], false);
+
+                    if (i != _args.length - 1)
+                        Terminal.print(CYAN, " ", false);
+                }
+
+                Terminal.println(CYAN, "\"", true);
+                break;
+            }
+
+            return;
+        }
+
+        ShellCaller execCall = null;
+        for (ShellCaller caller : shellCallers) {
+            if (cmdName.equals(caller.getCommand()))
+                execCall = caller;
+        }
+
+        if (execCall == null) {
+            Terminal.errPrintln(RED, "No command by the name of \"" + cmdName + "\" found", true);
+            return;
+        }
+
+        String[] sExecArgs = new String[execArgs.size()];
+        for (int i = 0; i < execArgs.size(); i++)
+            sExecArgs[i] = execArgs.get(i);
+
+        for (int i = 0; i < shellAliases.size(); i++) {
+            ShellAlias alias = shellAliases.get(i);
+
+            if (aliasName.equals(alias.getAliasCmd())) {
+                ShellAlias nAlias = new ShellAlias(aliasName, execCall, sExecArgs);
+                nAlias.allowPlatformSupport(getOperatingSystem(), true);
+                shellAliases.set(i, nAlias);
+
+                return;
+            }
+        }
+
+        ShellAlias nAlias = new ShellAlias(aliasName, execCall, sExecArgs);
+        nAlias.allowPlatformSupport(getOperatingSystem(), true);
+        shellAliases.add(nAlias);
+
+        log.info(String.format("MkAlias(\"%s\", Cmd=\"%s\", ArgsLen=\"%d\")", aliasName, cmdName, execArgs.size()));
+    }
+
     private ShellExecution getExecutionLine(String line) {
         String[] lnSplits = Tools.translateCmdLine(line);
 
@@ -267,6 +349,11 @@ public class Shell {
                     continue;
                 }
 
+                if (ln.startsWith("%")) {
+                    assignAlias(ln);
+                    continue;
+                }
+
                 ShellExecution execution = getExecutionLine(ln);
                 if (execution == null)
                     continue;
@@ -276,7 +363,7 @@ public class Shell {
 
                 switch (exec) {
                     case "exit", "quit", "close" -> stopShell();
-                    default -> execCommand(shellConfigList, exec, givenArgs);
+                    default -> execCommand(exec, givenArgs);
                 }
             } catch (NoSuchElementException ignore) {
                 // This exception can be ignored: can occur, when a pipe is being used in the Shell Execution Code
@@ -292,11 +379,10 @@ public class Shell {
     /**
      * Executes a command from the parsed line.
      *
-     * @param env  The environment parameter
      * @param exec The command parameter
      * @param args Given Shell command parameters
      */
-    private void execCommand(List<ShellConfig> env, String exec, String[] args) {
+    private void execCommand(String exec, String[] args) {
         log.info(String.format("CreateCommandExec(Command=\"%s\", Args=\"%s\")", exec, Arrays.toString(args)));
 
         int rnd = Utility.getRandomInteger(0, 100000);
@@ -324,7 +410,7 @@ public class Shell {
                         Terminal.println(YELLOW, String.format("%s: command deprecated", exec), true);
                     }
 
-                    int code = caller.execute(args, env);
+                    int code = caller.execute(args, shellConfigList);
 
                     log.info("CommandExecution(Code=" + code + ", Cmd=" + exec + ")");
 
@@ -349,7 +435,7 @@ public class Shell {
 
                         try {
                             log.info("CommandRun(MC_Alternate; " + exec + ", " + Arrays.toString(args) + ")");
-                            int code = caller.execute(args, env);
+                            int code = caller.execute(args, shellConfigList);
                             log.info("CommandExecution(MC_Alternate; Code=" + code + ", Cmd=" + exec + ")");
 
                             if (code != 0) {
@@ -375,7 +461,7 @@ public class Shell {
                             if (cmdFound) {
                                 try {
                                     log.info("AliasExecute(Command=" + alias.getCaller().getCommand() + "; DefArgs=" + Arrays.toString(alias.getExecutionArgs()) + "; AdditionalArgs=" + Arrays.toString(args) + ")");
-                                    int code = alias.execute(args, env);
+                                    int code = alias.execute(args, shellConfigList);
                                     log.info("AliasExecution(Code=" + code + ")");
                                 } catch (ShellException ex) {
                                     Terminal.println(Terminal.TermColor.RED, Utility.throwableToString(ex), true);

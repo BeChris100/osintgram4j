@@ -1,12 +1,16 @@
 Modification of the resource files are free to do so.
 
-However, renaming them is more of a problem for you, unless you know exactly, how you can mitigate the problems during runtime.
+However, renaming them is more of a problem for you, unless you know exactly how to mitigate the problems during runtime.
 
 See, file names, along with its paths, are hardcoded to access these files.
 
 Moving or renaming them can lead to runtime issues, or might lead itself to crashing itself.
 
-Unless, let's say that you can modify the Java classes, which include only the String values.
+Unless, let's say that you can modify the Java classes, which mostly include the String values.
+For commands... that's a different story.
+
+There are no specific guidelines. Just make sure to comply with what I wrote within the README file,
+and you won't have any problems. Unless...?
 
 These are separated in different classes, and since I don't keep up with everything, I guess you'll have to find them.
 

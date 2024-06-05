@@ -22,6 +22,10 @@ public class ShellAlias {
         this.aliasCmd = aliasCmd;
         this.caller = caller;
         this.executionArgs = executionArgs;
+
+        this.osSupportList.put(OperatingSystem.LINUX, Boolean.FALSE);
+        this.osSupportList.put(OperatingSystem.WINDOWS, Boolean.FALSE);
+        this.osSupportList.put(OperatingSystem.MAC_OS, Boolean.FALSE);
     }
 
     public String getAliasCmd() {
