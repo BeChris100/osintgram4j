@@ -10,40 +10,37 @@ set -e
 
 source app_ver
 
-if [ -f ".build-info" ]; then
-    source .build-info
-
-    if [ -z "$JAR_CMD" ] || [ -z "$JAVA_CMD" ] || [ -z "$JAVAC_CMD" ] || [ -z "$JLINK_CMD" ] || [ -z "$JDEPS_CMD" ] || [ -z "$JPACKAGE_CMD" ]; then
-        echo "Error: Some JDK tools are missing. Please re-run the setup.sh to set up the required tools."
-        exit 1
-    fi
-
-    if [ -f "$JAVA_CMD" ] && [ -x "$JAVA_CMD" ] &&
-        [ -f "$JAVAC_CMD" ] && [ -x "$JAVAC_CMD" ] &&
-        [ -f "$JLINK_CMD" ] && [ -x "$JLINK_CMD" ] &&
-        [ -f "$JDEPS_CMD" ] && [ -x "$JDEPS_CMD" ] &&
-        [ -f "$JPACKAGE_CMD" ] && [ -x "$JPACKAGE_CMD" ]; then
-        JAVA_VERSION=$($JAVA_CMD --version 2>&1 | grep -oP 'openjdk \K\d+' | cut -d. -f1)
-
-        if [ "$JAVA_VERSION" -ge 21 ]; then
-            echo "Found JDK with version $JAVA_VERSION"
-        elif [ "$JAVA_VERSION" -le 20 ]; then
-            echo "You need at least the JDK version of 21. Reported Java Version is $JAVA_VERSION"
-            echo "To obtain the newest JDK Version, run the setup.sh with the '--force-download' argument."
-            exit 1
-        else
-            echo "The JDK Version could not be identified, and has returned a value of $JAVA_VERSION."
-            exit 1
-        fi
-    else
-        echo "Error: Some of more JDK Tools are missing from the JDK Installation."
-        echo "Please verify the JDK instance at \"$JAVA_DEFAULT_HOME\" and reinstall, if necessary."
-        echo "Alternatively, run the setup.sh with '--force-download' to obtain the latest JDK version compatible with the project."
-        exit 1
-    fi
-else
+if [ ! -f ".build-info" ]; then
     echo "No JDK has been initialized."
     echo "To set up and initialize a JDK instance, run the setup.sh script."
+    exit 1
+fi
+
+declare -a JDK_TOOLS=( "$JAVA_CMD" "$JAVAC_CMD" "$JLINK_CMD" "$JDEPS_CMD" "$JPACKAGE_CMD" )
+source .build-info
+
+for tool in "${JDK_TOOLS[@]}"; do
+    if [ -z "$tool" ]; then
+        echo "Error: A required JDK tool is missing in .build-info entry."
+        exit 1
+    fi
+
+    if ! [ -f "$tool" ] || ! [ -x "$tool" ]; then
+        echo "Error: Missing required JDK tool: $tool"
+        echo "Make sure that the JDK was already downloaded by setup.sh, or have the JDK installed."
+        exit 1
+    fi
+done
+
+JAVA_VERSION=$($JAVA_CMD --version 2>&1 | grep -oP 'openjdk \K\d+' | cut -d. -f1)
+if [ "$JAVA_VERSION" -ge 21 ]; then
+    echo "Found JDK with version $JAVA_VERSION"
+elif [ "$JAVA_VERSION" -le 20 ]; then
+    echo "You need at least the JDK version of 21. Reported Java Version is $JAVA_VERSION"
+    echo "To obtain the newest JDK Version, run the setup.sh with the '--force-download' argument."
+    exit 1
+else
+    echo "The JDK Version could not be identified, and has returned a value of $JAVA_VERSION."
     exit 1
 fi
 
@@ -78,7 +75,7 @@ fi
 
 mkdir -p out/pkg out/project/input out/project/commons out/project/instagram-api out/project/core
 
-echo "## Compiling CXX code"
+echo "// Compiling CXX code"
 if [ "$OS_TYPE" == "osx" ]; then
     echo "* CXX code unsupported on macOS"
 else
@@ -111,34 +108,34 @@ else
     cd "$CURRENT_WORKDIR"
 fi
 
-echo "## Compiling the Commons Library"
+echo "// Compiling the Commons Library"
 find commons/src -name "*.java" -type f -print0 | xargs -0 "$JAVAC_CMD" -d out/project/commons
 
-echo "## Compiling the Instagram API"
+echo "// Compiling the Instagram API"
 find instagram_api/src -name "*.java" -type f -print0 | xargs -0 "$JAVAC_CMD" -cp out/project/commons:out/libs/json.jar -d out/project/instagram-api
 
-echo "## Compiling the Osintgram4j API"
+echo "// Compiling the Osintgram4j API"
 find modapi/src -name "*.java" -type f -print0 | xargs -0 "$JAVAC_CMD" -cp out/project/commons:out/libs/json.jar -d out/project/modapi
 
-echo "## Compiling the Core Application"
+echo "// Compiling the Core Application"
 find src -name "*.java" -type f -print0 | xargs -0 "$JAVAC_CMD" -cp out/project/modapi:out/project/commons:out/project/instagram-api:out/libs/json.jar -d out/project/core
 
-echo "## Adding resources to the Core Application"
+echo "// Adding resources to the Core Application"
 cp -r src/net/bc100dev/osintgram4j/res out/project/core/net/bc100dev/osintgram4j/
 
-echo '## Making "commons.jar"'
+echo "// Making commons.jar"
 "$JAR_CMD" -cf out/project/input/commons.jar -C out/project/commons .
 
-echo '## Making "instagram-api.jar"'
+echo "// Making instagram-api.jar"
 "$JAR_CMD" -cf out/project/input/instagram-api.jar -C out/project/instagram-api .
 
-echo '## Making "modapi.jar"'
+echo '// Making modapi.jar'
 "$JAR_CMD" -cf out/project/input/modapi.jar -C out/project/modapi .
 
-echo '## Making "core.jar"'
+echo '// Making core.jar'
 "$JAR_CMD" -cfm out/project/input/core.jar META-INF/MANIFEST.MF -C out/project/core .
 
-echo '## Building the Application Package'
+echo '// Building the Application Package'
 cp out/libs/json.jar out/project/input/json.jar
 cp AppSettings.cfg out/project/input/AppSettings.cfg
 
@@ -154,7 +151,7 @@ fi
 cp cxx/out/og4j-editor out/pkg/osintgram4j/bin/og4j-editor
 
 echo ""
-echo "## Build Complete"
+echo "// Build Complete"
 
 ln -s "${PWD}"/out/pkg/osintgram4j/bin "${PWD}"/
 
@@ -163,6 +160,7 @@ if [[ "$INSTALL_CHOICE" =~ ^[Yy]$ ]]; then
     if [ -f "/usr/bin/osintgram4j" ]; then
         echo "Deleting previous installation"
         "$PREFIX" rm /usr/bin/osintgram4j
+        "$PREFIX" rm /usr/bin/og4j-editor
 
         if [ -d "/usr/share/osintgram4j" ]; then
             echo "Deleting old directory (moving to /usr/share/bc100dev/osintgram4j)"
@@ -183,7 +181,7 @@ if [[ "$INSTALL_CHOICE" =~ ^[Yy]$ ]]; then
         "$PREFIX" cp extres/app_launcher.desktop /usr/share/applications/bc100dev-osintgram4j.desktop
     fi
 
-    echo "## Installation complete"
+    echo "// Installation complete"
     echo "To run Osintgram, with a Terminal open, run the 'osintgram4j' command."
     echo
     echo "In order to remove Osintgram4j from your system, delete the /usr/share/bc100dev/osintgram4j directory,"

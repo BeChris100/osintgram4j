@@ -65,9 +65,17 @@ public class ShellCommandEntry {
         if (!obj.has("command_list"))
             throw new ShellException("\"command_list\" key not found");
 
-        String pkgName = obj.getString("package"),
-                label = obj.getString("label");
-        int version = obj.getInt("version");
+        String pkgName, label;
+        int version;
+
+        if (obj.get("package") instanceof String s0 &&
+                obj.get("label") instanceof String s1 &&
+                obj.get("version") instanceof Integer i0) {
+            pkgName = s0;
+            label = s1;
+            version = i0;
+        } else
+            throw new ShellException("One of the keys (\"package\", \"label\", \"version\") have invalid value types");
 
         if (version != 1) {
             Terminal.errPrintln(Terminal.TermColor.RED, String.format("%s: unknown version %d", label, version), true);
@@ -101,24 +109,33 @@ public class ShellCommandEntry {
                 }
 
                 List<String> alternatesList = new ArrayList<>();
-                JSONArray altArr = cmdObj.getJSONArray("alternates");
+                if (cmdObj.get("alternates") instanceof JSONArray) {
+                    JSONArray altArr = cmdObj.getJSONArray("alternates");
 
-                for (int j = 0; j < altArr.length(); j++) {
-                    if (altArr.get(j) instanceof String str) {
-                        if (alternatesList.contains(str))
-                            continue;
+                    for (int j = 0; j < altArr.length(); j++) {
+                        if (altArr.get(j) instanceof String str) {
+                            if (alternatesList.contains(str))
+                                continue;
 
-                        alternatesList.add(str);
+                            alternatesList.add(str);
+                        }
                     }
-                }
+                } else
+                    throw new ShellException("\"alternates\" has an invalid value data type");
 
                 String[] alternates = new String[alternatesList.size()];
                 for (int j = 0; j < alternatesList.size(); j++)
                     alternates[j] = alternatesList.get(j);
 
-                String cmd = cmdObj.getString("command"),
-                        description = cmdObj.getString("description"),
-                        _class = cmdObj.getString("class");
+                String cmd, description, _class;
+                if (cmdObj.get("cmd") instanceof String ss0 &&
+                        cmdObj.get("description") instanceof String ss1 &&
+                        cmdObj.get("class") instanceof String ss2) {
+                    cmd = ss0;
+                    description = ss1;
+                    _class = ss2;
+                } else
+                    throw new ShellException("One of the keys (command_list: \"cmd\", \"description\", \"class\") have invalid data type");
 
                 if (_class.startsWith("."))
                     _class = pkgName + _class;
@@ -127,51 +144,61 @@ public class ShellCommandEntry {
                 callerList.add(caller);
 
                 if (cmdObj.has("aliases")) {
-                    JSONArray aliasesArr = cmdObj.getJSONArray("aliases");
-                    for (int j = 0; j < aliasesArr.length(); j++) {
-                        JSONObject aliasObj = aliasesArr.getJSONObject(j);
-                        if (!aliasObj.has("cmd"))
-                            throw new ShellException(String.format("\"%s\" key at entry %d not found (required to execute)", "cmd", i + 1));
+                    if (cmdObj.get("aliases") instanceof JSONArray ja0) {
+                        for (int j = 0; j < ja0.length(); j++) {
+                            JSONObject aliasObj = ja0.getJSONObject(j);
+                            if (!aliasObj.has("cmd"))
+                                throw new ShellException(String.format("\"%s\" key at entry %d not found (required to execute)", "cmd", i + 1));
 
-                        if (!aliasObj.has("args"))
-                            throw new ShellException(String.format("\"%s\" key at entry %d not found (required to append to command)", "args", i + 1));
+                            if (!aliasObj.has("args"))
+                                throw new ShellException(String.format("\"%s\" key at entry %d not found (required to append to command)", "args", i + 1));
 
-                        String aliasCmd = aliasObj.getString("cmd");
-                        String[] aliasArgs = Tools.translateCmdLine(aliasObj.getString("args"));
+                            String aliasCmd;
+                            String[] aliasArgs;
 
-                        ShellAlias alias = new ShellAlias(aliasCmd, caller, aliasArgs);
+                            if (aliasObj.get("cmd") instanceof String sss0 &&
+                                    aliasObj.get("args") instanceof String sss1) {
+                                aliasCmd = sss0;
+                                aliasArgs = Tools.translateCmdLine(sss1);
+                            } else
+                                throw new ShellException("One of the keys (aliases: \"cmd\", \"args\") have an invalid data type");
 
-                        if (aliasObj.has("depends")) {
-                            String depsArr = aliasObj.getString("depends");
-                            String[] deps = Tools.translateCmdLine(depsArr);
+                            ShellAlias alias = new ShellAlias(aliasCmd, caller, aliasArgs);
 
-                            alias.dependsOn(deps);
-                        }
+                            if (aliasObj.has("depends")) {
+                                if (aliasObj.get("depends") instanceof String depStr)
+                                    alias.dependsOn(Tools.translateCmdLine(depStr));
+                                else
+                                    throw new ShellException("Key (aliases: \"depends\") have an invalid data type");
+                            }
 
-                        if (aliasObj.has("platforms")) {
-                            String val = aliasObj.getString("platforms");
-                            if (!val.contains("*")) {
-                                String[] platformsArr = val.split(",");
+                            if (aliasObj.has("platforms")) {
+                                if (aliasObj.get("platforms") instanceof String plt) {
+                                    if (!plt.contains("*")) {
+                                        String[] platformsArr = plt.split(",");
 
-                                for (String platform : platformsArr) {
-                                    switch (platform.toLowerCase()) {
-                                        case "linux", "lin", "nux" ->
-                                                alias.allowPlatformSupport(OperatingSystem.LINUX, true);
-                                        case "win", "win32", "win64", "windows", "windows64", "windows32",
-                                             "windows_x32",
-                                             "windows_x64", "windows_32", "windows_64" ->
-                                                alias.allowPlatformSupport(OperatingSystem.WINDOWS, true);
-                                        case "mac_os", "osx", "mac" ->
-                                                alias.allowPlatformSupport(OperatingSystem.MAC_OS, true);
-                                    }
-                                }
+                                        for (String platform : platformsArr) {
+                                            switch (platform.toLowerCase()) {
+                                                case "linux", "lin", "nux" ->
+                                                        alias.allowPlatformSupport(OperatingSystem.LINUX, true);
+                                                case "win", "win32", "win64", "windows", "windows64", "windows32",
+                                                     "windows_x32",
+                                                     "windows_x64", "windows_32", "windows_64" ->
+                                                        alias.allowPlatformSupport(OperatingSystem.WINDOWS, true);
+                                                case "mac_os", "osx", "mac" ->
+                                                        alias.allowPlatformSupport(OperatingSystem.MAC_OS, true);
+                                            }
+                                        }
+                                    } else
+                                        alias.allowAllPlatforms(true);
+                                } else
+                                    throw new ShellException("Key (aliases: \"platforms\") have an invalid data type");
                             } else
                                 alias.allowAllPlatforms(true);
-                        } else
-                            alias.allowAllPlatforms(true);
 
-                        if (alias.isPlatformSupported(getOperatingSystem()))
-                            aliases.add(alias);
+                            if (alias.isPlatformSupported(getOperatingSystem()))
+                                aliases.add(alias);
+                        }
                     }
                 }
             }

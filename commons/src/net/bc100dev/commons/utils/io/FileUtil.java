@@ -21,6 +21,34 @@ public class FileUtil {
         return new File(path).exists();
     }
 
+    public static boolean isValidZipFile(String zipFilePath) throws IOException {
+        FileInputStream fis = null;
+        DataInputStream dis = null;
+        int hex;
+
+        File file = new File(zipFilePath);
+        if (!file.exists())
+            throw new FileNotFoundException("File at \"" + zipFilePath + "\" does not exist");
+
+        if (!file.canRead())
+            throw new AccessDeniedException("\"" + zipFilePath + "\": No read permission (denied)");
+
+        try {
+            fis = new FileInputStream(zipFilePath);
+            dis = new DataInputStream(fis);
+
+            hex = dis.readInt();
+        } finally {
+            if (dis != null)
+                dis.close();
+
+            if (fis != null)
+                fis.close();
+        }
+
+        return hex == 0x504b0304 || hex == 0x504b0506 || hex == 0x504b0708;
+    }
+
     public static void createFile(String filePath, boolean createDirs) throws IOException {
         File file = new File(filePath);
         File dirs = new File(file.getParent());

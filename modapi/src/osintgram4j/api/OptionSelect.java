@@ -1,4 +1,4 @@
-package osintgram4j.api.sh;
+package osintgram4j.api;
 
 import net.bc100dev.commons.ApplicationException;
 import net.bc100dev.commons.Terminal;

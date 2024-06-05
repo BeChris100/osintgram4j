@@ -135,35 +135,16 @@ public class Shell {
         }
 
         Attributes attributes = manifest.getMainAttributes();
-        String outJarValue = attributes.getValue("Osintgram4j-API-ExposedCommands");
-        if (outJarValue != null) {
-            String[] paths = Tools.translateCmdLine(outJarValue);
+        String value = attributes.getValue("Osintgram4j-OnLoad-Commands");
 
-            for (String path : paths) {
-                File f = new File(path);
-                if (!f.exists()) {
-                    log.warning("API-ExposedCommands(\"" + f.getAbsolutePath() + "\"): not found");
-                    continue;
-                }
-
-                if (!f.canRead()) {
-                    log.warning("API-ExposedCommands(\"" + f.getAbsolutePath() + "\"): access denied");
-                    continue;
-                }
-
-                addCommands(f);
-            }
-        }
-
-        String value = attributes.getValue("Osintgram4j-API-Commands");
         if (value == null) {
-            log.warning("JarFile(" + file.getPath() + "): No \"Osintgram4j-API-Commands\" attribute found; skipping JAR file");
+            log.warning("JarFile(" + file.getPath() + "): No \"Osintgram4j-OnLoad-Commands\" attribute found; skipping JAR file");
             return;
         }
 
         String[] paths = Tools.translateCmdLine(value);
         if (paths.length == 0) {
-            log.warning("JarFile(" + file.getPath() + "): Manifest Attribute \"Osintgram4j-API-Commands\" has no paths, returned " + paths.length);
+            log.warning("JarFile(" + file.getPath() + "): Manifest Attribute \"Osintgram4j-OnLoad-Commands\" has no paths, returned " + paths.length);
             return;
         }
 

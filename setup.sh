@@ -34,7 +34,7 @@ if [ -f ".build-info" ]; then
     fi
 fi
 
-echo "## Operating System State"
+echo ">> Operating System State"
 echo "Is Linux: $IS_LINUX"
 echo "Is OS X (macOS): $IS_OSX"
 echo ""
@@ -239,5 +239,5 @@ else
     get_libs
 fi
 
-echo "## Setup Process completed"
+echo ">> Setup Process completed"
 echo "To build the project, run the Build script to complete the building process."

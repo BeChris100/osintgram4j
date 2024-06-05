@@ -1,7 +1,9 @@
 package osintgram4j.api.sh;
 
+import osintgram4j.api.Launcher;
 import osintgram4j.commons.ShellConfig;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -31,6 +33,9 @@ public class ShellCaller {
             this.callableClass = Class.forName(callableClassName);
             this.classInstance = callableClass.getDeclaredConstructor().newInstance();
 
+            if (!callableClass.isAssignableFrom(Command.class))
+                throw new ShellException("Launch class " + callableClassName + " is not extending \"Launcher.class\"");
+
             Method[] callableMethodArr = this.callableClass.getDeclaredMethods();
             if (callableMethodArr.length == 0)
                 throw new ShellException("No methods are given for the method");
@@ -46,12 +51,8 @@ public class ShellCaller {
 
             this.callableMethod = execMethod;
             this.callableHelpMethod = helpMethod;
-        } catch (ClassNotFoundException ignore) {
-            throw new ShellException("No such class found at " + callableClassName);
-        } catch (NoSuchMethodException ignore) {
-            throw new ShellException("Class at " + callableClassName + " does not have the necessary methods");
-        } catch (InvocationTargetException | InstantiationException | IllegalAccessException e) {
-            throw new RuntimeException(e);
+        } catch (ReflectiveOperationException ex) {
+            throw new ShellException("An error occurred", ex);
         }
     }
 
