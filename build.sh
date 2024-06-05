@@ -16,8 +16,8 @@ if [ ! -f ".build-info" ]; then
     exit 1
 fi
 
-declare -a JDK_TOOLS=( "$JAVA_CMD" "$JAVAC_CMD" "$JLINK_CMD" "$JDEPS_CMD" "$JPACKAGE_CMD" )
 source .build-info
+declare -a JDK_TOOLS=( "$JAVA_CMD" "$JAVAC_CMD" "$JAR_CMD" "$JAVAC_CMD" "$JPACKAGE_CMD" )
 
 for tool in "${JDK_TOOLS[@]}"; do
     if [ -z "$tool" ]; then

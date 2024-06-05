@@ -34,7 +34,7 @@ if [ -f ".build-info" ]; then
     fi
 fi
 
-echo ">> Operating System State"
+echo "// Operating System State"
 echo "Is Linux: $IS_LINUX"
 echo "Is OS X (macOS): $IS_OSX"
 echo ""
@@ -112,8 +112,6 @@ function presence_java_tools() {
 
     local java_cmd
     local javac_cmd
-    local jlink_cmd
-    local jdeps_cmd
     local jpackage_cmd
 
     java_cmd=$(command -v "java")
@@ -121,7 +119,9 @@ function presence_java_tools() {
     javac_cmd=$(command -v "javac")
     jpackage_cmd=$(command -v "jpackage")
 
-    if [ -n "$java_cmd" ] && [ -n "$jar_cmd" ] && [ -n "$javac_cmd" ] && [ -n "$jlink_cmd" ] && [ -n "$jdeps_cmd" ] && [ -n "$jpackage_cmd" ]; then
+    set -e
+
+    if [ -n "$java_cmd" ] && [ -n "$jar_cmd" ] && [ -n "$javac_cmd" ] && [ -n "$jpackage_cmd" ]; then
         echo "JDK Tools have been found."
         
         JAVA_VERSION=$($java_cmd --version 2>&1 | grep -oP 'openjdk \K\d+' | cut -d. -f1)
@@ -135,8 +135,6 @@ function presence_java_tools() {
         echo "JAVA_CMD=$java_cmd" >>.build-info
         echo "JAR_CMD=$jar_cmd" >>.build-info
         echo "JAVAC_CMD=$javac_cmd" >>.build-info
-        echo "JLINK_CMD=$jlink_cmd" >>.build-info
-        echo "JDEPS_CMD=$jdeps_cmd" >>.build-info
         echo "JPACKAGE_CMD=$jpackage_cmd" >>.build-info
         echo "JAVA_DEFAULT_HOME=$(dirname "$(dirname "$(command -v java)")")" >>.build-info
 
@@ -144,8 +142,6 @@ function presence_java_tools() {
     else
         return 1
     fi
-
-    set -e
 }
 
 function get_jdk() {
