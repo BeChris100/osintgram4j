@@ -80,8 +80,6 @@ public class HelpCmd extends Command {
                     maxCmdLength = cmd.length();
             }
 
-            // .--. .-. --- -... .-.. . -- ... / .... .- ...- . / .- .-.. .-. . .- -.. -.-- / .- .-. .. ... . -.
-
             maxCmdLength += 5;
 
             for (ShellCaller caller : instance.shellCallers) {
@@ -157,7 +155,7 @@ public class HelpCmd extends Command {
                         pg.addArg("-t", null, "Shows only alternate commands, in PowerShell Syntax alike");
                         pg.display(System.out);
 
-                        System.exit(0);
+                        return 0;
                     }
                     default -> {
                         Terminal.errPrintln(RED, "invalid option: " + arg, true);

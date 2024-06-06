@@ -95,11 +95,11 @@
             "aliases": [
                 {
                     "cmd": "login",
-                    "args": "--manage-users login"
+                    "args": "login"
                 },
                 {
                     "cmd": "logout",
-                    "args": "--manage-users logout"
+                    "args": "logout"
                 }
             ]
         },
