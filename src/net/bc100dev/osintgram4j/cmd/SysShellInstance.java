@@ -6,7 +6,7 @@ import net.bc100dev.commons.utils.HelpPage;
 import net.bc100dev.commons.utils.Utility;
 import net.bc100dev.commons.utils.io.FileUtil;
 import osintgram4j.api.sh.Command;
-import osintgram4j.commons.ShellConfig;
+import osintgram4j.commons.ShellEnvironment;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,7 +45,8 @@ public class SysShellInstance extends Command {
         bdr.inheritIO();
 
         Process proc = bdr.start();
-        Terminal.println(Terminal.TermColor.GREEN, "Process executed with PID " + proc.pid(), true);
+        Terminal.println(Terminal.TermColor.GREEN, String.format("Process executed under PID %d as \"%s\"",
+                proc.pid(), shellExec.getName()), true);
 
         return proc.waitFor();
     }
@@ -82,7 +83,7 @@ public class SysShellInstance extends Command {
     }
 
     @Override
-    public int launchCmd(String[] args, List<ShellConfig> ignore) {
+    public int launchCmd(String[] args, List<ShellEnvironment> ignore) {
         File shellEnv = null;
 
         if (isWindows())
@@ -94,7 +95,8 @@ public class SysShellInstance extends Command {
                     shellEnv = new File("/bin/bash");
                 else if (isMac())
                     shellEnv = new File("/bin/zsh");
-            }
+            } else
+                shellEnv = new File(lShellEnv);
         }
 
         List<String> cmdArgs = new ArrayList<>();

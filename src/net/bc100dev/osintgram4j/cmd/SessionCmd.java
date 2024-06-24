@@ -6,7 +6,7 @@ import com.instagram.api.ConnectionStateException;
 import net.bc100dev.commons.utils.io.FileUtil;
 import net.bc100dev.osintgram4j.Settings;
 import osintgram4j.api.sh.Command;
-import osintgram4j.commons.ShellConfig;
+import osintgram4j.commons.ShellEnvironment;
 import org.json.JSONArray;
 
 import java.io.*;
@@ -59,7 +59,7 @@ public class SessionCmd extends Command {
     private static void addSession(String username) throws IOException, ConnectionStateException {
     }
 
-    private static int testImpl(String[] args, List<ShellConfig> shellConfigs) {
+    private static int testImpl(String[] args, List<ShellEnvironment> shellConfigs) {
         if (args != null && args.length != 0) {
             switch (args[0]) {
                 case "--encrypt", "-e" -> {
@@ -97,7 +97,7 @@ public class SessionCmd extends Command {
     }
 
     @Override
-    public int launchCmd(String[] args, List<ShellConfig> shellConfigs) {
+    public int launchCmd(String[] args, List<ShellEnvironment> shellConfigs) {
         Terminal.println(Terminal.TermColor.RED, "Session Manager is not implemented yet", true);
         return testImpl(args, shellConfigs);
     }

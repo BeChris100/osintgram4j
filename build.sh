@@ -170,7 +170,7 @@ if [[ "$INSTALL_CHOICE" =~ ^[Yy]$ ]]; then
         fi
     fi
 
-    echo "> Copying built files"
+    echo "// Copying built files"
     "$PREFIX" mkdir -p /usr/share/bc100dev/osintgram4j/
     "$PREFIX" cp -r out/pkg/osintgram4j/* /usr/share/bc100dev/osintgram4j
     "$PREFIX" ln -s /usr/share/bc100dev/osintgram4j/bin/osintgram4j /usr/bin/osintgram4j

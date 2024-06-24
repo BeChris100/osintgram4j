@@ -2,7 +2,7 @@ package osintgram4j.api.sh;
 
 import net.bc100dev.commons.utils.OperatingSystem;
 import net.bc100dev.commons.utils.io.FileUtil;
-import osintgram4j.commons.ShellConfig;
+import osintgram4j.commons.ShellEnvironment;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,14 +11,14 @@ import java.util.*;
 public class ShellAlias {
 
     private final String aliasCmd;
-    private final ShellCaller caller;
+    private final ShellCommand caller;
     private final String[] executionArgs;
 
     private String[] dependenciesArr;
 
     private final Map<OperatingSystem, Boolean> osSupportList = new HashMap<>();
 
-    public ShellAlias(String aliasCmd, ShellCaller caller, String[] executionArgs) {
+    public ShellAlias(String aliasCmd, ShellCommand caller, String[] executionArgs) {
         this.aliasCmd = aliasCmd;
         this.caller = caller;
         this.executionArgs = executionArgs;
@@ -32,7 +32,7 @@ public class ShellAlias {
         return aliasCmd;
     }
 
-    public ShellCaller getCaller() {
+    public ShellCommand getCaller() {
         return caller;
     }
 
@@ -99,7 +99,7 @@ public class ShellAlias {
         return binaries.size() == dependenciesArr.length;
     }
 
-    public int execute(String[] additionalArgs, List<ShellConfig> env) throws ShellException {
+    public int execute(String[] additionalArgs, List<ShellEnvironment> env) throws ShellException {
         List<String> listArgs = new ArrayList<>();
         listArgs.addAll(Arrays.asList(executionArgs));
         listArgs.addAll(Arrays.asList(additionalArgs));

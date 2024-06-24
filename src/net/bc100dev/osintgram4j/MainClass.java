@@ -7,7 +7,7 @@ import net.bc100dev.commons.utils.io.FileUtil;
 import net.bc100dev.commons.utils.io.UserIO;
 import osintgram4j.api.sh.Shell;
 import osintgram4j.api.sh.ShellException;
-import osintgram4j.commons.ShellConfig;
+import osintgram4j.commons.ShellEnvironment;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -19,13 +19,13 @@ import java.util.logging.Level;
 import static net.bc100dev.commons.utils.RuntimeEnvironment.*;
 import static net.bc100dev.osintgram4j.Settings.securityWarnings;
 import static net.bc100dev.osintgram4j.Settings.loadSettings;
-import static osintgram4j.commons.AppConstants.log;
+import static osintgram4j.commons.AppConstants.log_og4j;
 import static osintgram4j.commons.Titles.DISPLAY;
 import static osintgram4j.commons.Titles.TITLE_BLOCK;
 
 public class MainClass {
 
-    private static final List<ShellConfig> configList = new ArrayList<>();
+    private static final List<ShellEnvironment> configList = new ArrayList<>();
 
     private static void init() {
         Terminal.TermColor cRed = Terminal.TermColor.RED;
@@ -48,7 +48,7 @@ public class MainClass {
             Terminal.errPrintln(cRed, "Error/Exception Stacktrace:", true);
             Terminal.errPrintln(cRed, sw.toString(), true);
 
-            log.log(Level.SEVERE, thread.getName() + ": crashed (exception not handled)", throwable);
+            log_og4j.log(Level.SEVERE, thread.getName() + ": crashed (exception not handled)", throwable);
         });
 
         try {
@@ -63,18 +63,18 @@ public class MainClass {
                 FileUtil.createFile(logFile.getAbsolutePath(), true);
 
             FileHandler handler = new FileHandler(logFile.getAbsolutePath(), true);
-            handler.setFormatter(new LGFMT());
+            handler.setFormatter(new LogFormatter());
 
-            log.setUseParentHandlers(false);
-            log.addHandler(handler);
-            log.info("Initialized");
+            log_og4j.setUseParentHandlers(false);
+            log_og4j.addHandler(handler);
+            log_og4j.info("Initialized");
         } catch (IOException ex) {
             ex.printStackTrace(System.err);
         }
     }
 
     private static void usage(ProcessHandle ph) {
-        log.info("Show help page upon start");
+        log_og4j.info("Show help page upon start");
         System.out.println(TITLE_BLOCK());
         System.out.println();
         System.out.println(DISPLAY());
@@ -118,7 +118,7 @@ public class MainClass {
         init();
         loadSettings();
 
-        log.info("Application initialized");
+        log_og4j.info("Application initialized");
 
         if (NativeLoader.hasLibrary())
             NativeLoader.load();
@@ -147,7 +147,7 @@ public class MainClass {
                             env[0] = env[0].trim();
                             env[1] = env[1].trim();
 
-                            configList.add(new ShellConfig(env[0], env[1]));
+                            configList.add(new ShellEnvironment(env[0], env[1]));
                         } else {
                             File envFile = new File(opts[1]);
                             if (!envFile.exists())
@@ -165,7 +165,7 @@ public class MainClass {
 
                                 if (!envProps.isEmpty()) {
                                     for (Object key : envProps.keySet())
-                                        configList.add(new ShellConfig((String) key, envProps.getProperty((String) key)));
+                                        configList.add(new ShellEnvironment((String) key, envProps.getProperty((String) key)));
                                 }
                             } catch (IOException ex) {
                                 ex.printStackTrace(System.err);
@@ -232,27 +232,29 @@ public class MainClass {
             if (!configList.isEmpty())
                 appShell.appendConfig(configList);
 
+            Terminal.println(Terminal.TermColor.GREEN, TITLE_BLOCK(), true);
+
             appShell.launch();
         } catch (IOException | ShellException ex) {
             ex.printStackTrace(System.err);
         }
 
-        log.info("App stopped");
+        log_og4j.info("App stopped");
     }
 
     private static void addTarget(String target) {
         if (configList.isEmpty()) {
-            configList.add(new ShellConfig("Session0:UserTarget", target));
+            configList.add(new ShellEnvironment("Session0:UserTarget", target));
             return;
         }
 
         int sessionIndex = 0;
-        for (ShellConfig config : configList) {
+        for (ShellEnvironment config : configList) {
             if (config.getName().equals(String.format("Session%d:UserTarget", sessionIndex)))
                 sessionIndex++;
         }
 
-        configList.add(new ShellConfig(String.format("Session%d:UserTarget", sessionIndex), target));
+        configList.add(new ShellEnvironment(String.format("Session%d:UserTarget", sessionIndex), target));
     }
 
 }

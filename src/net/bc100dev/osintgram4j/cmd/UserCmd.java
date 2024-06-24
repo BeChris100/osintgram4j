@@ -4,12 +4,11 @@ import net.bc100dev.commons.Terminal;
 import net.bc100dev.commons.utils.HelpPage;
 import net.bc100dev.osintgram4j.api_conn.UserSession;
 import osintgram4j.api.sh.Command;
-import osintgram4j.commons.ShellConfig;
+import osintgram4j.commons.ShellEnvironment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
 
 public class UserCmd extends Command {
 
@@ -20,12 +19,12 @@ public class UserCmd extends Command {
     private static void logout(UserSession session) {
     }
 
-    private static void promptCreate(List<ShellConfig> shellEnv) {
+    private static void promptCreate(List<ShellEnvironment> shellEnv) {
         // TODO:
     }
 
     @Override
-    public int launchCmd(String[] args, List<ShellConfig> shellConfigs) {
+    public int launchCmd(String[] args, List<ShellEnvironment> shellConfigs) {
         if (args == null || args.length == 0) {
             Terminal.errPrintln(Terminal.TermColor.YELLOW, helpCmd(new String[0]), true);
             return 1;

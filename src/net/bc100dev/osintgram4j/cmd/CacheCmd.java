@@ -5,7 +5,7 @@ import net.bc100dev.commons.utils.Utility;
 import net.bc100dev.commons.utils.io.FileUtil;
 import net.bc100dev.osintgram4j.Settings;
 import osintgram4j.api.sh.Command;
-import osintgram4j.commons.ShellConfig;
+import osintgram4j.commons.ShellEnvironment;
 
 import java.io.File;
 import java.io.IOException;
@@ -69,7 +69,7 @@ public class CacheCmd extends Command {
     }
 
     @Override
-    public int launchCmd(String[] args, List<ShellConfig> ignore) {
+    public int launchCmd(String[] args, List<ShellEnvironment> ignore) {
         if (args == null) {
             Terminal.println(Terminal.TermColor.BLUE, helpCmd(new String[0]), true);
             return 0;

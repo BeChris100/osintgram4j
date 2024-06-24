@@ -2,14 +2,14 @@ package net.bc100dev.osintgram4j.cmd;
 
 import osintgram4j.api.sh.Shell;
 import osintgram4j.api.sh.Command;
-import osintgram4j.commons.ShellConfig;
+import osintgram4j.commons.ShellEnvironment;
 
 import java.util.List;
 
 public class EnvCmd extends Command {
 
     @Override
-    public int launchCmd(String[] args, List<ShellConfig> configs) {
+    public int launchCmd(String[] args, List<ShellEnvironment> configs) {
         if (configs.isEmpty())
             return 0;
 
@@ -27,7 +27,7 @@ public class EnvCmd extends Command {
                         int index = -1;
 
                         for (int I = 0; I < configs.size(); I++) {
-                            ShellConfig config = configs.get(I);
+                            ShellEnvironment config = configs.get(I);
                             if (config.getName().equals(args[i])) {
                                 index = I;
                                 break;
@@ -35,7 +35,7 @@ public class EnvCmd extends Command {
                         }
 
                         if (index != -1) {
-                            shell.shellConfigList.remove(index);
+                            shell.shellEnvList.remove(index);
                             System.out.println("\"" + args[i] + "\" successfully deleted");
                         }
                     }
@@ -43,7 +43,7 @@ public class EnvCmd extends Command {
             }
         }
 
-        for (ShellConfig config : configs)
+        for (ShellEnvironment config : configs)
             System.out.println(config.getName() + " = " + config.getValue());
 
         return 0;

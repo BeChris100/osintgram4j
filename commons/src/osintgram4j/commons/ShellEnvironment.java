@@ -1,11 +1,11 @@
 package osintgram4j.commons;
 
-public class ShellConfig {
+public class ShellEnvironment {
 
     private final String name;
     private String value;
 
-    public ShellConfig(String name, String value) {
+    public ShellEnvironment(String name, String value) {
         this.name = name;
         this.value = value;
     }

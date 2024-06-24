@@ -1,10 +1,9 @@
 package osintgram4j.api.sh;
 
 import net.bc100dev.commons.*;
-import net.bc100dev.commons.utils.RuntimeEnvironment;
 import net.bc100dev.commons.utils.Utility;
 import net.bc100dev.commons.utils.io.UserIO;
-import osintgram4j.commons.ShellConfig;
+import osintgram4j.commons.ShellEnvironment;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,7 +16,7 @@ import java.util.jar.Manifest;
 
 import static net.bc100dev.commons.Terminal.TermColor.*;
 import static net.bc100dev.commons.utils.RuntimeEnvironment.*;
-import static osintgram4j.commons.AppConstants.log;
+import static osintgram4j.commons.AppConstants.log_og4j;
 
 /**
  * The Shell class is an interactive shell (as the name says), used for
@@ -34,12 +33,12 @@ public class Shell {
 
     private boolean running = false;
 
-    private final boolean terminal = System.console() != null;
+    public final boolean terminal = System.console() != null;
 
     public Scanner kbi; // kbi, as short, is named after "KeyBoard Input"
 
-    public final List<ShellConfig> shellConfigList = new ArrayList<>();
-    public final List<ShellCaller> shellCallers = new ArrayList<>();
+    public final List<ShellEnvironment> shellEnvList = new ArrayList<>();
+    public final List<ShellCommand> shellCallers = new ArrayList<>();
     public final List<ShellAlias> shellAliases = new ArrayList<>();
 
     private String PS1;
@@ -63,7 +62,9 @@ public class Shell {
             PS1 = String.format("[%s/%s: %s] >> ", USER_NAME, getHostName(), WORKING_DIRECTORY.getName());
         }
 
-        // In favor of `addCallersFromResource` deprecation:
+        if (!terminal)
+            PS1 = "[osintgram4j]$ ";
+
         try {
             InputStream is = new ResourceManager(Shell.class, false).getResourceInputStream("/net/bc100dev/osintgram4j/res/cmd_list_d/app-core.json");
             byte[] buff = is.readAllBytes();
@@ -74,7 +75,6 @@ public class Shell {
             throw new ApplicationRuntimeException(ex);
         }
 
-        // If everything goes well, this will be successfully initialized
         Shell.instance = this;
     }
 
@@ -82,9 +82,9 @@ public class Shell {
         return instance;
     }
 
-    public void appendConfig(List<ShellConfig> configList) {
-        shellConfigList.addAll(configList);
-        log.info("added " + configList.size() + " variables");
+    public void appendConfig(List<ShellEnvironment> configList) {
+        shellEnvList.addAll(configList);
+        log_og4j.info("added " + configList.size() + " variables");
     }
 
     /**
@@ -99,7 +99,7 @@ public class Shell {
         shellCallers.addAll(entry.getCommands());
         shellAliases.addAll(entry.getAliases());
 
-        log.info("added " + entry.getCommands().size() + " commands");
+        log_og4j.info("added " + entry.getCommands().size() + " commands");
     }
 
     /**
@@ -113,7 +113,7 @@ public class Shell {
         shellCallers.addAll(e.getCommands());
         shellAliases.addAll(e.getAliases());
 
-        log.info("added " + e.getCommands().size() + " commands");
+        log_og4j.info("added " + e.getCommands().size() + " commands");
     }
 
     /**
@@ -130,7 +130,7 @@ public class Shell {
         JarFile jarFile = new JarFile(file);
         Manifest manifest = jarFile.getManifest();
         if (manifest == null) {
-            log.warning("Manifest file for file \"" + file.getPath() + "\" was not found");
+            log_og4j.warning("Manifest file for file \"" + file.getPath() + "\" was not found");
             return;
         }
 
@@ -138,20 +138,20 @@ public class Shell {
         String value = attributes.getValue("Osintgram4j-OnLoad-Commands");
 
         if (value == null) {
-            log.warning("JarFile(" + file.getPath() + "): No \"Osintgram4j-OnLoad-Commands\" attribute found; skipping JAR file");
+            log_og4j.warning("JarFile(" + file.getPath() + "): No \"Osintgram4j-OnLoad-Commands\" attribute found; skipping JAR file");
             return;
         }
 
         String[] paths = Tools.translateCmdLine(value);
         if (paths.length == 0) {
-            log.warning("JarFile(" + file.getPath() + "): Manifest Attribute \"Osintgram4j-OnLoad-Commands\" has no paths, returned " + paths.length);
+            log_og4j.warning("JarFile(" + file.getPath() + "): Manifest Attribute \"Osintgram4j-OnLoad-Commands\" has no paths, returned " + paths.length);
             return;
         }
 
         for (String path : paths) {
             JarEntry entry = jarFile.getJarEntry(path);
             if (entry == null) {
-                log.warning("JarFile(" + file.getPath() + "): Entry \"" + path + "\" in the JAR file does not exist");
+                log_og4j.warning("JarFile(" + file.getPath() + "): Entry \"" + path + "\" in the JAR file does not exist");
                 throw new IOException("Entry at \"" + path + "\" in the JAR file does not exist");
             }
 
@@ -177,7 +177,7 @@ public class Shell {
      * @param line The line to get a configuration parsed
      */
     private void assignCfg(String line) {
-        log.info("AddEnv \"" + line + "\"");
+        log_og4j.info("AddEnv \"" + line + "\"");
 
         if (line.contains("=")) {
             String[] opt = line.split("=", 2);
@@ -192,28 +192,28 @@ public class Shell {
                 return;
             }
 
-            if (shellConfigList.isEmpty()) {
-                shellConfigList.add(new ShellConfig(opt[0], opt[1]));
+            if (shellEnvList.isEmpty()) {
+                shellEnvList.add(new ShellEnvironment(opt[0], opt[1]));
                 return;
             }
 
             boolean found = false;
-            for (int i = 0; i < shellConfigList.size(); i++) {
-                ShellConfig cfg = shellConfigList.get(i);
+            for (int i = 0; i < shellEnvList.size(); i++) {
+                ShellEnvironment cfg = shellEnvList.get(i);
 
                 if (opt[0].equals(cfg.getName())) {
                     cfg.setValue(opt[1]);
 
-                    shellConfigList.set(i, cfg);
+                    shellEnvList.set(i, cfg);
 
                     found = true;
                 }
             }
 
             if (!found)
-                shellConfigList.add(new ShellConfig(opt[0], opt[1]));
+                shellEnvList.add(new ShellEnvironment(opt[0], opt[1]));
         } else {
-            if (shellConfigList.isEmpty()) {
+            if (shellEnvList.isEmpty()) {
                 System.out.println("No Items assigned");
                 return;
             }
@@ -221,7 +221,7 @@ public class Shell {
             String nm = line.replaceFirst("&", "").trim();
 
             boolean found = false;
-            for (ShellConfig cfg : shellConfigList) {
+            for (ShellEnvironment cfg : shellEnvList) {
                 if (nm.equals(cfg.getName())) {
                     System.out.printf("%s ==> %s\n", cfg.getName(), cfg.getValue());
                     found = true;
@@ -238,7 +238,7 @@ public class Shell {
 
         String[] opts = Tools.translateCmdLine(line);
         if (opts.length == 0) {
-            log.warning("AliasCreationError(Length == 0)");
+            log_og4j.warning("AliasCreationError(Length == 0)");
             Terminal.errPrintln(RED, "no alias name given", true);
             return;
         }
@@ -281,8 +281,8 @@ public class Shell {
             return;
         }
 
-        ShellCaller execCall = null;
-        for (ShellCaller caller : shellCallers) {
+        ShellCommand execCall = null;
+        for (ShellCommand caller : shellCallers) {
             if (cmdName.equals(caller.getCommand()))
                 execCall = caller;
         }
@@ -312,7 +312,7 @@ public class Shell {
         nAlias.allowPlatformSupport(getOperatingSystem(), true);
         shellAliases.add(nAlias);
 
-        log.info(String.format("MkAlias(\"%s\", Cmd=\"%s\", ArgsLen=\"%d\")", aliasName, cmdName, execArgs.size()));
+        log_og4j.info(String.format("MkAlias(\"%s\", Cmd=\"%s\", ArgsLen=\"%d\")", aliasName, cmdName, execArgs.size()));
     }
 
     private ShellExecution getExecutionLine(String line) {
@@ -336,9 +336,7 @@ public class Shell {
     private void cmd() {
         while (running) {
             try {
-                if (terminal)
-                    System.out.print(PS1);
-
+                System.out.print(PS1);
                 String ln = kbi.nextLine().trim();
 
                 if (ln.isEmpty())
@@ -383,36 +381,36 @@ public class Shell {
      * @param args Given Shell command parameters
      */
     private void execCommand(String exec, String[] args) {
-        log.info(String.format("CreateCommandExec(Command=\"%s\", Args=\"%s\")", exec, Arrays.toString(args)));
+        log_og4j.info(String.format("CreateCommandExec(Command=\"%s\", Args=\"%s\")", exec, Arrays.toString(args)));
 
         int rnd = Utility.getRandomInteger(0, 100000);
         if (rnd == 1983) {
             rnd = Utility.getRandomInteger(1, 5);
             switch (rnd) {
-                case 1 -> log.info("They have already infested the machine");
-                case 2 -> log.info("Problems have arrived. Time to wipe them.");
-                case 3 -> log.info("Why did they have to add them in?");
-                case 4 -> log.info("Bro had all the time to design the core, yet couldn't make the API already.");
-                case 5 -> log.info("Nothing else than the alternates being within the core itself.");
+                case 1 -> log_og4j.info("They have already infested the machine");
+                case 2 -> log_og4j.info("Problems have arrived. Time to wipe them.");
+                case 3 -> log_og4j.info("Why did they have to add them in?");
+                case 4 -> log_og4j.info("Bro had all the time to design the core, yet couldn't make the API already.");
+                case 5 -> log_og4j.info("Nothing else than the alternates being within the core itself.");
             }
         }
 
         boolean cmdFound = false;
-        for (ShellCaller caller : shellCallers) {
+        for (ShellCommand caller : shellCallers) {
             if (caller.getCommand().equalsIgnoreCase(exec)) {
                 cmdFound = true;
 
                 try {
-                    log.info("CommandRun(" + exec + ", " + Arrays.toString(args) + ")");
+                    log_og4j.info("CommandRun(" + exec + ", " + Arrays.toString(args) + ")");
 
                     if (caller.isDeprecated()) {
-                        log.warning("CommandDeprecation(" + exec + ")");
+                        log_og4j.warning("CommandDeprecation(" + exec + ")");
                         Terminal.println(YELLOW, String.format("%s: command deprecated", exec), true);
                     }
 
-                    int code = caller.execute(args, shellConfigList);
+                    int code = caller.execute(args, shellEnvList);
 
-                    log.info("CommandExecution(Code=" + code + ", Cmd=" + exec + ")");
+                    log_og4j.info("CommandExecution(Code=" + code + ", Cmd=" + exec + ")");
 
                     if (code != 0) {
                         Terminal.println(Terminal.TermColor.RED,
@@ -429,14 +427,14 @@ public class Shell {
                         cmdFound = true;
 
                         if (caller.isDeprecated()) {
-                            log.warning("CommandDeprecation(" + exec + ")");
+                            log_og4j.warning("CommandDeprecation(" + exec + ")");
                             Terminal.println(YELLOW, String.format("%s: command deprecated", exec), true);
                         }
 
                         try {
-                            log.info("CommandRun(MC_Alternate; " + exec + ", " + Arrays.toString(args) + ")");
-                            int code = caller.execute(args, shellConfigList);
-                            log.info("CommandExecution(MC_Alternate; Code=" + code + ", Cmd=" + exec + ")");
+                            log_og4j.info("CommandRun(MC_Alternate; " + exec + ", " + Arrays.toString(args) + ")");
+                            int code = caller.execute(args, shellEnvList);
+                            log_og4j.info("CommandExecution(MC_Alternate; Code=" + code + ", Cmd=" + exec + ")");
 
                             if (code != 0) {
                                 Terminal.println(Terminal.TermColor.RED,
@@ -460,9 +458,9 @@ public class Shell {
 
                             if (cmdFound) {
                                 try {
-                                    log.info("AliasExecute(Command=" + alias.getCaller().getCommand() + "; DefArgs=" + Arrays.toString(alias.getExecutionArgs()) + "; AdditionalArgs=" + Arrays.toString(args) + ")");
-                                    int code = alias.execute(args, shellConfigList);
-                                    log.info("AliasExecution(Code=" + code + ")");
+                                    log_og4j.info("AliasExecute(Command=" + alias.getCaller().getCommand() + "; DefArgs=" + Arrays.toString(alias.getExecutionArgs()) + "; AdditionalArgs=" + Arrays.toString(args) + ")");
+                                    int code = alias.execute(args, shellEnvList);
+                                    log_og4j.info("AliasExecution(Code=" + code + ")");
                                 } catch (ShellException ex) {
                                     Terminal.println(Terminal.TermColor.RED, Utility.throwableToString(ex), true);
                                 }
@@ -474,7 +472,7 @@ public class Shell {
         }
 
         if (!cmdFound) {
-            log.info(String.format("CommandExecution(Command = \"%s\"; Found = false)", exec));
+            log_og4j.info(String.format("CommandExecution(Command = \"%s\"; Found = false)", exec));
             Terminal.println(Terminal.TermColor.RED, String.format("%s: command not found", exec), true);
         }
     }
@@ -483,7 +481,7 @@ public class Shell {
      * Launches the interactive Shell
      */
     public void launch() {
-        log.info("Starting Shell");
+        log_og4j.info("Starting Shell");
 
         running = true;
         cmd();
@@ -493,7 +491,7 @@ public class Shell {
      * Stops the Application Shell
      */
     public void stopShell() {
-        log.info("Closing app");
+        log_og4j.info("Closing app");
 
         running = false;
         Shell.instance = null;

@@ -5,7 +5,7 @@ import net.bc100dev.commons.Terminal;
 import net.bc100dev.commons.utils.HelpPage;
 import net.bc100dev.osintgram4j.MainClass;
 import osintgram4j.api.sh.Command;
-import osintgram4j.commons.ShellConfig;
+import osintgram4j.commons.ShellEnvironment;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -80,7 +80,7 @@ public class VerCmd extends Command {
     }
 
     @Override
-    public int launchCmd(String[] args, List<ShellConfig> env) {
+    public int launchCmd(String[] args, List<ShellEnvironment> env) {
         InputStream is = null;
 
         try {

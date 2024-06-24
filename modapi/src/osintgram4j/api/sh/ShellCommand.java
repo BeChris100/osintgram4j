@@ -1,12 +1,12 @@
 package osintgram4j.api.sh;
 
-import osintgram4j.commons.ShellConfig;
+import osintgram4j.commons.ShellEnvironment;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
-public class ShellCaller {
+public class ShellCommand {
 
     private final String command, helpDesc;
     private Class<?> callableClass;
@@ -17,7 +17,7 @@ public class ShellCaller {
 
     private final Object classInstance;
 
-    public ShellCaller(boolean deprecated, String command, String helpDesc, String callableClassName, String... alternateCommands) throws ShellException {
+    public ShellCommand(boolean deprecated, String command, String helpDesc, String callableClassName, String... alternateCommands) throws ShellException {
         this.deprecated = deprecated;
         this.command = command;
         this.helpDesc = helpDesc;
@@ -70,7 +70,7 @@ public class ShellCaller {
         return helpDesc;
     }
 
-    public int execute(String[] args, List<ShellConfig> configList) throws ShellException {
+    public int execute(String[] args, List<ShellEnvironment> configList) throws ShellException {
         if (callableMethod == null || callableClass == null)
             throw new NullPointerException("Method and/or Class not initialized");
 

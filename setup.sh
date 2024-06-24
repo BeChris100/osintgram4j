@@ -235,5 +235,5 @@ else
     get_libs
 fi
 
-echo ">> Setup Process completed"
+echo "// Setup Process completed"
 echo "To build the project, run the Build script to complete the building process."

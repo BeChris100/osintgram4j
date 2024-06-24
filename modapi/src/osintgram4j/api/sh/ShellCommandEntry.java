@@ -18,10 +18,10 @@ public class ShellCommandEntry {
 
     private final int version;
     private final String label, pkgName;
-    private final List<ShellCaller> callers;
+    private final List<ShellCommand> callers;
     private final List<ShellAlias> aliases;
 
-    private ShellCommandEntry(int version, String label, String pkgName, List<ShellCaller> callers, List<ShellAlias> aliases) {
+    private ShellCommandEntry(int version, String label, String pkgName, List<ShellCommand> callers, List<ShellAlias> aliases) {
         this.version = version;
         this.label = label;
         this.pkgName = pkgName;
@@ -37,7 +37,7 @@ public class ShellCommandEntry {
         return aliases;
     }
 
-    public List<ShellCaller> getCommands() {
+    public List<ShellCommand> getCommands() {
         return callers;
     }
 
@@ -83,7 +83,7 @@ public class ShellCommandEntry {
         }
 
         JSONArray arr = obj.getJSONArray("command_list");
-        List<ShellCaller> callerList = new ArrayList<>();
+        List<ShellCommand> callerList = new ArrayList<>();
         List<ShellAlias> aliases = new ArrayList<>();
 
         if (!arr.isEmpty()) {
@@ -140,7 +140,7 @@ public class ShellCommandEntry {
                 if (_class.startsWith("."))
                     _class = pkgName + _class;
 
-                ShellCaller caller = new ShellCaller(deprecated, cmd, description, _class, alternates);
+                ShellCommand caller = new ShellCommand(deprecated, cmd, description, _class, alternates);
                 callerList.add(caller);
 
                 if (cmdObj.has("aliases")) {

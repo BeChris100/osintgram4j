@@ -2,13 +2,10 @@
     "ModInfo": {
         "Author": "ExampleUser",
         "Name": "ModName",
-        "Version": "1.00",
-        "PackageName": "com.example"
+        "Version": "1.00"
     },
-    "Actions": {
-        "OnStart": {
-            "LaunchClass": ".ModMain",
-            "InitiateCommands": "{pkg}/resources/commands.json"
-        }
-    }
+    "JsonCommandFiles": [
+        "com/app_package/example/commands.json"
+    ],
+    "StartClass": "com.app_package.example.StartClass"
 }

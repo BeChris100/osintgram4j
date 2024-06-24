@@ -1,5 +1,7 @@
 package osintgram4j.commons;
 
+import net.bc100dev.commons.ApplicationException;
+
 import java.io.File;
 
 /**
@@ -16,7 +18,7 @@ public class PackagedApplication {
     private static final String oldPrefix = ".app.locations";
     private static final String newPrefix = "og4j.location";
 
-    public static File getApplicationDirectory() {
+    public static File getApplicationDirectory() throws ApplicationException {
         String k = oldPrefix + ".app_dir";
         String v = withValue(k);
         if (v != null)
@@ -24,10 +26,14 @@ public class PackagedApplication {
 
         k = newPrefix + ".app_dir";
         v = withValue(k);
-        return v != null ? new File(v) : null;
+
+        if (v == null)
+            throw new ApplicationException("Application directory was not initialized");
+
+        return new File(v);
     }
 
-    public static File getRootDirectory() {
+    public static File getRootDirectory() throws ApplicationException {
         String k = oldPrefix + ".root_dir";
         String v = withValue(k);
         if (v != null)
@@ -35,10 +41,14 @@ public class PackagedApplication {
 
         k = newPrefix + ".root_dir";
         v = withValue(k);
-        return v != null ? new File(v) : null;
+
+        if (v == null)
+            throw new ApplicationException("Application directory was not initialized");
+
+        return new File(v);
     }
 
-    public static File getBinaryDirectory() {
+    public static File getBinaryDirectory() throws ApplicationException {
         String k = oldPrefix + ".bin_dir";
         String v = withValue(k);
         if (v != null)
@@ -46,7 +56,11 @@ public class PackagedApplication {
 
         k = newPrefix + ".bin_dir";
         v = withValue(k);
-        return v != null ? new File(v) : null;
+
+        if (v == null)
+            throw new ApplicationException("Application directory was not initialized");
+
+        return new File(v);
     }
 
 }

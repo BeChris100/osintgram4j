@@ -183,16 +183,10 @@ public class Utility {
                 File bin = new File(pathContent);
                 if ((bin.exists() && bin.canExecute()) && (getOperatingSystem() == OperatingSystem.WINDOWS ?
                         bin.getName().equalsIgnoreCase(name) : bin.getName().equals(name))) {
-                    passedPathContents.clear();
-                    passedPathEntries.clear();
-
                     return bin;
                 }
             }
         }
-
-        passedPathContents.clear();
-        passedPathEntries.clear();
 
         return null;
     }

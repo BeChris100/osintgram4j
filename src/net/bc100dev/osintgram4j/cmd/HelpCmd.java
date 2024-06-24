@@ -3,13 +3,12 @@ package net.bc100dev.osintgram4j.cmd;
 import net.bc100dev.commons.Terminal;
 import net.bc100dev.commons.utils.HelpPage;
 import osintgram4j.api.sh.*;
-import osintgram4j.commons.ShellConfig;
+import osintgram4j.commons.ShellEnvironment;
 
 import java.util.*;
 
 import static net.bc100dev.commons.Terminal.TermColor.*;
-import static osintgram4j.commons.AppConstants.log;
-import static osintgram4j.commons.Titles.TITLE_BLOCK;
+import static osintgram4j.commons.AppConstants.log_og4j;
 
 public class HelpCmd extends Command {
 
@@ -21,7 +20,7 @@ public class HelpCmd extends Command {
         Shell instance = Shell.getInstance();
 
         for (String tokVal : cmdList) {
-            for (ShellCaller caller : instance.shellCallers) {
+            for (ShellCommand caller : instance.shellCallers) {
                 if (caller.getCommand().equals(tokVal)) {
                     try {
                         if (helps.containsKey(tokVal))
@@ -29,7 +28,7 @@ public class HelpCmd extends Command {
 
                         helps.put(tokVal, caller.retrieveLongHelp(new String[0]));
                     } catch (ShellException ignore) {
-                        log.warning("Command not found: " + tokVal);
+                        log_og4j.warning("Command not found: " + tokVal);
                         Terminal.println(Terminal.TermColor.RED,
                                 String.format("Unknown command \"%s\"", tokVal), true);
                         return 1;
@@ -43,7 +42,7 @@ public class HelpCmd extends Command {
 
                                 helps.put(caller.getCommand(), caller.retrieveLongHelp(new String[0]));
                             } catch (ShellException ignore) {
-                                log.warning("Command not found: " + tokVal);
+                                log_og4j.warning("Command not found: " + tokVal);
                                 Terminal.println(Terminal.TermColor.RED,
                                         String.format("Unknown command \"%s\"", tokVal), true);
                                 return 1;
@@ -69,12 +68,9 @@ public class HelpCmd extends Command {
                 }
             }
         } else {
-            Terminal.println(Terminal.TermColor.GREEN, TITLE_BLOCK(), true);
-            System.out.println();
-
             int maxCmdLength = 0;
 
-            for (ShellCaller caller : instance.shellCallers) {
+            for (ShellCommand caller : instance.shellCallers) {
                 String cmd = caller.getCommand();
                 if (cmd.length() > maxCmdLength)
                     maxCmdLength = cmd.length();
@@ -82,7 +78,7 @@ public class HelpCmd extends Command {
 
             maxCmdLength += 5;
 
-            for (ShellCaller caller : instance.shellCallers) {
+            for (ShellCommand caller : instance.shellCallers) {
                 String cmd = caller.getCommand();
                 int spaces = maxCmdLength - cmd.length();
 
@@ -97,7 +93,7 @@ public class HelpCmd extends Command {
 
             for (ShellAlias alias : instance.shellAliases) {
                 String cmd = alias.getAliasCmd();
-                ShellCaller call = alias.getCaller();
+                ShellCommand call = alias.getCaller();
 
                 Terminal.print(CYAN, cmd, true);
                 System.out.print(" → ");
@@ -121,7 +117,7 @@ public class HelpCmd extends Command {
             System.out.println();
             System.out.println("Alternates:");
 
-            for (ShellCaller caller : instance.shellCallers) {
+            for (ShellCommand caller : instance.shellCallers) {
                 for (String alternate : caller.getAlternateCommands()) {
                     Terminal.print(CYAN, alternate, true);
                     System.out.print(" → ");
@@ -136,14 +132,18 @@ public class HelpCmd extends Command {
     }
 
     @Override
-    public int launchCmd(String[] args, List<ShellConfig> env) {
+    public int launchCmd(String[] args, List<ShellEnvironment> env) {
         List<String> cmdList = new ArrayList<>();
 
         for (String arg : args) {
             if (arg.startsWith("-")) {
                 switch (arg) {
-                    case "-a" -> showAlias = true;
-                    case "-e" -> showAlt = true;
+                    case "-a", "--aliases" -> showAlias = true;
+                    case "-e", "--alternates" -> showAlt = true;
+                    case "--all" -> {
+                        showAlias = true;
+                        showAlt = true;
+                    }
                     case "-h", "--help" -> {
                         System.out.println("Display help information for each command");
 
@@ -151,8 +151,8 @@ public class HelpCmd extends Command {
                         pg.setStartSpaceWidth(5);
                         pg.setSpaceWidth(3);
                         pg.addArg("-a", null, "Show all commands, including aliases");
-                        pg.addArg("-e", null, "Shows only aliases");
-                        pg.addArg("-t", null, "Shows only alternate commands, in PowerShell Syntax alike");
+                        pg.addArg("-e", null, "Shows alternate commands, in different Syntaxes");
+                        pg.addArg("--all", null, "Shows all commands, aliases and alternates");
                         pg.display(System.out);
 
                         return 0;
@@ -162,9 +162,8 @@ public class HelpCmd extends Command {
                         return 1;
                     }
                 }
-            }
-
-            cmdList.add(arg);
+            } else
+                cmdList.add(arg);
         }
 
         String[] cmdArr = new String[cmdList.size()];
@@ -176,6 +175,13 @@ public class HelpCmd extends Command {
 
     @Override
     public String helpCmd(String[] args) {
-        return "A command that displays help information about specific commands";
+        HelpPage pg = new HelpPage();
+        pg.setStartSpaceWidth(5);
+        pg.setSpaceWidth(3);
+        pg.addArg("-a", null, "Show all commands, including aliases");
+        pg.addArg("-e", null, "Shows alternate commands, in different Syntaxes");
+        pg.addArg("--all", null, "Shows all commands, aliases and alternates");
+
+        return "Display help information for each command\n\nOptions:" + pg.display();
     }
 }
