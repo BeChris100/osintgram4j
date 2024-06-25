@@ -137,7 +137,11 @@ echo '// Making core.jar'
 
 echo '// Building the Application Package'
 cp out/libs/json.jar out/project/input/json.jar
+cp out/libs/commons-cli.jar out/project/input/commons-cli.jar
 cp AppSettings.cfg out/project/input/AppSettings.cfg
+
+mkdir -p out/project/input/mods
+touch out/project/input/mods/.nomedia
 
 if [ -d "out/pkg/osintgram4j" ]; then
     rm -rf out/pkg/osintgram4j
