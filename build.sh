@@ -146,7 +146,8 @@ fi
 "$JPACKAGE_CMD" -t app-image -n "$BUILD_NAME" --app-version "$BUILD_VERSION-$BUILD_VERSION_CODE" \
  -i out/project/input --main-jar core.jar --main-class net.bc100dev.osintgram4j.MainClass -d out/pkg --icon "extres/icon.png" \
  --java-options "-Xmx256m" --java-options "-Xms128m" --java-options '-Dog4j.location.app_dir=$APPDIR' \
- --java-options '-Dog4j.location.bin_dir=$BINDIR' --java-options '-Dog4j.location.root_dir=$ROOTDIR' --verbose
+ --java-options '-Dog4j.location.bin_dir=$BINDIR' --java-options '-Dog4j.location.root_dir=$ROOTDIR' \
+ --add-launcher og4j-logdata=extres/og4j-logdata-launcher.properties --verbose
 
 cp cxx/out/og4j-editor out/pkg/osintgram4j/bin/og4j-editor
 
@@ -161,6 +162,7 @@ if [[ "$INSTALL_CHOICE" =~ ^[Yy]$ ]]; then
         echo "Deleting previous installation"
         "$PREFIX" rm /usr/bin/osintgram4j
         "$PREFIX" rm /usr/bin/og4j-editor
+        "$PREFIX" rm /usr/bin/og4j-logdata
 
         if [ -d "/usr/share/osintgram4j" ]; then
             echo "Deleting old directory (moving to /usr/share/bc100dev/osintgram4j)"
@@ -175,6 +177,7 @@ if [[ "$INSTALL_CHOICE" =~ ^[Yy]$ ]]; then
     "$PREFIX" cp -r out/pkg/osintgram4j/* /usr/share/bc100dev/osintgram4j
     "$PREFIX" ln -s /usr/share/bc100dev/osintgram4j/bin/osintgram4j /usr/bin/osintgram4j
     "$PREFIX" ln -s /usr/share/bc100dev/osintgram4j/bin/og4j-editor /usr/bin/og4j-editor
+    "$PREFIX" ln -s /usr/share/bc100dev/osintgram4j/bin/og4j-logdata /usr/bin/og4j-logdata
 
     read -p "Do you wish to create an Application Launcher (start from the Start Menu)? (Y/N): " LAUNCHER_CHOICE
     if [[ "$LAUNCHER_CHOICE" =~ ^[Yy]$ ]]; then
