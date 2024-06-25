@@ -118,7 +118,7 @@ echo "// Compiling the Osintgram4j API"
 find modapi/src -name "*.java" -type f -print0 | xargs -0 "$JAVAC_CMD" -cp out/project/commons:out/libs/json.jar -d out/project/modapi
 
 echo "// Compiling the Core Application"
-find src -name "*.java" -type f -print0 | xargs -0 "$JAVAC_CMD" -cp out/project/modapi:out/project/commons:out/project/instagram-api:out/libs/json.jar -d out/project/core
+find src -name "*.java" -type f -print0 | xargs -0 "$JAVAC_CMD" -cp out/project/modapi:out/project/commons:out/project/instagram-api:out/libs/commons-cli.jar:out/libs/json.jar -d out/project/core
 
 echo "// Adding resources to the Core Application"
 cp -r src/net/bc100dev/osintgram4j/res out/project/core/net/bc100dev/osintgram4j/

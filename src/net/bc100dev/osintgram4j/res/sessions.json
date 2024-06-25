@@ -2,10 +2,10 @@
     "version": 1,
     "sessions": [
         {
-            "self.username": "",
-            "self.user_id": "",
-            "self.password": "[cached, encrypted password, in b64]",
-            "self.targets": [
+            "username": "",
+            "user_id": "",
+            "password": "[cached, encrypted password, in b64]",
+            "targets": [
                 {
                     "username": "",
                     "user_id": "",
@@ -13,8 +13,9 @@
                     "last_access_date": 1
                 }
             ],
-            "self.accessHeaderData": {
-            }
+            "cookies": {
+            },
+            "cookiesEncrypted": ""
         }
     ]
 }

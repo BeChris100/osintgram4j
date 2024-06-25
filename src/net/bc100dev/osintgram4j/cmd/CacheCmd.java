@@ -5,7 +5,7 @@ import net.bc100dev.commons.utils.Utility;
 import net.bc100dev.commons.utils.io.FileUtil;
 import net.bc100dev.osintgram4j.Settings;
 import osintgram4j.api.sh.Command;
-import osintgram4j.commons.ShellEnvironment;
+import osintgram4j.api.sh.ShellEnvironment;
 
 import java.io.File;
 import java.io.IOException;

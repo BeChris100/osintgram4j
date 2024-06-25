@@ -1,7 +1,5 @@
 package osintgram4j.api.sh;
 
-import osintgram4j.commons.ShellEnvironment;
-
 import java.util.List;
 
 public abstract class Command {

@@ -1,7 +1,7 @@
 package net.bc100dev.osintgram4j.cmd.conn;
 
 import osintgram4j.api.sh.Command;
-import osintgram4j.commons.ShellEnvironment;
+import osintgram4j.api.sh.ShellEnvironment;
 
 import java.util.List;
 

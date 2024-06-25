@@ -2,7 +2,6 @@ package osintgram4j.api.sh;
 
 import net.bc100dev.commons.utils.OperatingSystem;
 import net.bc100dev.commons.utils.io.FileUtil;
-import osintgram4j.commons.ShellEnvironment;
 
 import java.io.File;
 import java.io.IOException;

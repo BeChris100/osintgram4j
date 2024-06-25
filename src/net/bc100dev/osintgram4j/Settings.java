@@ -1,5 +1,6 @@
 package net.bc100dev.osintgram4j;
 
+import net.bc100dev.commons.ApplicationException;
 import net.bc100dev.commons.ApplicationRuntimeException;
 import osintgram4j.commons.PackagedApplication;
 
@@ -44,9 +45,12 @@ public class Settings {
     }
 
     public static void loadSettings() {
-        File appDir = PackagedApplication.getApplicationDirectory();
-        if (appDir == null)
-            throw new ApplicationRuntimeException("APPDIR (\"og4j.location.app_dir\") is not set up");
+        File appDir;
+        try {
+            appDir = PackagedApplication.getApplicationDirectory();
+        } catch (ApplicationException ex) {
+            throw new ApplicationRuntimeException(ex);
+        }
 
         File reqConfFile = new File(appDir.getAbsolutePath() + "/AppSettings.cfg");
         if (!reqConfFile.exists() || !reqConfFile.isFile() || !reqConfFile.canRead())

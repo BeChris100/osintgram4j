@@ -1,4 +1,4 @@
-package osintgram4j.commons;
+package osintgram4j.api.sh;
 
 public class ShellEnvironment {
 

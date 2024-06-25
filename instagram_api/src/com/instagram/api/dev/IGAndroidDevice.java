@@ -69,6 +69,33 @@ public class IGAndroidDevice extends IGDevice {
 
     @Override
     public void passUserAgent(String userAgent) {
+        /*
+        builds.json
+        [
+          "NMF26X",
+          "MMB29M",
+          "MRA58K",
+          "NRD90M",
+          "MRA58K",
+          "OPM1.171019.011",
+          "IMM76L",
+          "JZO54K",
+          "JDQ39",
+          "JLS36I",
+          "KTU84P",
+          "LRX22C",
+          "LMY48M",
+          "MMB29V",
+          "NRD91N",
+          "N2G48C"
+        ]
+         */
+
+        /*
+            get webUserAgent() {
+                return `Mozilla/5.0 (Linux; Android ${this.devicePayload.android_release}; ${this.devicePayload.model} Build/${this.build}; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/70.0.3538.110 Mobile Safari/537.36 ${this.appUserAgent}`;
+            }
+         */
         super.passUserAgent(userAgent);
     }
 }

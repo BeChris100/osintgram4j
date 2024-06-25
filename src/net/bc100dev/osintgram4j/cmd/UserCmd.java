@@ -4,7 +4,7 @@ import net.bc100dev.commons.Terminal;
 import net.bc100dev.commons.utils.HelpPage;
 import net.bc100dev.osintgram4j.api_conn.UserSession;
 import osintgram4j.api.sh.Command;
-import osintgram4j.commons.ShellEnvironment;
+import osintgram4j.api.sh.ShellEnvironment;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -16,13 +16,13 @@ import java.util.Arrays;
 
 public class FileEncryption {
 
-    private static final byte[] salt = {
+    private static final byte[] defaultEncryptionSalt = {
             (byte) 0x43, (byte) 0x76, (byte) 0x95, (byte) 0xc7,
             (byte) 0x5b, (byte) 0xd7, (byte) 0x45, (byte) 0x17
     };
 
     private static Cipher makeCipher(String pass, boolean doEncrypt) throws GeneralSecurityException {
-        PBEKeySpec keySpec = new PBEKeySpec(pass.toCharArray(), salt, 65536, 256);
+        PBEKeySpec keySpec = new PBEKeySpec(pass.toCharArray(), defaultEncryptionSalt, 65536, 256);
         SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
         SecretKey key = keyFactory.generateSecret(keySpec);
         SecretKeySpec secretKeySpec = new SecretKeySpec(key.getEncoded(), "AES");

@@ -6,7 +6,7 @@ import com.instagram.api.ConnectionStateException;
 import net.bc100dev.commons.utils.io.FileUtil;
 import net.bc100dev.osintgram4j.Settings;
 import osintgram4j.api.sh.Command;
-import osintgram4j.commons.ShellEnvironment;
+import osintgram4j.api.sh.ShellEnvironment;
 import org.json.JSONArray;
 
 import java.io.*;

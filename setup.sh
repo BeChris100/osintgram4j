@@ -193,7 +193,7 @@ function get_libs() {
     if [ "$FORCE_DOWNLOAD" == "true" ]; then
         RUN_DOWNLOAD="true"
     else
-        if [ ! -f "out/libs/json.jar" ]; then
+        if [ ! -f "out/libs/json.jar" ] || [ ! -f "out/libs/commons-cli.jar" ]; then
             RUN_DOWNLOAD="true"
         fi
     fi
@@ -201,6 +201,7 @@ function get_libs() {
     if [ "$RUN_DOWNLOAD" == "true" ]; then
         # update version to 20240303
         wget "https://repo1.maven.org/maven2/org/json/json/20240303/json-20240303.jar" -O out/libs/json.jar
+        wget "https://repo1.maven.org/maven2/commons-cli/commons-cli/1.8.0/commons-cli-1.8.0.jar" -O out/libs/commons-cli.jar
     fi
 }
 

@@ -1,7 +1,5 @@
 package osintgram4j.api.sh;
 
-import osintgram4j.commons.ShellEnvironment;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;

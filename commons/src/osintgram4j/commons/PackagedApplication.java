@@ -43,7 +43,7 @@ public class PackagedApplication {
         v = withValue(k);
 
         if (v == null)
-            throw new ApplicationException("Application directory was not initialized");
+            throw new ApplicationException("Root directory was not initialized");
 
         return new File(v);
     }
@@ -58,7 +58,7 @@ public class PackagedApplication {
         v = withValue(k);
 
         if (v == null)
-            throw new ApplicationException("Application directory was not initialized");
+            throw new ApplicationException("Binary directory was not initialized");
 
         return new File(v);
     }

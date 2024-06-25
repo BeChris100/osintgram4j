@@ -7,7 +7,7 @@ import net.bc100dev.commons.utils.io.FileUtil;
 import net.bc100dev.commons.utils.io.UserIO;
 import osintgram4j.api.sh.Shell;
 import osintgram4j.api.sh.ShellException;
-import osintgram4j.commons.ShellEnvironment;
+import osintgram4j.api.sh.ShellEnvironment;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -19,6 +19,7 @@ import java.util.logging.Level;
 import static net.bc100dev.commons.utils.RuntimeEnvironment.*;
 import static net.bc100dev.osintgram4j.Settings.securityWarnings;
 import static net.bc100dev.osintgram4j.Settings.loadSettings;
+import static osintgram4j.commons.AppConstants.log_net;
 import static osintgram4j.commons.AppConstants.log_og4j;
 import static osintgram4j.commons.Titles.DISPLAY;
 import static osintgram4j.commons.Titles.TITLE_BLOCK;
@@ -52,22 +53,47 @@ public class MainClass {
         });
 
         try {
-            // duplicate code from `Settings#storeLocation()` (reasoning: Settings not loaded yet)
-            File logFile = switch (getOperatingSystem()) {
+            File og4jLogFile = switch (getOperatingSystem()) {
                 case LINUX -> new File(USER_HOME.getAbsolutePath() + "/.config/net.bc100dev/osintgram4j/log.txt");
                 case WINDOWS -> new File(USER_HOME.getAbsolutePath() + "\\AppData\\Local\\BC100Dev\\Osintgram4j\\log.txt");
                 case MAC_OS -> new File(USER_HOME.getAbsolutePath() + "/Library/net.bc100dev/osintgram4j/log.txt");
             };
 
-            if (!logFile.exists())
-                FileUtil.createFile(logFile.getAbsolutePath(), true);
+            File og4jNetLogFile = switch (getOperatingSystem()) {
+                case LINUX -> new File(USER_HOME.getAbsolutePath() + "/.config/net.bc100dev/osintgram4j/net-log.txt");
+                case WINDOWS -> new File(USER_HOME.getAbsolutePath() + "\\AppData\\Local\\BC100Dev\\Osintgram4j\\net-log.txt");
+                case MAC_OS -> new File(USER_HOME.getAbsolutePath() + "/Library/net.bc100dev/osintgram4j/net-log.txt");
+            };
 
-            FileHandler handler = new FileHandler(logFile.getAbsolutePath(), true);
+            if (!og4jLogFile.exists()) {
+                FileUtil.createFile(og4jLogFile.getAbsolutePath(), true);
+
+                try (FileOutputStream fos = new FileOutputStream(og4jLogFile)) {
+                    fos.write("Osintgram4j Log Data\nVersion 1.00\n\n".getBytes());
+                }
+            }
+
+            if (!og4jNetLogFile.exists()) {
+                FileUtil.createFile(og4jNetLogFile.getAbsolutePath(), true);
+
+                try (FileOutputStream fos = new FileOutputStream(og4jNetLogFile)) {
+                    fos.write("Osintgram4j Log Data\nVersion 1.00\n\n".getBytes());
+                }
+            }
+
+            FileHandler handler = new FileHandler(og4jLogFile.getAbsolutePath(), true);
             handler.setFormatter(new LogFormatter());
+
+            FileHandler handler1 = new FileHandler(og4jNetLogFile.getAbsolutePath(), true);
+            handler1.setFormatter(new LogFormatter());
 
             log_og4j.setUseParentHandlers(false);
             log_og4j.addHandler(handler);
             log_og4j.info("Initialized");
+
+            log_net.setUseParentHandlers(false);
+            log_net.addHandler(handler1);
+            log_net.info("Initialized");
         } catch (IOException ex) {
             ex.printStackTrace(System.err);
         }
