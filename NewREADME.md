@@ -24,7 +24,8 @@ With Privacy Policy in mind, you acknowledge:
 - **Logging**: Your actions are logged locally that can be used for debugging.
 - **No Server Uploads**: No data is being sent to any server without any explicit
   permission
-- **Privacy Focus**: Sensitive information is not specifically recorded.
+- **Sensitivity**: Some sensitive information is included, such as the commands that
+  you type (e.g. usernames) in the interactive Shell
 
 See the [full Privacy Policy](PrivacyPolicy.md) to review. Don't forget, use
 Osintgram4j responsibly, respect privacy of others, and always act ethically.
@@ -51,7 +52,7 @@ setup with the Shell scripts:
 
 The `--force-download` is an optional parameter. If given, it will always download
 the JDK and the libraries, no matter its state. Otherwise, it will try to detect
-JDK 21, and get the latest `org.json` library.
+JDK 21, and get the latest `org.json` and `org.apache:commons-cli` library.
 
 ## Client Mods
 Osintgram4j introduces a Modding API, which is something that I like. Having the

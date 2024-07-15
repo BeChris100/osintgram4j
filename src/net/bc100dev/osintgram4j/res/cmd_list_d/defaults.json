@@ -9,7 +9,8 @@
             "class": ".cmd.conn.ReadAddresses",
             "alternates": [
                 "addrs",
-                "Get-Addresses"
+                "Get-Addresses",
+                "Read-Addresses"
             ]
         },
         {
@@ -17,7 +18,8 @@
             "description": "Get user's photos captions",
             "class": ".cmd.conn.ReadCaptions",
             "alternates": [
-                "Get-Captions"
+                "Get-Captions",
+                "Read-Captions"
             ]
         },
         {
@@ -26,7 +28,8 @@
             "class": ".cmd.conn.ReadComments",
             "alternates": [
                 "replies",
-                "Get-Comments"
+                "Get-Comments",
+                "Read-Comments"
             ]
         },
         {
@@ -34,7 +37,9 @@
             "description": "Get target followers",
             "class": ".cmd.conn.ReadFollowers",
             "alternates": [
-                "Get-Followers"
+                "Get-Followers",
+                "Snatch-Followers",
+                "Fetch-Followers"
             ]
         },
         {
@@ -43,7 +48,9 @@
             "class": ".cmd.conn.ReadFollowings",
             "alternates": [
                 "Get-Followings",
-                "Read-Followings"
+                "Read-Followings",
+                "Snatch-Followings",
+                "Fetch-Followings"
             ]
         },
         {
@@ -55,7 +62,11 @@
                 "Get-Followers-EmailAddresses",
                 "Read-Followers-Email",
                 "Read-Followers-EmailAddresses",
-                "followers-emails"
+                "followers-emails",
+                "Snatch-Followers-Email",
+                "Snatch-Followers-EmailAddresses",
+                "Fetch-Followers-Email",
+                "Fetch-Followers-EmailAddresses"
             ]
         },
         {
@@ -67,7 +78,11 @@
                 "Get-Followings-EmailAddresses",
                 "Read-Followings-Email",
                 "Read-Followings-EmailAddresses",
-                "followings-emails"
+                "followings-emails",
+                "Snatch-Followings-Email",
+                "Snatch-Followings-EmailAddresses",
+                "Fetch-Followings-Email",
+                "Fetch-Followings-EmailAddresses"
             ]
         },
         {
@@ -80,7 +95,11 @@
                 "Read-Followers-Phone",
                 "Read-Followers-PhoneNumbers",
                 "followers-phone",
-                "followers-phone-numbers"
+                "followers-phone-numbers",
+                "Snatch-Followers-Phone",
+                "Snatch-Followers-PhoneNumbers",
+                "Fetch-Followers-Phone",
+                "Fetch-Followers-PhoneNumbers"
             ]
         },
         {
@@ -93,7 +112,11 @@
                 "Read-Followings-Phone",
                 "Read-Followings-PhoneNumbers",
                 "followers-phone",
-                "followers-phone-numbers"
+                "followers-phone-numbers",
+                "Snatch-Followings-Phone",
+                "Snatch-Followings-PhoneNumbers",
+                "Fetch-Followings-Phone",
+                "Fetch-Followings-PhoneNumbers"
             ]
         },
         {
@@ -103,7 +126,8 @@
             "alternates": [
                 "Get-Hashtags",
                 "Read-Hashtags",
-                "htags"
+                "htags",
+                "Fetch-Hashtags"
             ]
         },
         {
@@ -111,11 +135,14 @@
             "description": "Get target information",
             "class": ".cmd.conn.ReadInfo",
             "alternates": [
+                "inf",
                 "information",
                 "Get-UserInfo",
                 "Get-User",
                 "Read-UserInfo",
-                "Read-User"
+                "Read-User",
+                "Fetch-User",
+                "Fetch-UserInfo"
             ]
         },
         {
@@ -123,7 +150,8 @@
             "description": "Get total likes of target's photos",
             "class": ".cmd.conn.ReadLikes",
             "alternates": [
-                "Get-TotalLikes"
+                "Get-TotalLikes",
+                "Fetch-TotalLikes"
             ]
         },
         {
@@ -132,6 +160,7 @@
             "class": ".cmd.conn.ReadMediaTypes",
             "alternates": [
                 "Get-MediaTypes",
+                "Fetch-MediaTypes",
                 "media-types"
             ]
         },
@@ -144,7 +173,9 @@
                 "Get-PhotoDesc",
                 "Read-PhotoDescriptions",
                 "Read-PhotoDesc",
-                "photo-desc"
+                "photo-desc",
+                "Fetch-PhotoDesc",
+                "Fetch-PhotoDescriptions"
             ]
         },
         {
@@ -153,6 +184,8 @@
             "class": ".cmd.conn.DownloaderPhotos",
             "alternates": [
                 "Download-Photos",
+                "Fetch-Photos",
+                "Snatch-Photos",
                 "Get-Photos",
                 "images"
             ]
@@ -166,6 +199,10 @@
                 "Download-ProfilePic",
                 "Get-ProfilePicture",
                 "Get-ProfilePic",
+                "Snatch-ProfilePicture",
+                "Snatch-ProfilePic",
+                "Fetch-ProfilePicture",
+                "Fetch-ProfilePic",
                 "pfp"
             ]
         },
@@ -175,7 +212,9 @@
             "class": ".cmd.conn.DownloaderStories",
             "alternates": [
                 "Download-Stories",
-                "Get-Stories"
+                "Get-Stories",
+                "Fetch-Stories",
+                "Snatch-Stories"
             ]
         },
         {
@@ -185,8 +224,13 @@
             "alternates": [
                 "Get-Tags",
                 "Get-Tagged",
+                "Get-TaggedContent",
                 "Read-Tags",
-                "Read-Tagged"
+                "Read-Tagged",
+                "Read-TaggedContent",
+                "Fetch-Tags",
+                "Fetch-Tagged",
+                "Fetch-TaggedContent"
             ]
         },
         {
@@ -195,7 +239,8 @@
             "class": ".cmd.conn.ReadUserComments",
             "alternates": [
                 "Get-PostComments",
-                "Read-PostComments"
+                "Read-PostComments",
+                "Fetch-PostComments"
             ]
         },
         {
@@ -206,7 +251,9 @@
                 "Get-UserTags",
                 "Get-UserTagList",
                 "Read-UserTags",
-                "Read-UserTagList"
+                "Read-UserTagList",
+                "Fetch-UserTags",
+                "Fetch-UserTagList"
             ]
         }
     ]

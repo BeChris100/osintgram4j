@@ -11,8 +11,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.Level;
 
 import static net.bc100dev.commons.utils.RuntimeEnvironment.getOperatingSystem;
+import static osintgram4j.commons.AppConstants.log_og4j;
 
 public class VerCmd extends Command {
 
@@ -121,6 +123,7 @@ public class VerCmd extends Command {
             System.out.println(str.substring(0, str.toString().length() - 1));
             return 0;
         } catch (IOException ex) {
+            log_og4j.log(Level.SEVERE, "App Information Read Fail", ex);
             Terminal.errPrintln(Terminal.TermColor.RED, "An error occurred while trying to read the App Information file", true);
             return 1;
         } finally {

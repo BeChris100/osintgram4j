@@ -1,192 +1,126 @@
 # OSINTgram (OSINT for Instagram)
-Remember on how good our old, beloved Osintgram project became famous by Datalux,
-and nowadays, it barely even functions? Yeah, ever since the lack of updates and
-Instagram API changes, the original project on the
-[base repository](https://github.com/Datalux/Osintgram) barely works anymore.
-What I decided to do is to rewrite the whole entire project, including the IG
-Private APIs, in my favorite language of all time, Java.
+```text
+   ,#&@@@@%/       *%&@@@@&&%.        %&@%         /&&&&&&&&&*
+ ,&@/     .%@/   /@%,     *&&,      *&/ @%              #@/   
+ %@/       .%@* *@%.               (&,  @%              #@/   
+.@&*        #@( (@#    .******   .&#.   @%              #@/
+ (@(       *&@. .@@*    ..,#@*   /@@@@@@@@@(    @%      #@/
+  *&&(,..*%@#.   .#@&(,..,/&@,          @&      @@#,. ,(@%.
+     ,/((*.          ,/((/*.            ||        \*/(/,
+```
 
-Note that this is still a work in the progress, as the original code is still
-being analyzed, so that I can convert them into the functional Java code. It is
-not expected to be fully functional as of now, as I recently started working on
-Osintgram for Java.
-
----
-
-## Disclaimer (Rules)
-The use of any software, Osintgram / Osintgram4j included, is intended for
-legitimate and ethical use only. [Me](https://github.com/BeChris100),
-[the developer](https://github.com/Datalux) and other contributors of the Osintgram
-project do not condone or support any form of unethical activities, such as Illegal
-/ Black-Hat Hacking, or having malicious intents in the first place. It is essential
-to follow all relevant laws and Instagram's ToS (Terms of Service), while using
-this software.
-
-By using the Osintgram Project, you acknowledge and agree that:
-
-- You are responsible for your actions and usage of this software. This indicates
-  that your actions might, and could be, punishable by the law enforcement (police,
-  FBI etc.). We, as the developers, cannot replace the actions that the law should
-  do, but being vigilante and doing some actions that the law ***should*** do, when
-  no actions are taken, could be done.
-- Any actions, such as potential misuse, illegal activities or violations of
-  Instagram's policies, are prohibited. By breaking the policies, you acknowledge
-  that your account may or may not be banned, if this tool is being misused.
-- We, the developers of this project are not responsible for any consequences or
-  damages that might result from the use of this software. This project is designed
-  for a specific purpose, being information gathering only. Using it for Blackmail
-  or other things, may or may not be held reliable.
-
-Please use the Osintgram project responsibly, respect privacy, maintain ethical
-standards in all your activities, and use the tool with explicit permission. For
-legal reasons, always have a legal document that you explicitly gained permission
-for your actions.
+Remember, how the beloved Osintgram project by [Datalux](https://github.com/Datalux)
+fell apart due to Instagram's API changes and lack of updates? Well, you can stop
+worrying. Osintgram4j aims to fix the issues, and make [the original
+Project](https://github.com/Datalux/Osintgram) look like it was never broken. It's
+a complete rewrite in Java, bringing back stability, along with new features.
 
 ---
 
-## Potential Takedown
-Another point to mention is that the original developer has all the right to tell
-me, if I am required to archive, delete or completely dump the project. While I am
-still happy on the development in this project, I am still trying to get in touch
-with [the original developer](https://github.com/Datalux) himself, and hope to get
-a positive response. The reason is that I do not want to dive myself into a lawsuit
-due to copyrights. Even though that the Software Licensing exists, I am willing to
-contact to ensure the legitimacy between me and the developer.
+## Use cases...?
+No use cases yet. Matter of fact, this project is still heavily under development.
+Keep an eye on the discussions tab, as I will be doing Announcements, when a new
+milestone will be reached.
 
-28-03-2024 Update: I am not getting any response from the original developer, which
-means, I am getting involved with Russian roulette (taking risks), and I'll be
-trying to not get any Takedown notice, like for example, DMCA Takedown notice,
-since that will be bad. However, this does not mean that I am not following the
-Licensing guidelines because if I don't, then I will most likely face legal issues.
-So, in that case, I will be following the Licensing guidelines. I'll try to get in
-touch with the developer one last time, and if that won't work, then Licensing
-guidelines it is.
-
-Now, don't get me wrong. I like this project, and I clearly don't want to close this
-project whatsoever. But, if I do get forced to close this project down, then you
-know the cause.
+Oh, and when a project is under development, and features like not being able to log
+into your Instagram account is unclear, then do note that features like these are not
+fully adjusted yet that it is being used in general use case. And yes, people do
+start to piss me off on how to use it. I am tired on telling that this tool is not
+ready for public use yet.
 
 ---
 
-## Reasoning on Development
-The first reason that I started the development on this project is to have the
-stability of the Osintgram project back. Since the Instagram APIs have changed, and
-a single API Call have been removed, the use of the
-[original Project](https://github.com/Datalux/Osintgram) have broken the main
-method, which the project can no longer start. This is due to a single line, which
-I debugged, and will work with it, commented out. See
-[the Restoration Process](docs/OrigRestore.md).
+## Disclaimer & Privacy Policy
+Osintgram4j, like any other software, is intended for ethical and legal use only.
+Other developers, myself included, do not support unethical activities like hacking
+or other malicious actions. Always follow relevant laws and the platforms Terms of
+Service.
 
-Also, even that Python is easy, I decided to switch to a different language. It is
-none other than Java itself. Yes, I use Java and C++, by the way. However,
-due to some issues with IntelliJ having multiple modules and working with Gradle /
-Maven, I decided to reject their offer, and go with the more controllable form,
-writing a custom Build Process for the project. I hate that issue, and I simply
-don't want to go that route. I use IntelliJ Ultimate and CLion, by the way.
+By using Osintgram4j, you acknowledge:
+- **Responsibility**: You are accountable for your own actions.
+- **Ethical Use**: Never misuse this tool or violate Instagram's policies.
+- **No Liability**: We, the developers, are not liable for consequences arising from
+  misuse.
 
-To fill up the conception about me not using Gradle or Maven, I will be making
-an alternative way of building projects that will support multiple languages, making
-the time process of building a project faster, especially that you don't have to
-run `make`, Gradle or Maven, or even other processes. That build system might
-also be one of the reasons, why I might also ditch the Shell scripts to build this
-project, and use the new-style Building. I hear you, you don't like bloat on your
-system, but we live in 2024, as of now.
+With Privacy Policy in mind, you acknowledge:
+- **Logging**: Your actions are logged locally that can be used for debugging.
+- **No Server Uploads**: No data is being sent to any server without any explicit
+  permission
+- **Sensitivity**: Some sensitive information is included, such as the commands that
+  you type (e.g. usernames) in the interactive Shell
 
-Also, this project might look like it is bloated to the max, but I am still trying
-to keep it lightweight as possible. Please do note that Java development can
-receive more and more bloat from time to time, since it can be time-consuming, or
-the fact that Java is very much verbose and that it forces you into OOP
-(Object-oriented programming). The bloat should be more than an expectation.
-
-Another point to mention is that I won't provide the building scripts for Windows
-via the Batch / Powershell files, but I'll still provide the releases for the
-Windows platform via the "Releases" tab. It is meant to be run on Linux instead of
-Windows, since I'm an Arch Linux user, by the way.
+See the [full Privacy Policy](PrivacyPolicy.md) to review. Don't forget, use
+Osintgram4j responsibly, respect privacy of others, and always act ethically.
 
 ---
 
 ## Build Process
-To set up your workspace for the Osintgram project, you can select this project,
-or [the original project](https://github.com/Datalux/Osintgram). However, this is
-Osintgram4j project, which is a part of the OSINT and the Osintgram Family.
+Prepare a Linux environment, with either one of these options:
+- Host (main OS / Dual Boot)
+- VM (Virtual Machine)
+- Cloud Shell / Servers (Google Cloud, Linode)
+- Containers (Docker)
+- WSL (Windows-only)
 
-This project is mainly targeted for the Linux platform. However, this does not
-mean that you have to install Linux on your host system. Here are a few workarounds:
+This project is mainly focused and optimized for **the Linux platform**. Simple
+setup with the Shell scripts:
 
-- Virtual Machine (VM): Creates a virtual environment that operates like a
-  separate computer, allowing you to run Linux on Windows, macOS, or Android.
-  It's a cost-free and straightforward way to experiment with different operating
-  systems.
-- Cloud Shell / Web Server: Offers remote Linux access via `ssh`. Costs vary by
-  provider. Linode can be a way, if you follow NetworkChuck.
-- Windows Subsystem for Linux (WSL): Provides Linux capabilities inside Windows.
-  Can be enabled through `optionalfeatures` in Windows 10 & 11.
-- Linux Containers (e.g., Docker): Runs Linux apps in lightweight, isolated
-  containers on your system, allowing to run any Container within the Docker 
-  Runtime. Efficient for development and specific app usage. Comes with a Docker
-  setup for easy project initialization.
+1. **_Download dependencies_**:
+   - Debian/Ubuntu based: `sudo apt install build-essential cmake tar wget`
+   - Arch/Manjaro based: `sudo pacman -Sy base-devel cmake tar wget`
+2. **_Clone the repo_**: `git clone https://github.com/BeChris100/osintgram4j`
+3. **_Set permissions_**: `chmod +x setup.sh build.sh`
+4. **_Set up environment_**: `./setup.sh --force-download`
+5. **_Build_**: `./build.sh`
 
-After having a Linux shell instance, you need to prepare the system for compilation
-first. You need these following tools:
+The `--force-download` is an optional parameter. If given, it will always download
+the JDK and the libraries, no matter its state. Otherwise, it will try to detect
+JDK 21, and get the latest `org.json` and `org.apache:commons-cli` library.
 
-***Debian/Ubuntu based Systems (e.g. Zorin OS)***
-```shell
-sudo apt install tar wget cmake build-essential
-```
+Built binaries can be found under `./bin` directory (within the root source code
+directory), which is a symlink towards `./out/pkg/osintgram4j/bin`.
 
-***Arch Linux/Manjaro based Systems***
-```shell
-sudo pacman -Sy tar wget cmake base-devel
-```
+Alternatively, you can install this project, and have the executables directly in the
+PATH environment.
 
-After installing the necessary tools, you can start with building the project. To
-do so, run these following commands:
-```shell
-git clone https://github.com/BeChris100/osintgram4j && cd osintgram4j
-chmod +x setup.sh build.sh
-./setup.sh --force-download
-./build.sh
-```
+---
 
-Step-by-step explanation:
-1. Via the `git` command, the project gets downloaded, and by doing
-   `cd osintgram4j`, the working directory gets changed.
-2. The `chmod` command will set the Shell files executable. By default, `git`
-   will automatically mark the Shell files executable, but in some cases, it might
-   fail. Running them will make sure that the files are executable.
-3. First Shell script (`setup.sh`) will create a working Build Environment. It
-   will create a `out` folder, putting every necessary files, including external
-   libraries (`org.json` is only currently involved) and prepare the necessary
-   files. The `--force-download` can be removed, as it will rely on the already
-   installed JDK. 
-4. Running the `build.sh` script will build this project, compiling the C++ code
-   into a shared library, along with the Java Compiler. After the compilation,
-   `jpackage` gets invoked to create a native executable package without having
-   the need of running `java` or other pesky scripts. Installation is optional,
-   which will place the native executable into `/usr/bin`.
+## Executables
+By default, Osintgram4j delivers these following executable files:
 
-However, if you wish to not install directly, the Application Package will be stored
-at the current working directory under `build/pkg/osintgram4j`, with the executable
-being under `bin/osintgram4j`.
+- `osintgram4j`: The default executable to run this project
+- `og4j-editor`: A C++ executable that requires administrative privileges, when
+  applying new modifications
+- `og4j-logdata`: An optional executable for Log File Handling (see "SLFT" for better
+  explanation)
+
+---
+
+## SLFT
+"SLFT", or rather, "Secure Log File Transfer", is used to transfer Log Files securely.
+It is used to extract from the external Osintgram4j directory, but also being able to
+encrypt the file itself, so that third-party people / bad actors don't have the ability
+to peek in. Due to the nature of potential sensitive information being stored, this
+will be a necessity, in case of being requested for a Log file.
+
+Note that I will ***NOT*** ask you randomly for your Log files. Anyone that asks for
+one of the files is more likely to be a scammer / hacker, looking for snatching your
+information. In case that I will be asking, please look out for any ***red flags***
+first. If that is the case that I will be asking for one of the log files, please
+DO attach a link to the issue within the E-Mail or one of the other ***contact
+methods***.
 
 ---
 
 ## Client Mods
-The release of Osintgram4j Version v1, or rather pretty soon, v0.1, is introducing
-a Modding API, which the original project does not have. Now, I wouldn't say that
-it is a bad thing, but it is a cool feature. The use of client modifications is to
-enhance the features that the stock Osintgram4j might not have delivered that you
-might have expected.
+Osintgram4j introduces a Modding API, which is something that I like. Having the
+ability to modify the client directly instead of creating separate forks for each
+modification is better than handling each fork, which could eventually make that fork
+outdated from its original source. Allowing to customize and extend is functionality
+is something anyone would want.
 
-While the use of Modifications is still a cool thing, you have to prioritize
-Privacy, Data Safety and Security. That means, you should only download from sources
-that I marked as "trusted", or from the original marketplace that does not exist
-yet. Developers should follow the best practices to prevent the introduction of
-Malware, Spyware, Ransomware or other software that might be harmful for yo' system.
-
-Documentation on this GitHub Repository will be coming soon. Also, please, don't
-mind that I'll use ChatGPT in some sections because sometimes, I just need help in
-writing.
+As always, prioritize privacy and security, along with downloading mods from trusted
+sources.
 
 ---
 

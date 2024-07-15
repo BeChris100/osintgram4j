@@ -15,8 +15,7 @@
         {
             "manufacturer": "Apple",
             "model": "iPhone 13 Pro",
-            "android": false,
-            "ios": true,
+            "os": "iOS",
             "client_type": "Browser",
             "client_app": {
                 "application_version": ""
@@ -33,8 +32,7 @@
         {
             "manufacturer": "Google",
             "model": "Pixel 8 Pro",
-            "android": true,
-            "ios": false,
+            "os": "Android",
             "client_type": "App",
             "client_app": {
                 "application_version": ""

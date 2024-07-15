@@ -7,7 +7,7 @@ import osintgram4j.api.sh.ShellEnvironment;
 
 import java.util.List;
 
-public class AppManager extends Command {
+public class ClientManager extends Command {
 
     @Override
     public int launchCmd(String[] args, List<ShellEnvironment> env) {

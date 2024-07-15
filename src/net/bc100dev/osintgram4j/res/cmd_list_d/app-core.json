@@ -168,7 +168,7 @@
         {
             "command": "clientmgr",
             "description": "Application Client Management",
-            "class": ".cmd.AppManager",
+            "class": ".cmd.ClientManager",
             "alternates": [
                 "appmgr",
                 "ApplicationManager",

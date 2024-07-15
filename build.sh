@@ -62,6 +62,7 @@ if [ "$#" -ne 0 ]; then
         echo "Uninstalling osintgram4j"
         "$PREFIX" rm -rf /usr/bin/osintgram4j
         "$PREFIX" rm -rf /usr/bin/og4j-editor
+        "$PREFIX" rm -rf /usr/bin/og4j-logdata
 
         if [ -d "/usr/share/osintgram4j" ]; then
             "$PREFIX" rm -rf /usr/share/osintgram4j

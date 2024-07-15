@@ -1,5 +1,8 @@
 package com.instagram.api;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Constants {
 
     public static final String URL_API = "https://i.instagram.com/api/v1";
@@ -9,6 +12,11 @@ public class Constants {
     public static final String APP_ID = "567067343352427";
 
     public static String LOCALE = "en_US";
+
+    public static Map<String, String> putDefaultHeaders() {
+        Map<String, String> headers = new HashMap<>();
+        return headers;
+    }
 
     public static class Privates {
 
