@@ -2,9 +2,6 @@ package net.bc100dev.commons;
 
 public class Terminal {
 
-    public static native int windowLines();
-    public static native int windowColumns();
-
     public static void print(TermColor color, String msg, boolean reset) {
         if (msg != null)
             System.out.print(translateColor(color) + msg);

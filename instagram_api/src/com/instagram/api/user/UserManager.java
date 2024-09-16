@@ -1,11 +1,13 @@
 package com.instagram.api.user;
 
+import com.instagram.api.APIException;
 import com.instagram.api.Constants;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.net.ssl.HttpsURLConnection;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
@@ -13,10 +15,19 @@ import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+
+import static osintgram4j.commons.AppConstants.log_net;
 
 public class UserManager {
+
+    /*
+    private static final String FILTER_PLACEHOLDER_NAME = "__name__";
+    private static final String FILTER_PLACEHOLDER_ID = "__userID__";
+    private static final String FILTER_PLACEHOLDER_SESSION_ID = "__sessionID__";
+     */
 
     /*
     TODO: Steps on encrypting the password, and logging in
@@ -33,7 +44,30 @@ public class UserManager {
     'ig-set-password-encryption-pub-key': pwPubKey,
      */
 
-    public static User login(String username, String password) {
+    public static User login(String username, String password) throws IOException, APIException {
+        if (Constants.Privates.PASS_ENC_KEY_ID == null)
+            throw new NullPointerException("Password Encryption Key ID has not been initialized");
+
+        if (Constants.Privates.PASS_ENC_PUB_KEY == null)
+            throw new NullPointerException("Password Encryption Public Key has not been initialized");
+
+        if (Constants.Privates.IG_AUTH_HEADER == null)
+            throw new NullPointerException("Instagram Authentication Header has not been initialized");
+
+        if (Constants.Privates.WWW_CLAIM == null)
+            throw new NullPointerException("Instagram WWW Claim has not been initialized");
+
+        String encPass;
+        try {
+            encPass = PasswordEncryption.toEncryptedPassword(password.toCharArray());
+        } catch (GeneralSecurityException ex) {
+            log_net.log(Level.SEVERE, "Failed to encrypt password", ex);
+            throw new APIException(ex);
+        }
+
+        Map<String, String> loginHeaders = new HashMap<>(Constants.putDefaultHeaders());
+        loginHeaders.put("enc_password", PasswordEncryption.writePassword(encPass));
+
         //https://www.instagram.com/api/v1/accounts/login/ajax
         //https://www.instagram.com/api/v1/accounts/login/ajax?force_classic_login
 
@@ -167,7 +201,7 @@ public class UserManager {
             return String.format("#PWD_INSTAGRAM:4:%d:%s", timestamp, encryptedPassword);
         }
 
-        public static String toEncryptedPassword(String password) throws GeneralSecurityException {
+        public static String toEncryptedPassword(char[] password) throws GeneralSecurityException {
             KeyFactory keyFact = KeyFactory.getInstance("RSA");
             X509EncodedKeySpec pubKeySpec = new X509EncodedKeySpec(Base64.getDecoder().decode(Constants.Privates.PASS_ENC_PUB_KEY));
             PublicKey publicKey = keyFact.generatePublic(pubKeySpec);
@@ -189,7 +223,8 @@ public class UserManager {
             long time = System.currentTimeMillis() / 1000L;
             aesCipher.updateAAD(String.valueOf(time).getBytes());
 
-            byte[] aesEncrypted = aesCipher.doFinal(password.getBytes());
+            String _pass = new String(password);
+            byte[] aesEncrypted = aesCipher.doFinal(_pass.getBytes());
             byte[] sizeBuffer = ByteBuffer.allocate(2).putShort((short) rsaEncrypted.length).array();
             byte[] authTag = aesCipher.getIV();
 

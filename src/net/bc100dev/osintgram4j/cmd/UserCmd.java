@@ -1,30 +1,69 @@
 package net.bc100dev.osintgram4j.cmd;
 
+import com.instagram.api.APIException;
+import com.instagram.api.user.User;
+import com.instagram.api.user.UserManager;
 import net.bc100dev.commons.Terminal;
 import net.bc100dev.commons.utils.HelpPage;
 import net.bc100dev.osintgram4j.api_conn.UserSession;
+import net.bc100dev.osintgram4j.dev.DesktopDevice;
+import net.bc100dev.osintgram4j.dev.Device;
+import net.bc100dev.osintgram4j.dev.PhoneDevice;
 import osintgram4j.api.sh.Command;
 import osintgram4j.api.sh.ShellEnvironment;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+
+import static osintgram4j.commons.AppConstants.log_net;
 
 public class UserCmd extends Command {
+
+    private static final boolean RUN_TESTS = false;
+
+    private static void changeDevice(Device device) {
+        switch (device) {
+            case DesktopDevice desktopDevice -> {
+            }
+            case PhoneDevice phoneDevice -> {
+            }
+            default -> throw new UnsupportedOperationException("Unknown device: " + device);
+        }
+    }
 
     private static void create(String username, String email, String password) {
         // TODO: Invoke Account Creation
     }
 
     private static void logout(UserSession session) {
+        // TODO: Invoke Account Log-Out
     }
 
     private static void promptCreate(List<ShellEnvironment> shellEnv) {
-        // TODO:
+        // TODO: Initiate a call to the System input (System.in)
+    }
+
+    private static int execTests(String[] args, List<ShellEnvironment> shellConfigs) {
+        try {
+            User user = UserManager.login("bc100dev", "GPPP");
+            if (user != null) {
+                if (user.requireTwoFactorLogin()) {
+                }
+            }
+        } catch (IOException | APIException ex) {
+            log_net.log(Level.WARNING, "Failed to login", ex);
+        }
+        return 0;
     }
 
     @Override
     public int launchCmd(String[] args, List<ShellEnvironment> shellConfigs) {
+        if (RUN_TESTS)
+            return execTests(args, shellConfigs);
+
         if (args == null || args.length == 0) {
             Terminal.errPrintln(Terminal.TermColor.YELLOW, helpCmd(new String[0]), true);
             return 1;

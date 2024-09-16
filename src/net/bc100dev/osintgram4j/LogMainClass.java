@@ -163,7 +163,7 @@ public class LogMainClass {
     public static void main(String[] args) {
         Options opts = new Options();
 
-        Option passOption = new Option("p", "pass", true, "The password used for encrypting the log file");
+        Option passOption = new Option("p", "pass", true, "The password used for encrypting the log file (defaults to \"ask\", prompting for password)");
         passOption.setRequired(false);
         opts.addOption(passOption);
 
@@ -175,7 +175,7 @@ public class LogMainClass {
         decryptOption.setRequired(false);
         opts.addOption(decryptOption);
 
-        Option openOption = new Option("o", "open", false, "Open a specific log file");
+        Option openOption = new Option("o", "open", false, "Open a specific log file, and print its contents out");
         openOption.setRequired(false);
         opts.addOption(openOption);
 

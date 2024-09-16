@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ProjectConfig>
+    <InfoConfig>
+        <Name display="Instagram OSINT (Osintgram4j)" name="osintgram4j"/>
+        <Version ver="0.2" code="1" />
+        <Maintainers>
+            <Maintainer>BC100Dev (contact@bc100dev.net)</Maintainer>
+        </Maintainers>
+        <Sources type="git" url="https://github.com/BeChris100/osintgram4j" branch="master" />
+    </InfoConfig>
+    <Modules>
+        <Module name="core" executable="true" sources="src/">
+            <Dependency name="org.json:json" />
+            <ModLink name="ig_api" />
+            <ModLink name="commons" />
+            <ModLink name="mod_api"/>
+            <Class binName="osintgram4j" main="net.bc100dev.osintgram4j.MainClass" />
+            <Class binName="og4j-tests" main="net.bc100dev.osintgram4j.test.TestMain" scope="test" />
+        </Module>
+        <Module name="ig_api" executable="false" sources="instagram_api/src/">
+            <Dependency name="org.json:json"/>
+            <ModLink name="commons" />
+        </Module>
+        <Module name="mod_api" executable="false" sources="modapi/src/">
+            <Dependency name="org.json:json"/>
+            <ModLink name="commons" />
+        </Module>
+        <Module name="commons" executable="false" sources="modapi/src/" />
+        <Module name="updater" executable="true" sources="updater/src/">
+            <Class binName="og4j-updater" main="app.updater.UpdaterMain" />
+        </Module>
+    </Modules>
+</ProjectConfig>
