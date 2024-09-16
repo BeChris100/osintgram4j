@@ -65,9 +65,8 @@ public class UserManager {
             throw new APIException(ex);
         }
 
-        Map<String, String> loginHeaders = new HashMap<>();
-        loginHeaders.putAll(Constants.putDefaultHeaders());
-        loginHeaders.put("enc_password", PasswordEncryption.)
+        Map<String, String> loginHeaders = new HashMap<>(Constants.putDefaultHeaders());
+        loginHeaders.put("enc_password", PasswordEncryption.writePassword(encPass));
 
         //https://www.instagram.com/api/v1/accounts/login/ajax
         //https://www.instagram.com/api/v1/accounts/login/ajax?force_classic_login

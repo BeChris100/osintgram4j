@@ -17,6 +17,17 @@ a complete rewrite in Java, bringing back stability, along with new features.
 
 ---
 
+## Archival In Progress
+Yes, I am planning to archive this project, as soon as
+[OsintgramCXX](https://github.com/BeChris100/OsintgramCXX) reaches the same
+stability stage as this current project is.
+
+Why am I doing this Archival? Reasons for more performance, and since Java is
+slowly becoming a boring language for me, I am fully switching to OsintgramCXX,
+making this project an obsolete project, where OsintgramCXX takes over.
+
+---
+
 ## Use cases...?
 No use cases yet. Matter of fact, this project is still heavily under development.
 Keep an eye on the discussions tab, as I will be doing Announcements, when a new
@@ -125,4 +136,4 @@ sources.
 ---
 
 ## Usage
-Refer to [the Usage file](docs/Usage) for this project.
+Refer to [the Usage file](docs/Usage.md) for this project.
